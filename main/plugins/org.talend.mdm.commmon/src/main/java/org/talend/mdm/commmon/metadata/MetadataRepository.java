@@ -320,7 +320,10 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         for (ComplexTypeMetadata subType : containedType.getSubTypes()) {
                             subType.accept(this);
                         }
-                        return super.visit(containedType);
+                        if (!containedType.getContainedType().equals(containedType.getContainer().getDeclaringType())) {
+                            return super.visit(containedType);
+                        }
+                        return null;
                     }
                 });
             }
