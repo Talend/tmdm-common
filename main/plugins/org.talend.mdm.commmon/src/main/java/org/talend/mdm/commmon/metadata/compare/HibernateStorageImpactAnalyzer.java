@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.talend.mdm.commmon.metadata.*;
 
 public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
@@ -82,10 +83,20 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 /*
                  * HIGH IMPACT CHANGES
                  */
-                if (!ObjectUtils.equals(previousLength, currentLength)) {
-                    // Won't be able to change constraint for max length
-                    impactSort.get(Impact.HIGH).add(modifyAction);
-                } else if (!ObjectUtils.equals(previousTotalDigits, currentTotalDigits)) {
+                if (((FieldMetadata) element).getType().getSuperTypes().iterator().next().getName().equals("string")) {
+                    if (Integer.valueOf((String) currentLength).compareTo(Integer.valueOf((String) previousLength)) > 0) {
+                        impactSort.get(Impact.LOW).add(modifyAction);
+                    } else if (Integer.valueOf((String) currentLength).compareTo(Integer.valueOf((String) previousLength)) < 0) {
+                        impactSort.get(Impact.MEDIUM).add(modifyAction);
+                    }
+                } else {
+                    if (!ObjectUtils.equals(previousLength, currentLength)) {
+                        // Won't be able to change constraint for max length
+                        impactSort.get(Impact.MEDIUM).add(modifyAction);
+                    }
+                }
+
+                if (!ObjectUtils.equals(previousTotalDigits, currentTotalDigits)) {
                     // TMDM-8022: issues about custom decimal type totalDigits/fractionDigits.
                     impactSort.get(Impact.HIGH).add(modifyAction);
                 } else if (!ObjectUtils.equals(previousFractionDigits, currentFractionDigits)) {
