@@ -74,6 +74,9 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 Object previousLength = previous.getType().getData(MetadataRepository.DATA_MAX_LENGTH);
                 Object currentLength = current.getType().getData(MetadataRepository.DATA_MAX_LENGTH);
                 
+                previousLength = previousLength == null ? "0" : previousLength;
+                currentLength = currentLength == null ? "0" : currentLength;
+
                 // TMDM-8022: issues about custom decimal type totalDigits/fractionDigits.
                 Object previousTotalDigits = previous.getType().getData(MetadataRepository.DATA_TOTAL_DIGITS);
                 Object currentTotalDigits = current.getType().getData(MetadataRepository.DATA_TOTAL_DIGITS);
@@ -83,20 +86,14 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 /*
                  * HIGH IMPACT CHANGES
                  */
-                if (((FieldMetadata) element).getType().getSuperTypes().iterator().next().getName().equals("string")) {
-                    if (Integer.valueOf((String) currentLength).compareTo(Integer.valueOf((String) previousLength)) > 0) {
-                        impactSort.get(Impact.LOW).add(modifyAction);
-                    } else if (Integer.valueOf((String) currentLength).compareTo(Integer.valueOf((String) previousLength)) < 0) {
-                        impactSort.get(Impact.MEDIUM).add(modifyAction);
-                    }
-                } else {
-                    if (!ObjectUtils.equals(previousLength, currentLength)) {
-                        // Won't be able to change constraint for max length
-                        impactSort.get(Impact.MEDIUM).add(modifyAction);
-                    }
-                }
-
-                if (!ObjectUtils.equals(previousTotalDigits, currentTotalDigits)) {
+                if (element instanceof SimpleTypeFieldMetadata
+                        && ((FieldMetadata) element).getType().getSuperTypes().iterator().next().getName().equals("string")
+                        && Integer.valueOf((String) currentLength).compareTo(Integer.valueOf((String) previousLength)) > 0) {
+                    impactSort.get(Impact.LOW).add(modifyAction);
+                } else if (!ObjectUtils.equals(previousLength, currentLength)) {
+                    // Won't be able to change constraint for max length
+                    impactSort.get(Impact.HIGH).add(modifyAction);
+                } else if (!ObjectUtils.equals(previousTotalDigits, currentTotalDigits)) {
                     // TMDM-8022: issues about custom decimal type totalDigits/fractionDigits.
                     impactSort.get(Impact.HIGH).add(modifyAction);
                 } else if (!ObjectUtils.equals(previousFractionDigits, currentFractionDigits)) {
