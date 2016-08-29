@@ -73,7 +73,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
             } else if (element instanceof FieldMetadata) {
                 FieldMetadata previous = (FieldMetadata) modifyAction.getPrevious();
                 FieldMetadata current = (FieldMetadata) modifyAction.getCurrent();
-                Object previousLength = previous.getType().getData(MetadataRepository.DATA_MAX_LENGTH);
+                Object previousLength = getSuperTypeMaxLength(previous.getType(), previous.getType()) ;
                 Object currentLength = getSuperTypeMaxLength(current.getType(), current.getType()) ;
 
                 // TMDM-8022: issues about custom decimal type totalDigits/fractionDigits.
