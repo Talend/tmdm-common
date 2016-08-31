@@ -19,6 +19,7 @@ import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.talend.mdm.commmon.metadata.*;
+import org.talend.mdm.commmon.util.core.CommonUtil;
 
 public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
 
@@ -73,8 +74,9 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
             } else if (element instanceof FieldMetadata) {
                 FieldMetadata previous = (FieldMetadata) modifyAction.getPrevious();
                 FieldMetadata current = (FieldMetadata) modifyAction.getCurrent();
-                Object previousLength = getSuperTypeMaxLength(previous.getType(), previous.getType()) ;
-                Object currentLength = getSuperTypeMaxLength(current.getType(), current.getType()) ;
+                // TMDM-9909: Increase the length of a string element should be low impact
+                Object previousLength = CommonUtil.getSuperTypeMaxLength(previous.getType(), previous.getType()) ;
+                Object currentLength = CommonUtil.getSuperTypeMaxLength(current.getType(), current.getType()) ;
 
                 // TMDM-8022: issues about custom decimal type totalDigits/fractionDigits.
                 Object previousTotalDigits = previous.getType().getData(MetadataRepository.DATA_TOTAL_DIGITS);
@@ -138,17 +140,4 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
         }
         return impactSort;
     }
-
-    private Object getSuperTypeMaxLength(TypeMetadata originalTypeMetadata, TypeMetadata typeMetadata){
-        Object currentLength = typeMetadata.getData(MetadataRepository.DATA_MAX_LENGTH);
-        if(currentLength == null){
-            for(TypeMetadata type: typeMetadata.getSuperTypes()){
-                if(MetadataUtils.getSuperConcreteType(originalTypeMetadata).getName().equals(MetadataUtils.getSuperConcreteType(type).getName())){
-                    currentLength = getSuperTypeMaxLength(originalTypeMetadata, type);
-                }
-            }
-        }
-        return currentLength;
-    }
-
 }

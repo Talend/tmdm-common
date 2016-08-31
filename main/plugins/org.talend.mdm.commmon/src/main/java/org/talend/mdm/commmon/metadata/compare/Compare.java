@@ -37,6 +37,7 @@ import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
 import org.talend.mdm.commmon.metadata.SimpleTypeFieldMetadata;
 import org.talend.mdm.commmon.metadata.SimpleTypeMetadata;
 import org.talend.mdm.commmon.metadata.TypeMetadata;
+import org.talend.mdm.commmon.util.core.CommonUtil;
 
 public class Compare {
 
@@ -86,8 +87,9 @@ public class Compare {
                             if(leftVisitable instanceof ReferenceFieldMetadata){
                                 compareReferenceFieldMetadata(diffResults.modifyChanges, (ReferenceFieldMetadata) leftVisitable, (ReferenceFieldMetadata) rightElement);
                             }
-                            Object leftLength = leftVisitableType.getData(MetadataRepository.DATA_MAX_LENGTH);
-                            Object rightLength = rightVisitableType.getData(MetadataRepository.DATA_MAX_LENGTH);
+                            // TMDM-9909: Increase the length of a string element should be low impact
+                            Object leftLength = CommonUtil.getSuperTypeMaxLength(leftVisitableType, leftVisitableType) ;
+                            Object rightLength = CommonUtil.getSuperTypeMaxLength(rightVisitableType, rightVisitableType) ;
                             if (!ObjectUtils.equals(leftLength, rightLength)) {
                                 diffResults.modifyChanges.add(new ModifyChange(leftVisitable, rightElement));
                             }
