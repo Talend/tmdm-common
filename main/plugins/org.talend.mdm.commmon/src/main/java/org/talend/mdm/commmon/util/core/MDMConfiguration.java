@@ -38,6 +38,8 @@ public final class MDMConfiguration {
 
     public static final String TECHNICAL_PASSWORD = "technical.password"; //$NON-NLS-1$
 
+    public static final String EXPORT_INPORT_DEFAULT_COUNT = "1000";//$NON-NLS-1$
+
     private static final Logger logger = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
