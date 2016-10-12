@@ -153,6 +153,8 @@ public interface ComplexTypeMetadata extends TypeMetadata {
      */
     Collection<ComplexTypeMetadata> getSubTypes();
 
+    Collection<ComplexTypeMetadata> getDirectSubTypes();
+
     /**
      * Registers a {@link ComplexTypeMetadata} type as a sub type of this type.
      */

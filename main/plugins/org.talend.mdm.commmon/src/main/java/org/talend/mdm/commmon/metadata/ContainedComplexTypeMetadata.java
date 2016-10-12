@@ -158,6 +158,11 @@ public class ContainedComplexTypeMetadata implements ComplexTypeMetadata {
     }
 
     @Override
+    public Collection<ComplexTypeMetadata> getDirectSubTypes() {
+        return containedType.getDirectSubTypes();
+    }
+
+    @Override
     public void registerSubType(ComplexTypeMetadata type) {
         containedType.registerSubType(type);
     }

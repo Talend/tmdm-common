@@ -192,6 +192,11 @@ public class UnresolvedTypeMetadata extends MetadataExtensions implements Comple
     }
 
     @Override
+    public Collection<ComplexTypeMetadata> getDirectSubTypes() {
+        return Collections.emptyList();
+    }
+
+    @Override
     public void registerSubType(ComplexTypeMetadata type) {
     }
 
