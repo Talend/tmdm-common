@@ -40,7 +40,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     // Contained field may change mapping strategy
                     impactSort.get(Impact.HIGH).add(addAction);
                 } else {
-                    Object defaultValueRule = ((FieldMetadata) element).getType().getData(MetadataRepository.DEFAULT_VALUE_RULE);
+                    Object defaultValueRule = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE_RULE);
                     
                     // TMDM-7895: Newly added element and mandatory should be considered as "high" change
                     if (((FieldMetadata) element).isMandatory() && defaultValueRule == null) {
