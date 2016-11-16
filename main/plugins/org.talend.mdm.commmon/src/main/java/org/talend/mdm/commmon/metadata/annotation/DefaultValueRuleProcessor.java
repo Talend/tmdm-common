@@ -1,6 +1,7 @@
 package org.talend.mdm.commmon.metadata.annotation;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xsd.XSDAnnotation;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
@@ -38,7 +39,7 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
         
         if (StringUtils.startsWith(text, "\"") && StringUtils.endsWith(text, "\"")) {
             isValue = true;
-        } else if (StringUtils.isNumeric(text)) {
+        } else if (NumberUtils.isNumber(text)) {
             isValue = true;
         } else if (StringUtils.equals(text, "fn:false()") || StringUtils.equals(text, "fn:true()")) {
             isValue = true;
