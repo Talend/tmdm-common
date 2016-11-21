@@ -20,12 +20,12 @@ public class XmlUtil {
 
     private static final Logger logger = Logger.getLogger(XmlUtil.class);
 
-    private static final TransformerFactory transformerFactory_Xalan = new org.apache.xalan.processor.TransformerFactoryImpl();
+    private static final TransformerFactory xalanTransformerFactory = new org.apache.xalan.processor.TransformerFactoryImpl();
 
-    private static final TransformerFactory transformerFactory_Saxon = new net.sf.saxon.TransformerFactoryImpl();
+    private static final TransformerFactory saxonTransformerFactory = new net.sf.saxon.TransformerFactoryImpl();
 
     public static Transformer generateTransformer() throws TransformerConfigurationException {
-        return transformerFactory_Xalan.newTransformer();
+        return xalanTransformerFactory.newTransformer();
     }
 
     public static Transformer generateTransformer(boolean isOmitXmlDeclaration) throws TransformerConfigurationException {
@@ -62,7 +62,7 @@ public class XmlUtil {
 
     public static Document styleDocument(Document document, String stylesheet) throws Exception {
         // load the transformer using JAXP
-        Transformer transformer = transformerFactory_Saxon.newTransformer(new StreamSource(stylesheet));
+        Transformer transformer = saxonTransformerFactory.newTransformer(new StreamSource(stylesheet));
 
         // now lets style the given document
         DocumentSource source = new DocumentSource(document);
