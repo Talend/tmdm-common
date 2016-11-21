@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
         <groupId>org.talend.mdm</groupId>
@@ -13,7 +14,7 @@
     <name>org.talend.mdm.common</name>
 
     <build>
-    	<sourceDirectory>../main/plugins/org.talend.mdm.commmon/src/main/java/</sourceDirectory>
+        <sourceDirectory>../main/plugins/org.talend.mdm.commmon/src/main/java/</sourceDirectory>
         <resources>
             <resource>
                 <directory>../main/plugins/org.talend.mdm.commmon/src/main/resources</directory>
@@ -29,9 +30,9 @@
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-        </plugins>    
+        </plugins>
     </build>
-    
+
     <dependencies>
         <dependency>
             <groupId>log4j</groupId>
@@ -63,18 +64,18 @@
         </dependency>
         <dependency>
             <groupId>org.talend</groupId>
-            <artifactId>org.talend.utils</artifactId>                
+            <artifactId>org.talend.utils</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
         </dependency>
         <dependency>
-        	<groupId>xalan</groupId>
-        	<artifactId>xalan</artifactId>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
         </dependency>
         <dependency>
-        	<groupId>net.sourceforge.saxon</groupId>
+            <groupId>net.sourceforge.saxon</groupId>
             <artifactId>saxon9-dom</artifactId>
         </dependency>
         <dependency>
@@ -82,29 +83,30 @@
             <artifactId>dom4j</artifactId>
         </dependency>
     </dependencies>
-    
+
     <profiles>
-    	<profile>
+        <profile>
             <id>dev-build</id>
             <build>
-            	<plugins>
-            		<plugin>
+                <plugins>
+                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
-                        	<execution>
+                            <execution>
                                 <id>deploy-tomcat</id>
                                 <configuration>
-                                	<target>
-                                		<copy tofile="${lib.dest}" file="${jar.lib.src}" />
-                                	</target>
+                                    <target>
+                                        <copy tofile="${lib.dest}"
+                                            file="${jar.lib.src}" />
+                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
-                     </plugin>
+                    </plugin>
                 </plugins>
-            </build>                
-    	</profile>
+            </build>
+        </profile>
     </profiles>
 
 </project>
