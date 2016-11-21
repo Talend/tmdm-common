@@ -38,8 +38,10 @@
         <mdm.build.web.dir>${mdm.build.dir}/${project.artifactId}-${project.version}</mdm.build.web.dir>
         <mdm.app.dir>${dev.tomcat.home}/webapps/talendmdm</mdm.app.dir>
         <jacoco.exec.file>${project.parent.build.directory}/${project.artifactId}.exec</jacoco.exec.file>
+        
+        <xalan.version>2.7.1</xalan.version>
+        <saxon.version>9.0.0.8</saxon.version>
     </properties>
-
     <repositories>
         <repository>
             <!--See http://community.jboss.org/wiki/MavenRepository -->
@@ -1122,6 +1124,16 @@
                 <artifactId>dom4j</artifactId>
                 <version>1.6.1</version>
             </dependency>
+            <dependency>
+            	<groupId>xalan</groupId>
+            	<artifactId>xalan</artifactId>
+            	<version>${xalan.version}</version>
+        	</dependency>
+        	<dependency>
+            	<groupId>net.sourceforge.saxon</groupId>
+            	<artifactId>saxon9-dom</artifactId>
+            	<version>${saxon.version}</version>
+        	</dependency>
             <!-- container dependencies -->
             <dependency>
                 <groupId>javax.servlet</groupId>

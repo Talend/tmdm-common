@@ -69,6 +69,18 @@
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
         </dependency>
+        <dependency>
+        	<groupId>xalan</groupId>
+        	<artifactId>xalan</artifactId>
+        </dependency>
+        <dependency>
+        	<groupId>net.sourceforge.saxon</groupId>
+            <artifactId>saxon9-dom</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
     </dependencies>
     
     <profiles>
