@@ -148,8 +148,7 @@
                                 <goal>compile</goal>
                             </goals>
                             <configuration>
-                                <extraJvmArgs>-Xmx512m
-                                    -XX:-ReduceInitialCardMarks</extraJvmArgs>
+                                <extraJvmArgs>-Xmx512m -XX:-ReduceInitialCardMarks</extraJvmArgs>
                                 <localWorkers>${gwt.localWorkers}</localWorkers>
                                 <deploy>${project.build.directory}/gwt-deploy</deploy>
                                 <logLevel>INFO</logLevel>
@@ -182,8 +181,7 @@
                         <argLine>-XX:-ReduceInitialCardMarks</argLine>
                         <useManifestOnlyJar>false</useManifestOnlyJar>
                         <systemPropertyVariables>
-                            <gwt.args>-out ${project.build.directory}
-                                -logLevel ERROR</gwt.args>
+                            <gwt.args>-out ${project.build.directory} -logLevel ERROR</gwt.args>
                             <gwt.persistentunitcachedir>${project.build.directory}</gwt.persistentunitcachedir>
                             <file.encoding>utf-8</file.encoding>
                         </systemPropertyVariables>
@@ -321,8 +319,8 @@
                     </dependencies>
                 </plugin>
 
-                <!--This plugin's configuration is used to store Eclipse 
-                    m2e settings only. It has no influence on the Maven build itself. -->
+                <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
+                  
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
                     <artifactId>lifecycle-mapping</artifactId>
