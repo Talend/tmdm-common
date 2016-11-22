@@ -1,5 +1,6 @@
 package org.talend.mdm.commmon.util.core;
 
+import java.io.StringReader;
 import java.io.StringWriter;
 
 import javax.xml.transform.Transformer;
@@ -62,7 +63,7 @@ public class XmlUtil {
 
     public static Document styleDocument(Document document, String stylesheet) throws Exception {
         // load the transformer using JAXP
-        Transformer transformer = saxonTransformerFactory.newTransformer(new StreamSource(stylesheet));
+        Transformer transformer = saxonTransformerFactory.newTransformer(new StreamSource(new StringReader(stylesheet)));
 
         // now lets style the given document
         DocumentSource source = new DocumentSource(document);
