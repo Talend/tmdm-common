@@ -21,12 +21,12 @@ public class XmlUtil {
 
     private static final Logger logger = Logger.getLogger(XmlUtil.class);
 
-    private static final TransformerFactory xalanTransformerFactory = new org.apache.xalan.processor.TransformerFactoryImpl();
+    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
 
     private static final TransformerFactory saxonTransformerFactory = new net.sf.saxon.TransformerFactoryImpl();
 
     public static Transformer generateTransformer() throws TransformerConfigurationException {
-        return xalanTransformerFactory.newTransformer();
+        return transformerFactory.newTransformer();
     }
 
     public static Transformer generateTransformer(boolean isOmitXmlDeclaration) throws TransformerConfigurationException {
