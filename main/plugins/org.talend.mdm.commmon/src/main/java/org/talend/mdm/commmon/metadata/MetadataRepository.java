@@ -92,7 +92,11 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
 
     public static final String ANONYMOUS_PREFIX = "X_ANONYMOUS"; //$NON-NLS-1$
     
-    public static final String DEFAULT_VALUE_RULE = "default.value.rule";
+    public static final String DEFAULT_VALUE_RULE = "default.value.rule"; //$NON-NLS-1$
+    
+    public static final String FN_TRUE = "fn:true()"; //$NON-NLS-1$
+    
+    public static final String FN_FALSE = "fn:false()"; //$NON-NLS-1$
 
     private static final Logger LOGGER = Logger.getLogger(MetadataRepository.class);
 
@@ -846,9 +850,9 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             field.registerDescription(entry.getKey(), entry.getValue());
         }
     }
-    
+
     private static void setDefaultValueRule(FieldMetadata field, String defaultValueRule) {
-        if(StringUtils.isNotEmpty(defaultValueRule)){
+        if (StringUtils.isNotBlank(defaultValueRule)) {
             field.setData(DEFAULT_VALUE_RULE, defaultValueRule);
         }
     }

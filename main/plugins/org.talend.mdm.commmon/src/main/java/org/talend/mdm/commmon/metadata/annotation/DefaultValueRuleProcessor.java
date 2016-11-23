@@ -18,7 +18,6 @@ import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.w3c.dom.Element;
 
-
 public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
 
     @Override
@@ -26,13 +25,11 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
             XmlSchemaAnnotationProcessorState state) {
         if (annotation != null) {
             EList<Element> annotations = annotation.getApplicationInformation();
-            // Process X_ForeignKey annotation first to get referenced type right
             for (Element appInfo : annotations) {
                 String source = appInfo.getAttribute("source"); //$NON-NLS-1$
 
                 if ("X_Default_Value_Rule".equals(source)) { //$NON-NLS-1$
-                    boolean isValue = isValue(appInfo.getTextContent());
-                    if (isValue) {
+                    if (isValue(appInfo.getTextContent())) {
                         state.setDefaultValueRule(appInfo.getTextContent());
                     }
                 }
@@ -42,19 +39,17 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
 
     private boolean isValue(String text) {
         boolean isValue = false;
-        
-        if (StringUtils.isEmpty(text)) {
-            return isValue;
-        }
-        
-        if (StringUtils.startsWith(text, "\"") && StringUtils.endsWith(text, "\"")) {
-            isValue = true;
-        } else if (NumberUtils.isNumber(text)) {
-            isValue = true;
-        } else if (StringUtils.equals(text, "fn:false()") || StringUtils.equals(text, "fn:true()")) {
-            isValue = true;
+
+        if (StringUtils.isNotBlank(text)) {
+            if (StringUtils.startsWith(text, "\"") && StringUtils.endsWith(text, "\"")) { //$NON-NLS-1$ //$NON-NLS-2$
+                isValue = true;
+            } else if (NumberUtils.isNumber(text)) {
+                isValue = true;
+            } else if (StringUtils.equals(text, MetadataRepository.FN_FALSE)
+                    || StringUtils.equals(text, MetadataRepository.FN_TRUE)) {
+                isValue = true;
+            }
         }
         return isValue;
     }
-
 }
