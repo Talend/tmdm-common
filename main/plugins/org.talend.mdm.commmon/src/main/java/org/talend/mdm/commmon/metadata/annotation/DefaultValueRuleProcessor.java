@@ -45,8 +45,8 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
                 isValue = true;
             } else if (NumberUtils.isNumber(text)) {
                 isValue = true;
-            } else if (StringUtils.equals(text, MetadataRepository.FN_FALSE)
-                    || StringUtils.equals(text, MetadataRepository.FN_TRUE)) {
+            } else if (StringUtils.equalsIgnoreCase(text, MetadataRepository.FN_FALSE)
+                    || StringUtils.equalsIgnoreCase(text, MetadataRepository.FN_TRUE)) {
                 isValue = true;
             }
         }
