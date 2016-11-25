@@ -29,8 +29,6 @@ import org.w3c.dom.Element;
 
 public class SchematronProcessor implements XmlSchemaAnnotationProcessor {
 
-    private static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-
     @Override
     public void process(MetadataRepository repository, ComplexTypeMetadata type, XSDAnnotation annotation,
             XmlSchemaAnnotationProcessorState state) {
@@ -41,11 +39,10 @@ public class SchematronProcessor implements XmlSchemaAnnotationProcessor {
                     StringWriter sw = new StringWriter();
                     Transformer transformer;
                     try {
-                        transformer = transformerFactory.newTransformer();
+                        transformer = XmlUtil.generateTransformer(true);
                     } catch (TransformerConfigurationException e) {
                         throw new RuntimeException("Could not create transformer instance.", e);
                     }
-                    transformer.setOutputProperty("omit-xml-declaration", "yes"); //$NON-NLS-1$ //$NON-NLS-2$
                     try {
                         // TODO This is not really efficient but doing it nicely would require to rewrite a
                         // StringEscapeUtils.unescapeXml()

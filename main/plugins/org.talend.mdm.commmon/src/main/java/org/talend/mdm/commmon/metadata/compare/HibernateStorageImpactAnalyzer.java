@@ -17,6 +17,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.talend.mdm.commmon.metadata.*;
 import org.talend.mdm.commmon.util.core.CommonUtil;
@@ -40,8 +41,10 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     // Contained field may change mapping strategy
                     impactSort.get(Impact.HIGH).add(addAction);
                 } else {
+                    String defaultValueRule = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE_RULE);
+                    
                     // TMDM-7895: Newly added element and mandatory should be considered as "high" change
-                    if (((FieldMetadata) element).isMandatory()) {
+                    if (((FieldMetadata) element).isMandatory() && StringUtils.isBlank(defaultValueRule)) {
                         impactSort.get(Impact.HIGH).add(addAction);
                     } else {
                         impactSort.get(Impact.LOW).add(addAction);
