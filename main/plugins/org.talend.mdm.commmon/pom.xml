@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.talend.studio</groupId>
     <artifactId>tmdm-common</artifactId>
-    <version>6.2.1-SNAPSHOT</version>
+    <version>6.3.1-SNAPSHOT</version>
     <relativePath>../../../</relativePath>
   </parent>
   <artifactId>org.talend.mdm.commmon</artifactId>

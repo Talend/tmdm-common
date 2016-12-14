@@ -41,7 +41,7 @@ public class ForeignKeyProcessor implements XmlSchemaAnnotationProcessor {
             // Then proceed to other FK related annotations
             for (Element appInfo : annotations) {
                 String source = appInfo.getAttribute("source"); //$NON-NLS-1$
-                 if ("X_ForeignKeyInfo".equals(source)) { //$NON-NLS-1$
+                if ("X_ForeignKeyInfo".equals(source)) { // $NON-NLS-1$
                     handleForeignKeyInfo(repository, state, appInfo);
                 } else if ("X_ForeignKeyInfoFormat".equals(source)) { //$NON-NLS-1$
                     state.setForeignKeyInfoFormat(String.valueOf(appInfo.getTextContent()));
@@ -56,7 +56,7 @@ public class ForeignKeyProcessor implements XmlSchemaAnnotationProcessor {
 
     private void handleForeignKeyInfo(MetadataRepository repository, XmlSchemaAnnotationProcessorState state, Element appInfo) {
         String path = appInfo.getTextContent();
-        FieldMetadata fieldMetadata = getFieldMetadata(repository, (ComplexTypeMetadata) state.getReferencedType(), appInfo, path);
+        FieldMetadata fieldMetadata = getFieldMetadata(repository, (ComplexTypeMetadata) state.getReferencedType(), appInfo, path, true);
         state.setForeignKeyInfo(fieldMetadata);
     }
 
@@ -64,23 +64,26 @@ public class ForeignKeyProcessor implements XmlSchemaAnnotationProcessor {
             XmlSchemaAnnotationProcessorState state, Element appInfo) {
         state.markAsReference();
         String path = appInfo.getTextContent();
-        FieldMetadata fieldMetadata = getFieldMetadata(repository, type, appInfo, path);
+        FieldMetadata fieldMetadata = getFieldMetadata(repository, type, appInfo, path, false);
         state.setReferencedField(fieldMetadata);
         // Only reference instantiable types.
         state.setReferencedType(new SoftTypeRef(repository, repository.getUserNamespace(), getTypeName(type, path), true));
     }
 
     private static FieldMetadata getFieldMetadata(MetadataRepository repository, ComplexTypeMetadata type, Element appInfo,
-            String path) {
+            String path, boolean isFKInfo) {
         String typeName = getTypeName(type, path);
         String fieldPath = StringUtils.substringAfter(path, "/").trim(); //$NON-NLS-1$
         FieldMetadata fieldMetadata;
-        // If the reference entity has composite key, the foreign key field should be set as entity not its ID.
-        if (!fieldPath.isEmpty()
-                && (repository.getComplexType(typeName) == null || repository.getComplexType(typeName).getKeyFields().size() <= 1)) {
+        if (!fieldPath.isEmpty() && isFKInfo) {
             fieldMetadata = new SoftFieldRef(repository, fieldPath, typeName);
         } else {
-            fieldMetadata = new SoftIdFieldRef(repository, typeName);
+            if(!fieldPath.isEmpty()
+                    && (repository.getComplexType(typeName) == null || repository.getComplexType(typeName).getKeyFields().size() == 1)) {
+                fieldMetadata = new SoftFieldRef(repository, fieldPath, typeName);
+            } else { // If the reference entity has composite key, the foreign key field should be set as entity not its ID.
+                fieldMetadata = new SoftIdFieldRef(repository, typeName);
+            }
         }
         fieldMetadata.setData(MetadataRepository.XSD_LINE_NUMBER, XSDParser.getStartLine(appInfo));
         fieldMetadata.setData(MetadataRepository.XSD_COLUMN_NUMBER, XSDParser.getStartColumn(appInfo));

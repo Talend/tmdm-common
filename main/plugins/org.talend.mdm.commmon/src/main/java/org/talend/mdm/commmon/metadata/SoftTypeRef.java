@@ -313,6 +313,11 @@ public class SoftTypeRef implements ComplexTypeMetadata {
     }
 
     @Override
+    public Collection<ComplexTypeMetadata> getDirectSubTypes() {
+        return getTypeAsComplex().getDirectSubTypes();
+    }
+
+    @Override
     public void registerSubType(ComplexTypeMetadata type) {
     }
 

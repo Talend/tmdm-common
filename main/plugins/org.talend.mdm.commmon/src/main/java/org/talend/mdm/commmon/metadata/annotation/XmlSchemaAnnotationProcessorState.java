@@ -68,6 +68,8 @@ public class XmlSchemaAnnotationProcessorState {
     private String visibilityRule;
 
     private String foreignKeyFilter = StringUtils.EMPTY;
+    
+    private String defaultValueRule;
 
     public void setFkIntegrity(boolean fkIntegrity) {
         this.fkIntegrity = fkIntegrity;
@@ -211,5 +213,13 @@ public class XmlSchemaAnnotationProcessorState {
 
     public String getVisibilityRule() {
         return visibilityRule;
+    }
+
+    public String getDefaultValueRule() {
+        return defaultValueRule;
+    }
+
+    public void setDefaultValueRule(String defaultValueRule) {
+        this.defaultValueRule = defaultValueRule;
     }
 }

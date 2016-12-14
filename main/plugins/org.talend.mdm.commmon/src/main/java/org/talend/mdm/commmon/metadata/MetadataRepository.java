@@ -52,6 +52,7 @@ import org.eclipse.xsd.XSDTotalDigitsFacet;
 import org.eclipse.xsd.XSDTypeDefinition;
 import org.eclipse.xsd.XSDXPathDefinition;
 import org.eclipse.xsd.util.XSDParser;
+import org.talend.mdm.commmon.metadata.annotation.DefaultValueRuleProcessor;
 import org.talend.mdm.commmon.metadata.annotation.DescriptionAnnotationProcessor;
 import org.talend.mdm.commmon.metadata.annotation.ForeignKeyProcessor;
 import org.talend.mdm.commmon.metadata.annotation.LabelAnnotationProcessor;
@@ -90,6 +91,12 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     public static final String XSD_DOM_ELEMENT = "metadata.xsd.dom.element"; //$NON-NLS-1$
 
     public static final String ANONYMOUS_PREFIX = "X_ANONYMOUS"; //$NON-NLS-1$
+    
+    public static final String DEFAULT_VALUE_RULE = "default.value.rule"; //$NON-NLS-1$
+    
+    public static final String FN_TRUE = "fn:true()"; //$NON-NLS-1$
+    
+    public static final String FN_FALSE = "fn:false()"; //$NON-NLS-1$
 
     private static final Logger LOGGER = Logger.getLogger(MetadataRepository.class);
 
@@ -108,7 +115,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
 
     private final static List<XmlSchemaAnnotationProcessor> XML_ANNOTATIONS_PROCESSORS = Arrays.asList(new ForeignKeyProcessor(),
             new UserAccessProcessor(), new SchematronProcessor(), new PrimaryKeyInfoProcessor(), new LookupFieldProcessor(),
-            new LabelAnnotationProcessor(), new DescriptionAnnotationProcessor());
+            new LabelAnnotationProcessor(), new DescriptionAnnotationProcessor(), new DefaultValueRuleProcessor());
 
     private final static String USER_NAMESPACE = StringUtils.EMPTY;
 
@@ -558,7 +565,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             boolean isAbstract = false;
             XSDTypeDefinition typeDefinition = element.getTypeDefinition();
             if(typeDefinition != null && typeDefinition instanceof XSDComplexTypeDefinition) {
-            	isAbstract = ((XSDComplexTypeDefinition)typeDefinition).isAbstract();
+                isAbstract = ((XSDComplexTypeDefinition)typeDefinition).isAbstract();
             }
             // Id fields
             Map<String, XSDXPathDefinition> idFields = new LinkedHashMap<String, XSDXPathDefinition>();
@@ -730,6 +737,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 referenceField.setData(XSD_DOM_ELEMENT, element.getElement());
                 setLocalizedNames(referenceField, state.getLocaleToLabel());
                 setLocalizedDescriptions(referenceField, state.getLocaleToDescription());
+                setDefaultValueRule(referenceField, state.getDefaultValueRule());
                 return referenceField;
             }
             if (content != null) {
@@ -750,6 +758,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         enumField.setData(XSD_DOM_ELEMENT, element.getElement());
                         setLocalizedNames(enumField, state.getLocaleToLabel());
                         setLocalizedDescriptions(enumField, state.getLocaleToDescription());
+                        setDefaultValueRule(enumField, state.getDefaultValueRule());
                         return enumField;
                     } else {
                         FieldMetadata field = new SimpleTypeFieldMetadata(containingType, false, isMany, isMandatory, fieldName,
@@ -759,6 +768,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         field.setData(XSD_DOM_ELEMENT, element.getElement());
                         setLocalizedNames(field, state.getLocaleToLabel());
                         setLocalizedDescriptions(field, state.getLocaleToDescription());
+                        setDefaultValueRule(field, state.getDefaultValueRule());
                         return field;
                     }
                 } else {
@@ -769,6 +779,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                     field.setData(XSD_DOM_ELEMENT, element.getElement());
                     setLocalizedNames(field, state.getLocaleToLabel());
                     setLocalizedDescriptions(field, state.getLocaleToDescription());
+                    setDefaultValueRule(field, state.getDefaultValueRule());
                     return field;
                 }
             }
@@ -840,6 +851,12 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     private static void setLocalizedDescriptions(FieldMetadata field, Map<Locale, String> descriptions) {
         for (Map.Entry<Locale, String> entry : descriptions.entrySet()) {
             field.registerDescription(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static void setDefaultValueRule(FieldMetadata field, String defaultValueRule) {
+        if (StringUtils.isNotBlank(defaultValueRule)) {
+            field.setData(DEFAULT_VALUE_RULE, defaultValueRule);
         }
     }
 

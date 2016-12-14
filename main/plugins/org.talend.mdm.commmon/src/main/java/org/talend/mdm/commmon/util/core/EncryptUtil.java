@@ -34,6 +34,8 @@ public class EncryptUtil {
 
     private static String DB_DEFAULT_DATASOURCE = "db.default.datasource"; //$NON-NLS-1$
 
+    public static String ACTIVEMQ_PASSWORD = "mdm.routing.engine.broker.password"; //$NON-NLS-1$
+
     private static boolean updated = false;
 
     private static String dataSourceName;
@@ -48,7 +50,7 @@ public class EncryptUtil {
     public static boolean encrypt(String path) {
         Map<String, String[]> propertiesFileMap = new HashMap<String, String[]>();
 
-        String[] mdmProperties = { MDMConfiguration.ADMIN_PASSWORD, MDMConfiguration.TECHNICAL_PASSWORD };
+        String[] mdmProperties = { MDMConfiguration.ADMIN_PASSWORD, MDMConfiguration.TECHNICAL_PASSWORD, ACTIVEMQ_PASSWORD };
         propertiesFileMap.put("mdm.conf", mdmProperties); //$NON-NLS-1$
 
         String[] tdscProperties = { TDSC_DATABASE_PASSWORD };

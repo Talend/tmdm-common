@@ -17,9 +17,14 @@ import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.talend.mdm.commmon.metadata.*;
+import org.talend.mdm.commmon.util.core.CommonUtil;
 
 public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
+
+    protected final String STRING_DEFAULT_LENGTH = "255"; //$NON-NLS-1$
 
     public Map<Impact, List<Change>> analyzeImpacts(Compare.DiffResults diffResult) {
         Map<Impact, List<Change>> impactSort = new EnumMap<Impact, List<Change>>(Impact.class);
@@ -36,8 +41,10 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     // Contained field may change mapping strategy
                     impactSort.get(Impact.HIGH).add(addAction);
                 } else {
+                    String defaultValueRule = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE_RULE);
+                    
                     // TMDM-7895: Newly added element and mandatory should be considered as "high" change
-                    if (((FieldMetadata) element).isMandatory()) {
+                    if (((FieldMetadata) element).isMandatory() && StringUtils.isBlank(defaultValueRule)) {
                         impactSort.get(Impact.HIGH).add(addAction);
                     } else {
                         impactSort.get(Impact.LOW).add(addAction);
@@ -70,9 +77,10 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
             } else if (element instanceof FieldMetadata) {
                 FieldMetadata previous = (FieldMetadata) modifyAction.getPrevious();
                 FieldMetadata current = (FieldMetadata) modifyAction.getCurrent();
-                Object previousLength = previous.getType().getData(MetadataRepository.DATA_MAX_LENGTH);
-                Object currentLength = current.getType().getData(MetadataRepository.DATA_MAX_LENGTH);
-                
+                // TMDM-9909: Increase the length of a string element should be low impact
+                Object previousLength = CommonUtil.getSuperTypeMaxLength(previous.getType(), previous.getType()) ;
+                Object currentLength = CommonUtil.getSuperTypeMaxLength(current.getType(), current.getType()) ;
+
                 // TMDM-8022: issues about custom decimal type totalDigits/fractionDigits.
                 Object previousTotalDigits = previous.getType().getData(MetadataRepository.DATA_TOTAL_DIGITS);
                 Object currentTotalDigits = current.getType().getData(MetadataRepository.DATA_TOTAL_DIGITS);
@@ -82,7 +90,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 /*
                  * HIGH IMPACT CHANGES
                  */
-                if (!ObjectUtils.equals(previousLength, currentLength)) {
+                if (element instanceof SimpleTypeFieldMetadata
+                        && MetadataUtils.getSuperConcreteType(((FieldMetadata) element).getType()).getName().equals("string")
+                        && Integer.valueOf((String) (currentLength == null ? STRING_DEFAULT_LENGTH : currentLength)).compareTo(
+                                Integer.valueOf((String) (previousLength == null ? STRING_DEFAULT_LENGTH : previousLength))) > 0) {
+                    impactSort.get(Impact.LOW).add(modifyAction);
+                } else if (!ObjectUtils.equals(previousLength, currentLength)) {
                     // Won't be able to change constraint for max length
                     impactSort.get(Impact.HIGH).add(modifyAction);
                 } else if (!ObjectUtils.equals(previousTotalDigits, currentTotalDigits)) {
@@ -114,9 +127,20 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     // Won't be able to change constraint
                     impactSort.get(Impact.HIGH).add(modifyAction);
                 }
+                
+                if(previous instanceof ReferenceFieldMetadata){
+                    if(current instanceof ReferenceFieldMetadata){
+                        ReferenceFieldMetadata previousFieldMetadata = (ReferenceFieldMetadata)previous;
+                        ReferenceFieldMetadata currentFieldMetadata = (ReferenceFieldMetadata)current;
+                        if(!previousFieldMetadata.getReferencedType().getName().equals(currentFieldMetadata.getReferencedType().getName())){
+                            impactSort.get(Impact.HIGH).add(modifyAction);
+                        }
+                    } else {
+                        impactSort.get(Impact.HIGH).add(modifyAction);
+                    }
+                }
             }
         }
         return impactSort;
     }
-
 }
