@@ -12,6 +12,7 @@ package org.talend.mdm.commmon.metadata;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -327,14 +328,28 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         for (ComplexTypeMetadata subType : containedType.getSubTypes()) {
                             subType.accept(this);
                         }
-                        if (!containedType.getContainedType().equals(containedType.getContainer().getDeclaringType())) {
-                            return super.visit(containedType);
+                        if (isCircle(containedType)) {
+                            return null;
                         }
-                        return null;
+                        return super.visit(containedType);
                     }
                 });
             }
         }
+    }
+
+    public static boolean isCircle(ComplexTypeMetadata containedType) {
+        if (containedType != null && containedType.getContainer() != null) {
+            TypeMetadata parentType = containedType.getContainer().getContainingType();
+            while (parentType instanceof ContainedComplexTypeMetadata) {
+                if (parentType.getName().equals(containedType.getName())) {
+                    return true;
+                } else {
+                    parentType = ((ContainedComplexTypeMetadata) parentType).getContainer().getContainingType();
+                }
+            }
+        }
+        return false;
     }
 
     private Map<String, TypeMetadata> freezeTypes(Map<String, TypeMetadata> typesToFreeze) {
