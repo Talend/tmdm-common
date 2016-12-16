@@ -95,9 +95,13 @@ public class InboundReferences extends DefaultMetadataVisitor<Set<ReferenceField
 
     @Override
     public Set<ReferenceFieldMetadata> visit(ContainedTypeFieldMetadata metadata) {
-        super.visit(metadata);
-        for (ComplexTypeMetadata subType : metadata.getContainedType().getSubTypes()) {
-            subType.accept(this);
+        ComplexTypeMetadata typeMetadata = metadata.getContainedType();
+        if (!checkedTypes.contains(typeMetadata)) {
+            checkedTypes.add(typeMetadata);
+            super.visit(metadata);
+            for (ComplexTypeMetadata subType : typeMetadata.getSubTypes()) {
+                subType.accept(this);
+            }
         }
         return fieldToCheck;
     }
