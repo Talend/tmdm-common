@@ -188,8 +188,10 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
             ComplexTypeMetadata copyContainedType = (ComplexTypeMetadata) copy.getType().copy();
             FieldMetadata container = ((ContainedComplexTypeMetadata) copy.getType()).getContainer();
             ComplexTypeMetadata copyFiledType = ContainedComplexTypeMetadata.contain(copyContainedType, container);
-            for (FieldMetadata copyField : copyContainedType.getFields()) {
-                copyField.adopt(copyFiledType);
+            if (!MetadataRepository.isCircle(copyFiledType, null)) {
+                for (FieldMetadata copyField : copyContainedType.getFields()) {
+                    copyField.adopt(copyFiledType);
+                }
             }
             ((ContainedTypeFieldMetadata) copy).setFieldType(copyFiledType);
         }

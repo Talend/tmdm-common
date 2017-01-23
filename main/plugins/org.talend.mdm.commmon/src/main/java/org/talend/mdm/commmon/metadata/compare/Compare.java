@@ -210,7 +210,11 @@ public class Compare {
 
         @Override
         public List<MetadataVisitable> visit(ContainedTypeFieldMetadata containedField) {
-            super.visit(containedField);
+            if (containedField.getType() instanceof ComplexTypeMetadata
+                    && MetadataRepository.isCircle((ComplexTypeMetadata) containedField.getType(), null)) {
+            } else {
+                super.visit(containedField);
+            }
             content.push(containedField);
             return content;
         }

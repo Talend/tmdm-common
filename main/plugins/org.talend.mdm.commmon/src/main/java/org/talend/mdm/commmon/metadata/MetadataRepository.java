@@ -326,9 +326,11 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         containedType.getContainedType().declareUsage(containedType);
                         containedType.finalizeUsage();
                         for (ComplexTypeMetadata subType : containedType.getSubTypes()) {
-                            subType.accept(this);
+                            if (!isCircle(containedType, subType)) {
+                                subType.accept(this);
+                            }
                         }
-                        if (isCircle(containedType)) {
+                        if (isCircle(containedType, null)) {
                             return null;
                         }
                         return super.visit(containedType);
@@ -338,11 +340,14 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
         }
     }
 
-    public static boolean isCircle(ComplexTypeMetadata containedType) {
+    public static boolean isCircle(ComplexTypeMetadata containedType, ComplexTypeMetadata subType) {
+        if (subType == null) {
+            subType = containedType;
+        }
         if (containedType != null && containedType.getContainer() != null) {
             TypeMetadata parentType = containedType.getContainer().getContainingType();
             while (parentType instanceof ContainedComplexTypeMetadata) {
-                if (parentType.getName().equals(containedType.getName())) {
+                if (parentType.getName().equals(subType.getName())) {
                     return true;
                 } else {
                     parentType = ((ContainedComplexTypeMetadata) parentType).getContainer().getContainingType();
