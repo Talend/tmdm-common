@@ -125,7 +125,14 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     impactSort.get(Impact.HIGH).add(modifyAction);
                 } else if (previous.isMandatory() != current.isMandatory()) {
                     // Won't be able to change constraint
-                    impactSort.get(Impact.HIGH).add(modifyAction);
+                    String defaultValueRule = ((FieldMetadata) current).getData(MetadataRepository.DEFAULT_VALUE_RULE);
+                    if (!modifyAction.isHasNullValue()) {
+                        impactSort.get(Impact.LOW).add(modifyAction);
+                    } else if (modifyAction.isHasNullValue() && StringUtils.isBlank(defaultValueRule)) {
+                        impactSort.get(Impact.HIGH).add(modifyAction);
+                    } else if (modifyAction.isHasNullValue() && StringUtils.isNotBlank(defaultValueRule)) {
+                        impactSort.get(Impact.MEDIUM).add(modifyAction);
+                    }
                 }
                 
                 if(previous instanceof ReferenceFieldMetadata){

@@ -11,18 +11,22 @@
 package org.talend.mdm.commmon.metadata.compare;
 
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.talend.mdm.commmon.metadata.*;
 
-class ModifyChange extends Change {
+public class ModifyChange extends Change {
 
     private final MetadataVisitable current;
 
     private ResourceBundle bundle;
 
-    ModifyChange(MetadataVisitable previous, MetadataVisitable current) {
+    private boolean hasNullValue;
+
+    public ModifyChange(MetadataVisitable previous, MetadataVisitable current) {
         super(previous);
         this.current = current;
     }
@@ -33,6 +37,14 @@ class ModifyChange extends Change {
 
     public MetadataVisitable getCurrent() {
         return current;
+    }
+
+    public boolean isHasNullValue() {
+        return hasNullValue;
+    }
+
+    public void setHasNullValue(boolean hasNullValue) {
+        this.hasNullValue = hasNullValue;
     }
 
     @Override
