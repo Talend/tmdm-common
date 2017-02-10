@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -36,11 +37,15 @@ public final class MDMConfiguration {
 
     public static final String TECHNICAL_PASSWORD = "technical.password"; //$NON-NLS-1$
 
+    public static final String TDS_URL = "tds.url"; //$NON-NLS-1$
+
+    public static final String TDS_PASSWORD = "tds.password"; //$NON-NLS-1$
+
     public static final String MAX_EXPORT_COUNT = "1000"; //$NON-NLS-1$
 
     public static final String MAX_IMPORT_COUNT = "1000"; //$NON-NLS-1$
 
-    private static final Logger logger = Logger.getLogger(MDMConfiguration.class);
+    private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
 
@@ -84,6 +89,11 @@ public final class MDMConfiguration {
         return Boolean.parseBoolean(properties.getProperty(SYSTEM_CLUSTER, Boolean.FALSE.toString()));
     }
 
+    public static boolean isTdsEnabled(){
+        Properties properties = MDMConfiguration.getConfiguration();
+        return StringUtils.isNotEmpty(properties.getProperty(TDS_URL));
+    }
+
     private Properties getProperties(boolean reload, boolean ignoreIfNotFound) {
         if (reload) {
             properties = null;
@@ -95,7 +105,7 @@ public final class MDMConfiguration {
 
         File file = new File(location);
         if (file.exists()) {
-            logger.info("MDM Configuration: found in '" + file.getAbsolutePath() + "'."); //$NON-NLS-1$ //$NON-NLS-2$           
+            LOGGER.info("MDM Configuration: found in '" + file.getAbsolutePath() + "'."); //$NON-NLS-1$ //$NON-NLS-2$           
             try {
                 PropertiesConfiguration config = new PropertiesConfiguration();
                 config.setDelimiterParsingDisabled(true);
@@ -103,20 +113,21 @@ public final class MDMConfiguration {
                 // Decrypt the passwords in mdm.conf
                 config.setProperty(ADMIN_PASSWORD, Crypt.decrypt(config.getString(ADMIN_PASSWORD)));
                 config.setProperty(TECHNICAL_PASSWORD, Crypt.decrypt(config.getString(TECHNICAL_PASSWORD)));
+                config.setProperty(TDS_PASSWORD, Crypt.decrypt(config.getString(TDS_PASSWORD)));
                 properties = ConfigurationConverter.getProperties(config);
             } catch (Exception e) {
                 if (!ignoreIfNotFound) {
                     throw new IllegalStateException("Unable to load MDM configuration from '" //$NON-NLS-1$
                             + file.getAbsolutePath() + "'", e); //$NON-NLS-1$
                 }
-                logger.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'", e); //$NON-NLS-1$ //$NON-NLS-2$
+                LOGGER.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'", e); //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else {
             if (!ignoreIfNotFound) {
                 throw new IllegalStateException("Unable to load MDM configuration from '" + file.getAbsolutePath() //$NON-NLS-1$
                         + "'"); //$NON-NLS-1$
             }
-            logger.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            LOGGER.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
         }        
         return properties;
     }
@@ -130,14 +141,14 @@ public final class MDMConfiguration {
             out = new FileOutputStream(location);
             properties.store(out, "MDM configuration file"); //$NON-NLS-1$
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
         } finally {
             if (out != null) {
                 try {
                     out.close();
                 } catch (Exception e) {
-                    if (logger.isDebugEnabled()) {
-                        logger.error(e.getMessage(), e);
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.error(e.getMessage(), e);
                     }
                 }
             }
