@@ -83,6 +83,7 @@ public class ValidationFactory {
         rules.add(new FieldInheritanceOverrideRule(field));
         rules.add(new FieldTypeValidationRule(field));
         rules.add(new VisibilityValidationRule(field));
+        rules.add(new CircleFieldInheritanceRule(field));
         return new CompositeValidationRule(rules.toArray(new ValidationRule[rules.size()]));
     }
 
