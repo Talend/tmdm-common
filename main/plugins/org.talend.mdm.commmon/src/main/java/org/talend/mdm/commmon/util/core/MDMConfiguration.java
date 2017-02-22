@@ -37,7 +37,7 @@ public final class MDMConfiguration {
 
     public static final String TECHNICAL_PASSWORD = "technical.password"; //$NON-NLS-1$
 
-    public static final String TDS_URL = "tds.url"; //$NON-NLS-1$
+    public static final String TDS_ROOT_URL = "tds.root.url"; //$NON-NLS-1$
 
     public static final String TDS_PASSWORD = "tds.password"; //$NON-NLS-1$
 
@@ -91,7 +91,7 @@ public final class MDMConfiguration {
 
     public static boolean isTdsEnabled(){
         Properties properties = MDMConfiguration.getConfiguration();
-        return StringUtils.isNotEmpty(properties.getProperty(TDS_URL));
+        return StringUtils.isNotEmpty(properties.getProperty(TDS_ROOT_URL));
     }
 
     private Properties getProperties(boolean reload, boolean ignoreIfNotFound) {
