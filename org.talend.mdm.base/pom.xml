@@ -45,7 +45,7 @@
     <repositories>
         <repository>
             <id>TalendOpenSourceRelease</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceRelease</url>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -58,7 +58,7 @@
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/releases</url>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases</url>
         </repository>
         <repository>
             <id>thirdparty-releases</id>
@@ -1148,7 +1148,7 @@
     <distributionManagement>
         <snapshotRepository>
             <id>talend_nexus_deployment</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceSnapshot/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -1158,7 +1158,7 @@
         </snapshotRepository>
         <repository>
             <id>talend_nexus_deployment</id>
-            <url>http://newbuild.talend.com:8081/nexus/content/repositories/TalendOpenSourceRelease/</url>
+            <url>https://artifacts-oss.talend.com/nexus/content/repositories/TalendOpenSourceRelease/</url>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
