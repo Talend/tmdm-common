@@ -76,7 +76,12 @@ public class Compare {
                         // Different (right does not exist, but might be removed or modified).
                         if (leftVisitable instanceof FieldMetadata) {
                             FieldMetadata field = (FieldMetadata) leftVisitable;
-                            removedElementNames.put(field.getName(), field);
+                            if (field.getContainingType() instanceof ContainedComplexTypeMetadata) {
+                                removedElementNames.put(field.getContainingType().getContainer().getName() + "/"
+                                        + field.getContainingType().getName() + "/" + field.getName(), field);
+                            } else {
+                                removedElementNames.put(field.getContainingType().getName() + "/" + field.getName(), field);
+                            }
                         }
                     } else {
                         // Field exists on both sides, but checks max length
@@ -114,7 +119,15 @@ public class Compare {
                         MetadataVisitable current = addedElements.next();
                         MetadataVisitable modifiedElement = null;
                         if (current instanceof FieldMetadata) {
-                            modifiedElement = removedElementNames.get(((FieldMetadata) current).getName());
+                            FieldMetadata field = (FieldMetadata) current;
+
+                            if (field.getContainingType() instanceof ContainedComplexTypeMetadata) {
+                                modifiedElement = removedElementNames.get(field.getContainingType().getContainer().getName()
+                                        + "/" + field.getContainingType().getName() + "/" + field.getName());
+                            } else {
+                                modifiedElement = removedElementNames.get(field.getContainingType().getName() + "/"
+                                        + field.getName());
+                            }
                         }
                         if (modifiedElement != null) {
                             // Modified element (only exist in right, not in left).
@@ -123,7 +136,18 @@ public class Compare {
                                 LOGGER.debug("[MODIFIED] " + current + " was modified" + "\t was " + modifiedElement + "\t now "
                                         + current);
                             }
-                            removedElementNames.remove(((FieldMetadata) current).getName());
+                            if (current instanceof FieldMetadata) {
+                                FieldMetadata field = (FieldMetadata) current;
+
+                                if (field.getContainingType() instanceof ContainedComplexTypeMetadata) {
+                                    removedElementNames.remove(field.getContainingType().getContainer().getName() + "/"
+                                            + field.getContainingType().getName() + "/" + field.getName());
+                                } else {
+                                    modifiedElement = removedElementNames.get(field.getContainingType().getName() + "/"
+                                            + field.getName());
+                                    removedElementNames.remove(field.getContainingType().getName() + "/" + field.getName());
+                                }
+                            }
                         } else {
                             // Added element (only exist in right, not in left).
                             diffResults.addChanges.add(new AddChange(current));
