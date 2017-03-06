@@ -99,6 +99,10 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     
     public static final String FN_FALSE = "fn:false()"; //$NON-NLS-1$
 
+    public static final String MIN_OCCURS = "metadata.min_occurs";
+
+    public static final String MAX_OCCURS = "metadata.max_occurs";
+
     private static final Logger LOGGER = Logger.getLogger(MetadataRepository.class);
 
     private final Map<XSDTypeDefinition, List<ComplexTypeMetadata>> entityTypeUsage = new HashMap<XSDTypeDefinition, List<ComplexTypeMetadata>>() {
@@ -747,6 +751,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             fieldType.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             fieldType.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
             fieldType.setData(XSD_DOM_ELEMENT, element.getElement());
+            fieldType.setData(MIN_OCCURS, minOccurs);
+            fieldType.setData(MAX_OCCURS, maxOccurs);
             if (isReference) {
                 ReferenceFieldMetadata referenceField = new ReferenceFieldMetadata(containingType, false, isMany, isMandatory,
                         fieldName, (ComplexTypeMetadata) referencedType, referencedField, foreignKeyInfo, foreignKeyInfoFormat,
@@ -755,6 +761,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 referenceField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                 referenceField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
                 referenceField.setData(XSD_DOM_ELEMENT, element.getElement());
+                referenceField.setData(MIN_OCCURS, minOccurs);
+                referenceField.setData(MAX_OCCURS, maxOccurs);
                 setLocalizedNames(referenceField, state.getLocaleToLabel());
                 setLocalizedDescriptions(referenceField, state.getLocaleToDescription());
                 setDefaultValueRule(referenceField, state.getDefaultValueRule());
@@ -776,6 +784,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         enumField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                         enumField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
                         enumField.setData(XSD_DOM_ELEMENT, element.getElement());
+                        enumField.setData(MIN_OCCURS, minOccurs);
+                        enumField.setData(MAX_OCCURS, maxOccurs);
                         setLocalizedNames(enumField, state.getLocaleToLabel());
                         setLocalizedDescriptions(enumField, state.getLocaleToDescription());
                         setDefaultValueRule(enumField, state.getDefaultValueRule());
@@ -786,6 +796,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         field.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                         field.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
                         field.setData(XSD_DOM_ELEMENT, element.getElement());
+                        field.setData(MIN_OCCURS, minOccurs);
+                        field.setData(MAX_OCCURS, maxOccurs);
                         setLocalizedNames(field, state.getLocaleToLabel());
                         setLocalizedDescriptions(field, state.getLocaleToDescription());
                         setDefaultValueRule(field, state.getDefaultValueRule());
@@ -797,6 +809,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                     field.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                     field.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
                     field.setData(XSD_DOM_ELEMENT, element.getElement());
+                    field.setData(MIN_OCCURS, minOccurs);
+                    field.setData(MAX_OCCURS, maxOccurs);
                     setLocalizedNames(field, state.getLocaleToLabel());
                     setLocalizedDescriptions(field, state.getLocaleToDescription());
                     setDefaultValueRule(field, state.getDefaultValueRule());
@@ -840,6 +854,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             containedField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             containedField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
             containedField.setData(XSD_DOM_ELEMENT, element.getElement());
+            containedField.setData(MIN_OCCURS, minOccurs);
+            containedField.setData(MAX_OCCURS, maxOccurs);
             if (fieldType.getName().startsWith(ANONYMOUS_PREFIX)) {
                 currentTypeStack.push((ComplexTypeMetadata) containedField.getType());
                 {
@@ -856,6 +872,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             field.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             field.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
             field.setData(XSD_DOM_ELEMENT, element.getElement());
+            field.setData(MIN_OCCURS, minOccurs);
+            field.setData(MAX_OCCURS, maxOccurs);
             setLocalizedNames(field, state.getLocaleToLabel());
             setLocalizedDescriptions(field, state.getLocaleToDescription());
             return field;

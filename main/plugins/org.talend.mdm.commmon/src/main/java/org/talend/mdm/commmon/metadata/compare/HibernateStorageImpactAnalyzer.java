@@ -140,10 +140,20 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                             }
                         }
                     } else if (element instanceof ContainedTypeFieldMetadata) {
-                        if (previous.isMandatory() && !current.isMandatory()) {
-                            impactSort.get(Impact.LOW).add(modifyAction);
-                        } else {
+                        if (!previous.isMany() && !previous.isMandatory()) {
                             impactSort.get(Impact.HIGH).add(modifyAction);
+                        } else if (previous.isMandatory() && !previous.isMany()) {
+                            if (!current.isMandatory() && !current.isMany()) {
+                                impactSort.get(Impact.LOW).add(modifyAction);
+                            } else if (current.isMany()) {
+                                impactSort.get(Impact.LOW).add(modifyAction);
+                            }
+                        } else if (previous.isMany()) {
+                            if (!current.isMany()) {
+                                impactSort.get(Impact.HIGH).add(modifyAction);
+                            } else {
+                                impactSort.get(Impact.LOW).add(modifyAction);
+                            }
                         }
                     }
                 }
