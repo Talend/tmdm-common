@@ -1136,6 +1136,11 @@
                 <artifactId>saxon9-dom</artifactId>
                 <version>${saxon.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.2.4</version>
+            </dependency>
             <!-- container dependencies -->
             <dependency>
                 <groupId>javax.servlet</groupId>
