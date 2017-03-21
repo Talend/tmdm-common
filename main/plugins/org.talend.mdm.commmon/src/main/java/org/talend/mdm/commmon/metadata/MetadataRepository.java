@@ -43,10 +43,16 @@ import org.eclipse.xsd.XSDEnumerationFacet;
 import org.eclipse.xsd.XSDFractionDigitsFacet;
 import org.eclipse.xsd.XSDIdentityConstraintDefinition;
 import org.eclipse.xsd.XSDLengthFacet;
+import org.eclipse.xsd.XSDMaxExclusiveFacet;
+import org.eclipse.xsd.XSDMaxInclusiveFacet;
 import org.eclipse.xsd.XSDMaxLengthFacet;
+import org.eclipse.xsd.XSDMinExclusiveFacet;
+import org.eclipse.xsd.XSDMinInclusiveFacet;
+import org.eclipse.xsd.XSDMinLengthFacet;
 import org.eclipse.xsd.XSDModelGroup;
 import org.eclipse.xsd.XSDParticle;
 import org.eclipse.xsd.XSDParticleContent;
+import org.eclipse.xsd.XSDPatternFacet;
 import org.eclipse.xsd.XSDSchema;
 import org.eclipse.xsd.XSDSimpleTypeDefinition;
 import org.eclipse.xsd.XSDTotalDigitsFacet;
@@ -77,10 +83,14 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
 
     public static final String COMPLEX_TYPE_NAME = "metadata.complex.type.name"; //$NON-NLS-1$
 
-    public static final String DATA_MAX_LENGTH = "metadata.data.length"; //$NON-NLS-1$
-    
+    public static final String DATA_MAX_LENGTH = "metadata.data.maxLength"; //$NON-NLS-1$
+
+    public static final String DATA_MIN_LENGTH = "metadata.data.minLength"; //$NON-NLS-1$
+
+    public static final String DATA_LENGTH = "metadata.data.length"; //$NON-NLS-1$
+
     public static final String DATA_TOTAL_DIGITS = "metadata.data.totalDigits"; //$NON-NLS-1$
-    
+
     public static final String DATA_FRACTION_DIGITS = "metadata.data.fractionDigits"; //$NON-NLS-1$
 
     public static final String DATA_ZIPPED = "metadata.zipped"; //$NON-NLS-1$
@@ -102,6 +112,18 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     public static final String MIN_OCCURS = "metadata.min_occurs";
 
     public static final String MAX_OCCURS = "metadata.max_occurs";
+
+    public static final String ENUMERATION_LIST = "metadata.data.enumeration";
+
+    public static final String MAX_EXCLUSIVE = "metadata.data.maxExclusive";
+
+    public static final String MIN_EXCLUSIVE = "metadata.data.minExclusive";
+
+    public static final String PATTERN = "metadata.data.pattern";
+
+    public static final String MAX_INCLUSIVE = "metadata.data.maxInclusive";
+
+    public static final String MIN_INCLUSIVE = "metadata.data.minInclusive";
 
     private static final Logger LOGGER = Logger.getLogger(MetadataRepository.class);
 
@@ -732,22 +754,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 if (content != null) {
                     fieldType.addSuperType(new SoftTypeRef(this, content.getTargetNamespace(), content.getName(), false));
                 }
-                EList<XSDConstrainingFacet> facets = simpleSchemaType.getFacetContents();
-                for (XSDConstrainingFacet currentFacet : facets) {
-                    if (currentFacet instanceof XSDMaxLengthFacet) {
-                        fieldType.setData(MetadataRepository.DATA_MAX_LENGTH,
-                                String.valueOf(((XSDMaxLengthFacet) currentFacet).getValue()));
-                    } else if(currentFacet instanceof XSDTotalDigitsFacet){//this is the totalDigits
-                        fieldType.setData(MetadataRepository.DATA_TOTAL_DIGITS,
-                                String.valueOf(((XSDTotalDigitsFacet) currentFacet).getValue()));
-                    } else if(currentFacet instanceof XSDFractionDigitsFacet){ // this is the fractionDigits
-                        fieldType.setData(MetadataRepository.DATA_FRACTION_DIGITS,
-                                String.valueOf(((XSDFractionDigitsFacet) currentFacet).getValue()));
-                    } else if (LOGGER.isTraceEnabled()) {
-                        LOGGER.trace("Ignore simple type facet on type '" + fieldName + "': " + currentFacet);
-                    }
-                }
             }
+            setFieldData(simpleSchemaType, fieldType);
             fieldType.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             fieldType.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
             fieldType.setData(XSD_DOM_ELEMENT, element.getElement());
@@ -766,6 +774,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 setLocalizedNames(referenceField, state.getLocaleToLabel());
                 setLocalizedDescriptions(referenceField, state.getLocaleToDescription());
                 setDefaultValueRule(referenceField, state.getDefaultValueRule());
+                setFieldData(simpleSchemaType, referenceField);
                 return referenceField;
             }
             if (content != null) {
@@ -789,6 +798,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         setLocalizedNames(enumField, state.getLocaleToLabel());
                         setLocalizedDescriptions(enumField, state.getLocaleToDescription());
                         setDefaultValueRule(enumField, state.getDefaultValueRule());
+                        setFieldData(simpleSchemaType, enumField);
                         return enumField;
                     } else {
                         FieldMetadata field = new SimpleTypeFieldMetadata(containingType, false, isMany, isMandatory, fieldName,
@@ -801,6 +811,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         setLocalizedNames(field, state.getLocaleToLabel());
                         setLocalizedDescriptions(field, state.getLocaleToDescription());
                         setDefaultValueRule(field, state.getDefaultValueRule());
+                        setFieldData(simpleSchemaType, field);
                         return field;
                     }
                 } else {
@@ -814,6 +825,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                     setLocalizedNames(field, state.getLocaleToLabel());
                     setLocalizedDescriptions(field, state.getLocaleToDescription());
                     setDefaultValueRule(field, state.getDefaultValueRule());
+                    setFieldData(simpleSchemaType, field);
                     return field;
                 }
             }
@@ -878,6 +890,46 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             setLocalizedDescriptions(field, state.getLocaleToDescription());
             return field;
         }
+    }
+    private void setFieldData(XSDSimpleTypeDefinition simpleSchemaType, MetadataExtensible field){
+        EList<XSDConstrainingFacet> facets = simpleSchemaType.getFacetContents();
+        List<String> enumerationList = new ArrayList<String>();
+        for (XSDConstrainingFacet currentFacet : facets) {
+            if (currentFacet instanceof XSDMaxLengthFacet) {
+                field.setData(MetadataRepository.DATA_MAX_LENGTH,
+                        String.valueOf(((XSDMaxLengthFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDMinLengthFacet){ // this is the minLengthFacet
+                field.setData(MetadataRepository.DATA_MIN_LENGTH,
+                        String.valueOf(((XSDMinLengthFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDLengthFacet){ // this is the lengthFacet
+                field.setData(MetadataRepository.DATA_LENGTH,
+                        String.valueOf(((XSDLengthFacet) currentFacet).getValue()));
+            } else if(currentFacet instanceof XSDTotalDigitsFacet){//this is the totalDigits
+                field.setData(MetadataRepository.DATA_TOTAL_DIGITS,
+                        String.valueOf(((XSDTotalDigitsFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDFractionDigitsFacet){ // this is the fractionDigits
+                field.setData(MetadataRepository.DATA_FRACTION_DIGITS,
+                        String.valueOf(((XSDFractionDigitsFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDPatternFacet){ // this is the patternFacet
+                field.setData(MetadataRepository.PATTERN,
+                        String.valueOf(((XSDPatternFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDMaxExclusiveFacet){ // this is the  maxExclusiveFacet
+                field.setData(MetadataRepository.MAX_EXCLUSIVE,
+                        String.valueOf((( XSDMaxExclusiveFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDMinExclusiveFacet){ // this is the  minExclusiveFacet
+                field.setData(MetadataRepository.MIN_EXCLUSIVE,
+                        String.valueOf((( XSDMinExclusiveFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDMaxInclusiveFacet){ // this is the  maxInclusiveFacet
+                field.setData(MetadataRepository.MAX_INCLUSIVE,
+                        String.valueOf((( XSDMaxInclusiveFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDMinInclusiveFacet){ // this is the  minInclusiveFacet
+                field.setData(MetadataRepository.MIN_INCLUSIVE,
+                        String.valueOf((( XSDMinInclusiveFacet) currentFacet).getLexicalValue()));
+            } else if(currentFacet instanceof XSDEnumerationFacet){ // this is the  minInclusiveFacet
+                enumerationList.add(String.valueOf((( XSDEnumerationFacet) currentFacet).getLexicalValue()));
+            }
+        }
+        field.setData(MetadataRepository.ENUMERATION_LIST, enumerationList);
     }
 
     private static void setLocalizedNames(FieldMetadata field, Map<Locale, String> labels) {
