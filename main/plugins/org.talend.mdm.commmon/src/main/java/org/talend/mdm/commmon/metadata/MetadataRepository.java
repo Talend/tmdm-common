@@ -925,7 +925,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             } else if(currentFacet instanceof XSDMinInclusiveFacet){ // this is the  minInclusiveFacet
                 field.setData(MetadataRepository.MIN_INCLUSIVE,
                         String.valueOf((( XSDMinInclusiveFacet) currentFacet).getLexicalValue()));
-            } else if(currentFacet instanceof XSDEnumerationFacet){ // this is the  minInclusiveFacet
+            } else if(currentFacet instanceof XSDEnumerationFacet){ // this is the  enumeration
                 enumerationList.add(String.valueOf((( XSDEnumerationFacet) currentFacet).getLexicalValue()));
             }
         }
