@@ -41,6 +41,8 @@ public final class MDMConfiguration {
 
     public static final String TDS_PASSWORD = "tds.password"; //$NON-NLS-1$
 
+    public static final String HZ_GROUP_PASSWORD = "hz.group.password"; //$NON-NLS-1$
+
     public static final String MAX_EXPORT_COUNT = "1000"; //$NON-NLS-1$
 
     public static final String MAX_IMPORT_COUNT = "1000"; //$NON-NLS-1$
@@ -114,6 +116,7 @@ public final class MDMConfiguration {
                 config.setProperty(ADMIN_PASSWORD, Crypt.decrypt(config.getString(ADMIN_PASSWORD)));
                 config.setProperty(TECHNICAL_PASSWORD, Crypt.decrypt(config.getString(TECHNICAL_PASSWORD)));
                 config.setProperty(TDS_PASSWORD, Crypt.decrypt(config.getString(TDS_PASSWORD)));
+                config.setProperty(HZ_GROUP_PASSWORD, Crypt.decrypt(config.getString(HZ_GROUP_PASSWORD)));
                 properties = ConfigurationConverter.getProperties(config);
             } catch (Exception e) {
                 if (!ignoreIfNotFound) {

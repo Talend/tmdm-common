@@ -23,6 +23,10 @@ import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.ADMIN_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.TECHNICAL_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.TDS_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.HZ_GROUP_PASSWORD;
 
 public class EncryptUtil {
 
@@ -45,10 +49,11 @@ public class EncryptUtil {
         encrypt(args[0]);
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static boolean encrypt(String path) {
         Map<String, String[]> propertiesFileMap = new HashMap<String, String[]>();
 
-        String[] mdmProperties = { MDMConfiguration.ADMIN_PASSWORD, MDMConfiguration.TECHNICAL_PASSWORD, MDMConfiguration.TDS_PASSWORD, ACTIVEMQ_PASSWORD };
+        String[] mdmProperties = { ADMIN_PASSWORD, TECHNICAL_PASSWORD, TDS_PASSWORD, HZ_GROUP_PASSWORD, ACTIVEMQ_PASSWORD };
         propertiesFileMap.put("mdm.conf", mdmProperties); //$NON-NLS-1$
 
         String[] tdscProperties = { TDSC_DATABASE_PASSWORD };
