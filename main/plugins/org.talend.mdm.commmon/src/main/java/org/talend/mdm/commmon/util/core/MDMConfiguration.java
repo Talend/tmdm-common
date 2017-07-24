@@ -91,11 +91,6 @@ public final class MDMConfiguration {
         return Boolean.parseBoolean(properties.getProperty(SYSTEM_CLUSTER, Boolean.FALSE.toString()));
     }
 
-    public static boolean isTdsEnabled(){
-        Properties properties = MDMConfiguration.getConfiguration();
-        return StringUtils.isNotEmpty(properties.getProperty(TDS_ROOT_URL));
-    }
-
     private Properties getProperties(boolean reload, boolean ignoreIfNotFound) {
         if (reload) {
             properties = null;
