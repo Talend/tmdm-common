@@ -96,6 +96,11 @@ public final class MDMConfiguration {
         return StringUtils.isNotEmpty(properties.getProperty(TDS_ROOT_URL));
     }
 
+    public static boolean isIamEnabled() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("iam.enabled")); //$NON-NLS-1$
+    }
+
     private Properties getProperties(boolean reload, boolean ignoreIfNotFound) {
         if (reload) {
             properties = null;
