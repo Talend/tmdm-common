@@ -32,8 +32,6 @@ public class EncryptUtil {
 
     private static final Logger LOGGER = Logger.getLogger(EncryptUtil.class);
 
-    public static String TDSC_DATABASE_PASSWORD = "tdsc.database.password"; //$NON-NLS-1$
-
     private static String DB_DEFAULT_DATASOURCE = "db.default.datasource"; //$NON-NLS-1$
 
     public static String ACTIVEMQ_PASSWORD = "mdm.routing.engine.broker.password"; //$NON-NLS-1$
@@ -56,9 +54,6 @@ public class EncryptUtil {
         String[] mdmProperties = { ADMIN_PASSWORD, TECHNICAL_PASSWORD, TDS_PASSWORD, HZ_GROUP_PASSWORD, ACTIVEMQ_PASSWORD };
         propertiesFileMap.put("mdm.conf", mdmProperties); //$NON-NLS-1$
 
-        String[] tdscProperties = { TDSC_DATABASE_PASSWORD };
-        propertiesFileMap.put("tdsc-database.properties", tdscProperties); //$NON-NLS-1$
-        
         Iterator it = propertiesFileMap.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, String[]> entry = (Entry<String, String[]>) it.next();

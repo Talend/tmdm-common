@@ -39,7 +39,6 @@ public enum XSystemObjects {
     M_BrowseRecords(XObjectType.MENU, "BrowseRecords", false), //$NON-NLS-1$
     M_Hierarchy(XObjectType.MENU, "Hierarchy", true), //$NON-NLS-1$
     M_WelcomePortal(XObjectType.MENU, "WelcomePortal", false), //$NON-NLS-1$
-    M_LicenseManager(XObjectType.MENU, "LicenseManager", true), //$NON-NLS-1$
     M_UserManager(XObjectType.MENU, "UserManager", true), //$NON-NLS-1$
     M_RecycleBin(XObjectType.MENU, "RecycleBin", false), //$NON-NLS-1$
     M_CrossReference(XObjectType.MENU, "CrossReference", true), //$NON-NLS-1$
