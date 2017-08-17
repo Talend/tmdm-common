@@ -42,6 +42,8 @@ public final class MDMConfiguration {
     public static final String TDS_PASSWORD = "tds.password"; //$NON-NLS-1$
 
     public static final String HZ_GROUP_PASSWORD = "hz.group.password"; //$NON-NLS-1$
+    
+    public static final String OIDC_CLIENT_SECRET = "oidc.client.secret";
 
     public static final String MAX_EXPORT_COUNT = "1000"; //$NON-NLS-1$
 

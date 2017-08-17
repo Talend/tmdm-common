@@ -27,6 +27,7 @@ import static org.talend.mdm.commmon.util.core.MDMConfiguration.ADMIN_PASSWORD;
 import static org.talend.mdm.commmon.util.core.MDMConfiguration.TECHNICAL_PASSWORD;
 import static org.talend.mdm.commmon.util.core.MDMConfiguration.TDS_PASSWORD;
 import static org.talend.mdm.commmon.util.core.MDMConfiguration.HZ_GROUP_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.OIDC_CLIENT_SECRET;
 
 public class EncryptUtil {
 
@@ -51,7 +52,8 @@ public class EncryptUtil {
     public static boolean encrypt(String path) {
         Map<String, String[]> propertiesFileMap = new HashMap<String, String[]>();
 
-        String[] mdmProperties = { ADMIN_PASSWORD, TECHNICAL_PASSWORD, TDS_PASSWORD, HZ_GROUP_PASSWORD, ACTIVEMQ_PASSWORD };
+        String[] mdmProperties = { ADMIN_PASSWORD, TECHNICAL_PASSWORD, TDS_PASSWORD, HZ_GROUP_PASSWORD, ACTIVEMQ_PASSWORD,
+                OIDC_CLIENT_SECRET };
         propertiesFileMap.put("mdm.conf", mdmProperties); //$NON-NLS-1$
 
         Iterator it = propertiesFileMap.entrySet().iterator();
