@@ -60,6 +60,8 @@ public final class MDMConfiguration {
 
     public static final String IAM_ENABLED = "iam.enabled";
 
+    public static final String SCIM_URL = "scim.url";
+
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
@@ -133,9 +135,15 @@ public final class MDMConfiguration {
         Properties properties = MDMConfiguration.getConfiguration();
         return properties.getProperty(TDS_API_VERSION);
     }
+
     public static boolean isIamEnabled() {
         String useIAM = MDMConfiguration.getConfiguration().getProperty(IAM_ENABLED);
         return Boolean.TRUE.toString().equalsIgnoreCase(useIAM);
+    }
+
+    public static String getScimUrl() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(SCIM_URL);
     }
 
     private Properties getProperties(boolean reload, boolean ignoreIfNotFound) {
