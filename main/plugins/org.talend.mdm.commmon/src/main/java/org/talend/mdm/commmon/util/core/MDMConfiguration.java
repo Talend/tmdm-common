@@ -58,7 +58,7 @@ public final class MDMConfiguration {
 
     public static final String TDS_API_VERSION = "tds.api.version";
 
-    public static final String IAM_ENABLED = "iam.enabled";
+    private static final String IAM_ENABLED = "iam.enabled";
 
     public static final String SCIM_URL = "scim.url";
 
