@@ -134,7 +134,7 @@ public final class MDMConfiguration {
         return properties.getProperty(TDS_API_VERSION);
     }
 
-    // TODO Change to check Util#isEnterprise when remove old login mode totally
+    // TODO Remove the method when remove old login mode totally. Replace all the references to Util#isEnterprise
     public static boolean isIamEnabled() {
         String useIAM = MDMConfiguration.getConfiguration().getProperty(IAM_ENABLED);
         return Boolean.TRUE.toString().equalsIgnoreCase(useIAM);
