@@ -46,19 +46,19 @@ public final class MDMConfiguration {
     /**
      * TDS Configuration
      */
-    public static final String TDS_ROOT_URL = "tds.root.url";
+    private static final String TDS_ROOT_URL = "tds.root.url";
 
-    public static final String TDS_USER = "tds.user";
+    private static final String TDS_USER = "tds.user";
 
     public static final String TDS_PASSWORD = "tds.password";
 
-    public static final String TDS_CORE_URL = "tds.core.url";
+    private static final String TDS_CORE_URL = "tds.core.url";
 
-    public static final String TDS_SCHEMA_URL = "tds.schema.url";
+    private static final String TDS_SCHEMA_URL = "tds.schema.url";
 
-    public static final String TDS_API_VERSION = "tds.api.version";
+    private static final String TDS_API_VERSION = "tds.api.version";
 
-    public static final String IAM_ENABLED = "iam.enabled";
+    private static final String IAM_ENABLED = "iam.enabled";
 
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
@@ -133,6 +133,8 @@ public final class MDMConfiguration {
         Properties properties = MDMConfiguration.getConfiguration();
         return properties.getProperty(TDS_API_VERSION);
     }
+
+    // TODO Change to check Util#isEnterprise when remove old login mode totally
     public static boolean isIamEnabled() {
         String useIAM = MDMConfiguration.getConfiguration().getProperty(IAM_ENABLED);
         return Boolean.TRUE.toString().equalsIgnoreCase(useIAM);
