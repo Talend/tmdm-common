@@ -62,8 +62,6 @@ public final class MDMConfiguration {
     
     public static final String OIDC_CLIENT_SECRET = "oidc.client.secret";
     
-    public static final String OIDC_CLIENT_SECRET = "oidc.client.secret";
-
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
