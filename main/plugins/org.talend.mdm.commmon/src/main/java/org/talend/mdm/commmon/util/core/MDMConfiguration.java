@@ -16,12 +16,12 @@ import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
  * Handles the mdm.conf file
  */
+@SuppressWarnings("nls")
 public final class MDMConfiguration {
     
     /**
@@ -31,23 +31,36 @@ public final class MDMConfiguration {
      * 
      * @see com.amalto.core.save.generator.AutoIncrementGenerator
      */
-    private static final String SYSTEM_CLUSTER = "system.cluster"; //$NON-NLS-1$
+    private static final String SYSTEM_CLUSTER = "system.cluster";
 
-    public static final String ADMIN_PASSWORD = "admin.password"; //$NON-NLS-1$
+    public static final String ADMIN_PASSWORD = "admin.password";
 
-    public static final String TECHNICAL_PASSWORD = "technical.password"; //$NON-NLS-1$
+    public static final String TECHNICAL_PASSWORD = "technical.password";
 
-    public static final String TDS_ROOT_URL = "tds.root.url"; //$NON-NLS-1$
+    public static final String HZ_GROUP_PASSWORD = "hz.group.password";
 
-    public static final String TDS_PASSWORD = "tds.password"; //$NON-NLS-1$
+    public static final String MAX_EXPORT_COUNT = "1000";
 
-    public static final String HZ_GROUP_PASSWORD = "hz.group.password"; //$NON-NLS-1$
+    public static final String MAX_IMPORT_COUNT = "1000";
+
+    /**
+     * TDS Configuration
+     */
+    private static final String TDS_ROOT_URL = "tds.root.url";
+
+    private static final String TDS_USER = "tds.user";
+
+    public static final String TDS_PASSWORD = "tds.password";
+
+    private static final String TDS_CORE_URL = "tds.core.url";
+
+    private static final String TDS_SCHEMA_URL = "tds.schema.url";
+
+    private static final String TDS_API_VERSION = "tds.api.version";
+
+    private static final String IAM_ENABLED = "iam.enabled";
     
     public static final String OIDC_CLIENT_SECRET = "oidc.client.secret";
-
-    public static final String MAX_EXPORT_COUNT = "1000"; //$NON-NLS-1$
-
-    public static final String MAX_IMPORT_COUNT = "1000"; //$NON-NLS-1$
 
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
@@ -93,9 +106,40 @@ public final class MDMConfiguration {
         return Boolean.parseBoolean(properties.getProperty(SYSTEM_CLUSTER, Boolean.FALSE.toString()));
     }
 
-    public static boolean isIamEnabled() {
+    public static String getTdsRootUrl() {
         Properties properties = MDMConfiguration.getConfiguration();
-        return Boolean.TRUE.toString().equalsIgnoreCase(properties.getProperty("iam.enabled")); //$NON-NLS-1$
+        return properties.getProperty(TDS_ROOT_URL);
+    }
+
+    public static String getTdsUser() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(TDS_USER);
+    }
+
+    public static String getTdsPassword() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(TDS_PASSWORD);
+    }
+
+    public static String getTdsCoreUrl() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(TDS_CORE_URL);
+    }
+
+    public static String getTdsSchemaUrl() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(TDS_SCHEMA_URL);
+    }
+
+    public static String getTdsApiVersion() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(TDS_API_VERSION);
+    }
+
+    // TODO Remove the method when remove old login mode totally. Replace all the references to Util#isEnterprise
+    public static boolean isIamEnabled() {
+        String useIAM = MDMConfiguration.getConfiguration().getProperty(IAM_ENABLED);
+        return Boolean.TRUE.toString().equalsIgnoreCase(useIAM);
     }
 
     private Properties getProperties(boolean reload, boolean ignoreIfNotFound) {
@@ -109,7 +153,7 @@ public final class MDMConfiguration {
 
         File file = new File(location);
         if (file.exists()) {
-            LOGGER.info("MDM Configuration: found in '" + file.getAbsolutePath() + "'."); //$NON-NLS-1$ //$NON-NLS-2$           
+            LOGGER.info("MDM Configuration: found in '" + file.getAbsolutePath() + "'.");
             try {
                 PropertiesConfiguration config = new PropertiesConfiguration();
                 config.setDelimiterParsingDisabled(true);
@@ -122,17 +166,15 @@ public final class MDMConfiguration {
                 properties = ConfigurationConverter.getProperties(config);
             } catch (Exception e) {
                 if (!ignoreIfNotFound) {
-                    throw new IllegalStateException("Unable to load MDM configuration from '" //$NON-NLS-1$
-                            + file.getAbsolutePath() + "'", e); //$NON-NLS-1$
+                    throw new IllegalStateException("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'", e);
                 }
-                LOGGER.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'", e); //$NON-NLS-1$ //$NON-NLS-2$
+                LOGGER.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'", e);
             }
         } else {
             if (!ignoreIfNotFound) {
-                throw new IllegalStateException("Unable to load MDM configuration from '" + file.getAbsolutePath() //$NON-NLS-1$
-                        + "'"); //$NON-NLS-1$
+                throw new IllegalStateException("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'");
             }
-            LOGGER.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            LOGGER.warn("Unable to load MDM configuration from '" + file.getAbsolutePath() + "'");
         }        
         return properties;
     }
@@ -144,7 +186,7 @@ public final class MDMConfiguration {
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(location);
-            properties.store(out, "MDM configuration file"); //$NON-NLS-1$
+            properties.store(out, "MDM configuration file");
         } catch (Exception e) {
             LOGGER.error(e.getMessage(), e);
         } finally {
@@ -161,7 +203,7 @@ public final class MDMConfiguration {
     }
 
     public static EDBType getDBType() {
-        Object dbType = getConfiguration().get("xmldb.type"); //$NON-NLS-1$
+        Object dbType = getConfiguration().get("xmldb.type");
         if (dbType != null && dbType.toString().equals(EDBType.QIZX.getName())) {
             return EDBType.QIZX;
         }
@@ -169,24 +211,24 @@ public final class MDMConfiguration {
     }
 
     public static boolean isExistDb() {
-        Object dbType = getConfiguration().get("xmldb.type"); //$NON-NLS-1$
+        Object dbType = getConfiguration().get("xmldb.type");
         return !(dbType != null && !dbType.toString().equals(EDBType.EXIST.getName()));
     }
 
     public static String getAdminPassword() {
-        String password = getConfiguration().getProperty("admin.password"); //$NON-NLS-1$
-        password = password == null ? "talend" : password; //$NON-NLS-1$
+        String password = getConfiguration().getProperty("admin.password");
+        password = password == null ? "talend" : password;
         return password;
     }
 
     public static String getAdminUser() {
-        String user = getConfiguration().getProperty("admin.user"); //$NON-NLS-1$
-        user = user == null ? "admin" : user; //$NON-NLS-1$
+        String user = getConfiguration().getProperty("admin.user");
+        user = user == null ? "admin" : user;
         return user;
     }
 
     public static int getAutoEntityFindThreshold() {
-        String value = getConfiguration().getProperty("autoentityfind.item.max"); //$NON-NLS-1$
+        String value = getConfiguration().getProperty("autoentityfind.item.max");
         try {
             return Integer.parseInt(value);
         } catch (NumberFormatException e) {
