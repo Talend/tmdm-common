@@ -59,9 +59,9 @@ public final class MDMConfiguration {
     private static final String TDS_API_VERSION = "tds.api.version";
 
     private static final String IAM_ENABLED = "iam.enabled";
-    
+
     public static final String OIDC_CLIENT_SECRET = "oidc.client.secret";
-    
+
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
