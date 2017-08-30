@@ -66,10 +66,33 @@
         </repository>
         <repository>
             <id>releases</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
             <snapshots>
                 <enabled>false</enabled>
             </snapshots>
-            <url>https://artifacts-zl.talend.com/nexus/content/repositories/releases</url>
+        </repository>
+         <repository>
+            <id>snapshots</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>talend-tpsvc</id>
+            <url>https://artifacts-zl.talend.com/nexus/content/repositories/tpsvc</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
         <repository>
             <id>thirdparty-releases</id>
