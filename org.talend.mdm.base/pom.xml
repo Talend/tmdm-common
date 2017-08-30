@@ -1156,6 +1156,11 @@
                 <artifactId>saxon9-dom</artifactId>
                 <version>${saxon.version}</version>
             </dependency>
+            <dependency>
+                <groupId>jmimemagic</groupId>
+                <artifactId>jmimemagic</artifactId>
+                <version>0.1.2</version>
+            </dependency>
             <!-- container dependencies -->
             <dependency>
                 <groupId>javax.servlet</groupId>
