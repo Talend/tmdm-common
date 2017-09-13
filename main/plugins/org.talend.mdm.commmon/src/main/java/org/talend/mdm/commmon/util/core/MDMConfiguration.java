@@ -58,8 +58,6 @@ public final class MDMConfiguration {
 
     private static final String TDS_API_VERSION = "tds.api.version";
 
-    private static final String IAM_ENABLED = "iam.enabled";
-
     public static final String OIDC_CLIENT_SECRET = "oidc.client.secret";
 
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
@@ -134,12 +132,6 @@ public final class MDMConfiguration {
     public static String getTdsApiVersion() {
         Properties properties = MDMConfiguration.getConfiguration();
         return properties.getProperty(TDS_API_VERSION);
-    }
-
-    // TODO Remove the method when remove old login mode totally. Replace all the references to Util#isEnterprise
-    public static boolean isIamEnabled() {
-        String useIAM = MDMConfiguration.getConfiguration().getProperty(IAM_ENABLED);
-        return Boolean.TRUE.toString().equalsIgnoreCase(useIAM);
     }
 
     private Properties getProperties(boolean reload, boolean ignoreIfNotFound) {
