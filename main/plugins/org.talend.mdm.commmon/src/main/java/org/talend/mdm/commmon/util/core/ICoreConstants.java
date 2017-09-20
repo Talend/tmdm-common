@@ -51,6 +51,8 @@ public interface ICoreConstants {
 
     String TALEND_NAMESPACE = "http://www.talend.com/mdm";
 
+    String SYSTEM_PREFIX = "System_";
+
     public static class rolesConvert {
 
         public static final HashMap<String, String> oldRoleToNewRoleMap = new HashMap<String, String>();
