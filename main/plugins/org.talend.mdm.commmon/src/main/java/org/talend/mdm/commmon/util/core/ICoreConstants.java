@@ -35,13 +35,15 @@ public interface ICoreConstants {
 
     String CrossReferencing_datamodel = "crossreferencing";
 
-    String SYSTEM_INTERACTIVE_ROLE = "System_Interactive";
+    String SYSTEM_ROLE_PREFIX = "System_";
 
-    String SYSTEM_WEB_ROLE = "System_Web";
+    String SYSTEM_INTERACTIVE_ROLE = SYSTEM_ROLE_PREFIX + "Interactive";
 
-    String SYSTEM_VIEW_ROLE = "System_View";
+    String SYSTEM_WEB_ROLE = SYSTEM_ROLE_PREFIX + "Web";
 
-    String SYSTEM_ADMIN_ROLE = "System_Admin";
+    String SYSTEM_VIEW_ROLE = SYSTEM_ROLE_PREFIX + "View";
+
+    String SYSTEM_ADMIN_ROLE = SYSTEM_ROLE_PREFIX + "Admin";
     
     String ADMIN_PERMISSION = "administration";
     
@@ -50,8 +52,6 @@ public interface ICoreConstants {
     String UI_AUTHENTICATED_PERMISSION = "UIAuthenticated";
 
     String TALEND_NAMESPACE = "http://www.talend.com/mdm";
-
-    String SYSTEM_PREFIX = "System_";
 
     public static class rolesConvert {
 
