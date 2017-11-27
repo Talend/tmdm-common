@@ -10,7 +10,9 @@
 
 package org.talend.mdm.commmon.util.core;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 @SuppressWarnings("nls")
 public interface ICoreConstants {
@@ -45,6 +47,9 @@ public interface ICoreConstants {
 
     String SYSTEM_ADMIN_ROLE = SYSTEM_ROLE_PREFIX + "Admin";
     
+    List<String> SYSTEM_ROLE_LIST = Arrays.asList(ICoreConstants.SYSTEM_ADMIN_ROLE, ICoreConstants.SYSTEM_INTERACTIVE_ROLE,
+            ICoreConstants.SYSTEM_WEB_ROLE);
+
     String ADMIN_PERMISSION = "administration";
     
     String AUTHENTICATED_PERMISSION = "authenticated"; 
