@@ -60,6 +60,10 @@ public final class MDMConfiguration {
 
     public static final String OIDC_CLIENT_SECRET = "oidc.client.secret";
 
+    public static final String SCIM_USER = "scim.username";
+
+    public static final String SCIM_PASSWORD = "scim.password";
+
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
@@ -155,6 +159,7 @@ public final class MDMConfiguration {
                 config.setProperty(TECHNICAL_PASSWORD, Crypt.decrypt(config.getString(TECHNICAL_PASSWORD)));
                 config.setProperty(TDS_PASSWORD, Crypt.decrypt(config.getString(TDS_PASSWORD)));
                 config.setProperty(HZ_GROUP_PASSWORD, Crypt.decrypt(config.getString(HZ_GROUP_PASSWORD)));
+                config.setProperty(SCIM_PASSWORD, Crypt.decrypt(config.getString(SCIM_PASSWORD)));
                 properties = ConfigurationConverter.getProperties(config);
             } catch (Exception e) {
                 if (!ignoreIfNotFound) {

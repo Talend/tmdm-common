@@ -10,6 +10,13 @@
 
 package org.talend.mdm.commmon.util.core;
 
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.ADMIN_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.HZ_GROUP_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.OIDC_CLIENT_SECRET;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.SCIM_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.TDS_PASSWORD;
+import static org.talend.mdm.commmon.util.core.MDMConfiguration.TECHNICAL_PASSWORD;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,13 +28,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
-
-import static org.talend.mdm.commmon.util.core.MDMConfiguration.ADMIN_PASSWORD;
-import static org.talend.mdm.commmon.util.core.MDMConfiguration.TECHNICAL_PASSWORD;
-import static org.talend.mdm.commmon.util.core.MDMConfiguration.TDS_PASSWORD;
-import static org.talend.mdm.commmon.util.core.MDMConfiguration.HZ_GROUP_PASSWORD;
-import static org.talend.mdm.commmon.util.core.MDMConfiguration.OIDC_CLIENT_SECRET;
+import org.apache.log4j.Logger;;
 
 public class EncryptUtil {
 
@@ -53,7 +54,7 @@ public class EncryptUtil {
         Map<String, String[]> propertiesFileMap = new HashMap<String, String[]>();
 
         String[] mdmProperties = { ADMIN_PASSWORD, TECHNICAL_PASSWORD, TDS_PASSWORD, HZ_GROUP_PASSWORD, ACTIVEMQ_PASSWORD,
-                OIDC_CLIENT_SECRET };
+                OIDC_CLIENT_SECRET, SCIM_PASSWORD };
         propertiesFileMap.put("mdm.conf", mdmProperties); //$NON-NLS-1$
 
         Iterator it = propertiesFileMap.entrySet().iterator();
