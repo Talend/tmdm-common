@@ -35,7 +35,7 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
     private final List<String> allowWriteUsers;
 
     private final List<String> hideUsers;
-    
+
     private final List<String> workflowAccessRights;
 
     private final boolean isMandatory;
@@ -56,21 +56,37 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
 
     private String visibilityRule;
 
+    private boolean isReference;
+    
     public ContainedTypeFieldMetadata(ComplexTypeMetadata containingType,
-                                      boolean isMany,
-                                      boolean isMandatory,
-                                      String name,
-                                      ComplexTypeMetadata fieldType,
-                                      List<String> allowWriteUsers,
-                                      List<String> hideUsers,
-                                      List<String> workflowAccessRights,
-                                      String visibilityRule) {
+            boolean isMany,
+            boolean isMandatory,
+            String name,
+            ComplexTypeMetadata fieldType,
+            List<String> allowWriteUsers,
+            List<String> hideUsers,
+            List<String> workflowAccessRights,
+            String visibilityRule) {
+        this(containingType,isMany,isMandatory,name,fieldType,false,allowWriteUsers,hideUsers,workflowAccessRights,visibilityRule);
+    }
+
+    public ContainedTypeFieldMetadata(ComplexTypeMetadata containingType,
+            boolean isMany,
+            boolean isMandatory,
+            String name,
+            ComplexTypeMetadata fieldType,
+            boolean isReference,
+            List<String> allowWriteUsers,
+            List<String> hideUsers,
+            List<String> workflowAccessRights,
+            String visibilityRule) {
         if (fieldType == null) {
             throw new IllegalArgumentException("Contained type cannot be null.");
         }
         this.visibilityRule = visibilityRule;
         this.isMandatory = isMandatory;
         this.fieldType = ContainedComplexTypeMetadata.contain(fieldType, this);
+        this.isReference = isReference;
         this.containingType = containingType;
         this.declaringType = containingType;
         this.isMany = isMany;
@@ -94,7 +110,7 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
     public TypeMetadata getType() {
         return fieldType;
     }
-    
+
     public void setFieldType(ComplexTypeMetadata fieldType) {
         this.fieldType = fieldType;
     }
@@ -203,11 +219,11 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
         ContainedTypeFieldMetadata copy;
         if (fieldType instanceof ContainedComplexTypeMetadata) {
             copy = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory, name,
-                    ((ContainedComplexTypeMetadata) fieldType).getContainedType(), allowWriteUsers, hideUsers,
-                    workflowAccessRights, visibilityRule);
+                    ((ContainedComplexTypeMetadata) fieldType).getContainedType(), isReference,
+                    allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
         } else {
-            copy = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory, name, fieldType, allowWriteUsers,
-                    hideUsers, workflowAccessRights, visibilityRule);
+            copy = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory, name, fieldType, isReference,
+                    allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
         }
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
@@ -243,6 +259,10 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
         return isMandatory;
     }
 
+    public boolean isReference() {
+        return this.isReference;
+    }
+
     @Override
     public <T> T accept(MetadataVisitor<T> visitor) {
         return visitor.visit(this);
@@ -256,7 +276,7 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
                 ", name='" + name + '\'' +  //$NON-NLS-1$
                 ", isMany=" + isMany +  //$NON-NLS-1$
                 ", fieldTypeName='" + fieldType.getName() + '\'' + //$NON-NLS-1$
-                '}';   
+                '}';
     }
 
     public ComplexTypeMetadata getContainedType() {

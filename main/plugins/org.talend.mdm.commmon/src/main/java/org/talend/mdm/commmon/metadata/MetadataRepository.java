@@ -102,11 +102,11 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     public static final String XSD_DOM_ELEMENT = "metadata.xsd.dom.element"; //$NON-NLS-1$
 
     public static final String ANONYMOUS_PREFIX = "X_ANONYMOUS"; //$NON-NLS-1$
-    
+
     public static final String DEFAULT_VALUE_RULE = "default.value.rule"; //$NON-NLS-1$
-    
+
     public static final String FN_TRUE = "fn:true()"; //$NON-NLS-1$
-    
+
     public static final String FN_FALSE = "fn:false()"; //$NON-NLS-1$
 
     public static final String MIN_OCCURS = "metadata.min_occurs";
@@ -862,7 +862,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
         }
         if (isContained) {
             ContainedTypeFieldMetadata containedField = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory,
-                    fieldName, (ComplexTypeMetadata) fieldType, allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
+                    fieldName, (ComplexTypeMetadata) fieldType, isReference, allowWriteUsers, hideUsers, workflowAccessRights,
+                    visibilityRule);
             containedField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             containedField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
             containedField.setData(XSD_DOM_ELEMENT, element.getElement());
