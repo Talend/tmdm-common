@@ -42,6 +42,7 @@
 
         <xalan.version>2.7.1</xalan.version>
         <saxon.version>9.0.0.8</saxon.version>
+        <audit.version>0.20.0-SNAPSHOT</audit.version>
     </properties>
     <repositories>
         <repository>
@@ -617,6 +618,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <dependency>
+                <groupId>org.talend.daikon</groupId>
+                <artifactId>daikon-audit</artifactId>
+                <version>${audit.version}</version>
+            </dependency>
 
             <!-- 3rd party dependencies -->
             <dependency>
@@ -964,7 +970,7 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.16</version>
+                <version>1.2.17</version>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>
