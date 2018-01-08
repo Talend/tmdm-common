@@ -113,6 +113,10 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
         return referencedField;
     }
 
+    public void setReferencedField(FieldMetadata referencedField) {
+        this.referencedField = referencedField;
+    }
+
     public ComplexTypeMetadata getReferencedType() {
         return referencedType;
     }
