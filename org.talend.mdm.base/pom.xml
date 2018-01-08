@@ -42,7 +42,7 @@
 
         <xalan.version>2.7.1</xalan.version>
         <saxon.version>9.0.0.8</saxon.version>
-        <audit.version>0.20.0-SNAPSHOT</audit.version>
+        <audit.version>0.20.0</audit.version>
     </properties>
     <repositories>
         <repository>
