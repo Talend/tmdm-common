@@ -46,12 +46,13 @@ public interface ICoreConstants {
     String SYSTEM_VIEW_ROLE = SYSTEM_ROLE_PREFIX + "View";
 
     String SYSTEM_ADMIN_ROLE = SYSTEM_ROLE_PREFIX + "Admin";
-    
-    List<String> SYSTEM_ROLE_LIST = Arrays.asList(ICoreConstants.SYSTEM_ADMIN_ROLE, ICoreConstants.SYSTEM_INTERACTIVE_ROLE,
-            ICoreConstants.SYSTEM_WEB_ROLE);
 
     String ADMIN_PERMISSION = "administration";
+
+    String SUPER_ADMIN = SYSTEM_ADMIN_ROLE + "+" + ADMIN_PERMISSION;
     
+    List<String> SYSTEM_ROLE_LIST = Arrays.asList(SYSTEM_ADMIN_ROLE, SYSTEM_INTERACTIVE_ROLE, SYSTEM_WEB_ROLE, ADMIN_PERMISSION);
+
     String AUTHENTICATED_PERMISSION = "authenticated"; 
     
     String UI_AUTHENTICATED_PERMISSION = "UIAuthenticated";
