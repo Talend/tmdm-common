@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.xsd.XSDAnnotation;
 import org.eclipse.xsd.XSDElementDeclaration;
@@ -42,6 +43,8 @@ public class PermissionValidationRule implements ValidationRule {
     private final String PERMISSIONTYPE_WORKFLOW_ACCESS = "Workflow Access"; //$NON-NLS-1$
     private final String ELEMENT_TYPE_ENTITY = "entity"; //$NON-NLS-1$
     private final String ELEMENT_TYPE_FIELD = "field"; //$NON-NLS-1$
+    
+    private final String VALIDATION_MARKER = "validation.validated"; //$NON-NLS-1$
 
     private FieldMetadata field;
     private ComplexTypeMetadata complexTypeMetadata;
@@ -75,38 +78,52 @@ public class PermissionValidationRule implements ValidationRule {
     private boolean validateFieldRefPermission(FieldMetadata fieldMetadata, ValidationHandler handler) {
         String name = fieldMetadata.getName();
         XSDElementDeclaration element = fieldMetadata.getData(MetadataRepository.XSD_ELEMENT);
-        XSDAnnotation annotation = element.getAnnotation();
-        EList<Element> appInfoElements = annotation.getApplicationInformation();
         
-        List<FieldMetadata> writeUsers = new ArrayList<FieldMetadata>();
-        List<FieldMetadata> hideUsers = new ArrayList<FieldMetadata>();
-        List<FieldMetadata> denyCreate = new ArrayList<FieldMetadata>();
-        List<FieldMetadata> workflowAccessRights = new ArrayList<FieldMetadata>();
-        for (Element appInfo : appInfoElements) {
-            String source = appInfo.getAttribute("source"); //$NON-NLS-1$
-            String permissionRole = appInfo.getTextContent();
-            if ("X_Write".equals(source)) { //$NON-NLS-1$
-                writeUsers.add(getFieldMetadata(appInfo, permissionRole));
-            } else if("X_Hide".equals(source)) { //$NON-NLS-1$
-                hideUsers.add(getFieldMetadata(appInfo, permissionRole));
-            } else if ("X_Deny_Create".equals(source)) { //$NON-NLS-1$)
-                denyCreate.add(getFieldMetadata(appInfo, permissionRole));
-            } else if("X_Workflow".equals(source)) { //$NON-NLS-1$
-                permissionRole = permissionRole.substring(0, permissionRole.indexOf("#")); //$NON-NLS-1$
-                workflowAccessRights.add(getFieldMetadata(appInfo, permissionRole));
-            }
+        if (element == null) {
+            return true;
         }
         
-        boolean valid = doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_WRITE, writeUsers);
-        valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_HIDE, hideUsers);
-        valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_DENY_CREATE, denyCreate);
-        valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
+        boolean valid = true;
+
+        XSDAnnotation annotation = element.getAnnotation();
+        if (annotation != null) {
+            EList<Element> appInfoElements = annotation.getApplicationInformation();
+
+            List<FieldMetadata> writeUsers = new ArrayList<FieldMetadata>();
+            List<FieldMetadata> hideUsers = new ArrayList<FieldMetadata>();
+            List<FieldMetadata> denyCreate = new ArrayList<FieldMetadata>();
+            List<FieldMetadata> workflowAccessRights = new ArrayList<FieldMetadata>();
+            for (Element appInfo : appInfoElements) {
+                String source = appInfo.getAttribute("source"); //$NON-NLS-1$
+                String permissionRole = appInfo.getTextContent();
+                if ("X_Write".equals(source)) { //$NON-NLS-1$
+                    writeUsers.add(getFieldMetadata(appInfo, permissionRole));
+                } else if ("X_Hide".equals(source)) { //$NON-NLS-1$
+                    hideUsers.add(getFieldMetadata(appInfo, permissionRole));
+                } else if ("X_Deny_Create".equals(source)) { //$NON-NLS-1$ )
+                    denyCreate.add(getFieldMetadata(appInfo, permissionRole));
+                } else if ("X_Workflow".equals(source)) { //$NON-NLS-1$
+                    permissionRole = permissionRole.substring(0, permissionRole.indexOf("#")); //$NON-NLS-1$
+                    workflowAccessRights.add(getFieldMetadata(appInfo, permissionRole));
+                }
+            }
+
+            valid = doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_WRITE, writeUsers);
+            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_HIDE, hideUsers);
+            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_DENY_CREATE, denyCreate);
+            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
+        }
+        
+
         if(fieldMetadata instanceof ContainedTypeFieldMetadata) {
             ContainedTypeFieldMetadata containedField = (ContainedTypeFieldMetadata) fieldMetadata;
             ComplexTypeMetadata cTypeMetadata = containedField.getContainedType();
             Collection<FieldMetadata>  fieldMetadatas = cTypeMetadata.getFields();
             for(FieldMetadata fMetadata: fieldMetadatas) {
-                validateFieldRefPermission(fMetadata, handler);
+                boolean validateMarked = BooleanUtils.isTrue(fMetadata.<Boolean> getData(VALIDATION_MARKER));
+                if(!validateMarked) {
+                    valid &= validateFieldRefPermission(fMetadata, handler);
+                }
             }
         }
 
@@ -116,7 +133,7 @@ public class PermissionValidationRule implements ValidationRule {
     private boolean validateComplexTypePermission(ComplexTypeMetadata cTypeMetadata, ValidationHandler handler) {// entity
         String name = cTypeMetadata.getName();
         XSDElementDeclaration element = cTypeMetadata.getData(MetadataRepository.XSD_ELEMENT);
-        if(element == null) {
+        if (element == null || element.getAnnotation() == null) {
             return true;
         }
         
