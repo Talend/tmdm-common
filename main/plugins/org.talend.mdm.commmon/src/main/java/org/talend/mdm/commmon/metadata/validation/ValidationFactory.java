@@ -14,7 +14,21 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.BooleanUtils;
-import org.talend.mdm.commmon.metadata.*;
+import org.talend.mdm.commmon.metadata.ComplexTypeMetadataImpl;
+import org.talend.mdm.commmon.metadata.CompoundFieldMetadata;
+import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
+import org.talend.mdm.commmon.metadata.EnumerationFieldMetadata;
+import org.talend.mdm.commmon.metadata.FieldMetadata;
+import org.talend.mdm.commmon.metadata.MetadataExtensible;
+import org.talend.mdm.commmon.metadata.MetadataRepository;
+import org.talend.mdm.commmon.metadata.ReferenceFieldMetadata;
+import org.talend.mdm.commmon.metadata.SimpleTypeFieldMetadata;
+import org.talend.mdm.commmon.metadata.SoftFieldRef;
+import org.talend.mdm.commmon.metadata.SoftIdFieldRef;
+import org.talend.mdm.commmon.metadata.SoftTypeRef;
+import org.talend.mdm.commmon.metadata.TypeMetadata;
+import org.talend.mdm.commmon.metadata.UnresolvedFieldMetadata;
+import org.talend.mdm.commmon.metadata.UnresolvedTypeMetadata;
 
 public class ValidationFactory {
 
@@ -52,6 +66,7 @@ public class ValidationFactory {
         List<ValidationRule> rules = new LinkedList<ValidationRule>();
         rules.add(new FieldInheritanceOverrideRule(field)); // All fields common rule
         rules.add(new FieldTypeValidationRule(field)); // All fields common rule
+        rules.add(new PermissionValidationRule(field));
         rules.add(new ForeignKeyExist(field));
         rules.add(new ForeignKeyMaxLength(field));
         rules.add(new ForeignKeyCannotBeKey(field));
@@ -67,6 +82,7 @@ public class ValidationFactory {
         rules.add(new FieldInheritanceOverrideRule(field));
         rules.add(new FieldTypeValidationRule(field));
         rules.add(new VisibilityValidationRule(field));
+        rules.add(new PermissionValidationRule(field));
         return new CompositeValidationRule(rules.toArray(new ValidationRule[rules.size()]));
     }
 
@@ -85,6 +101,7 @@ public class ValidationFactory {
         rules.add(new ForeignKeyHostCannotBeComplexTypeValidationRule(field));
         rules.add(new VisibilityValidationRule(field));
         rules.add(new CircleFieldInheritanceRule(field));
+        rules.add(new PermissionValidationRule(field));
         return new CompositeValidationRule(rules.toArray(new ValidationRule[rules.size()]));
     }
 
@@ -93,6 +110,7 @@ public class ValidationFactory {
         rules.add(new FieldInheritanceOverrideRule(field));
         rules.add(new FieldTypeValidationRule(field));
         rules.add(new VisibilityValidationRule(field));
+        rules.add(new PermissionValidationRule(field));
         return new CompositeValidationRule(rules.toArray(new ValidationRule[rules.size()]));
     }
 
@@ -120,6 +138,7 @@ public class ValidationFactory {
         rules.add(new LookupFieldsValidationRule(type));
         rules.add(new PrimaryKeyInfoValidationRule(type));
         rules.add(new XSDAttributeValidationRule(type));
+        rules.add(new PermissionValidationRule(type));
         if (!type.isInstantiable()) {
             rules.add(new UnusedReusableTypeValidationRule(type));
         } else {
