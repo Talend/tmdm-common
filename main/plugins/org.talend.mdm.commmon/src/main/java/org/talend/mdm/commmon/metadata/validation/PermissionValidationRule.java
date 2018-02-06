@@ -44,7 +44,7 @@ public class PermissionValidationRule implements ValidationRule {
     private final String ELEMENT_TYPE_ENTITY = "entity"; //$NON-NLS-1$
     private final String ELEMENT_TYPE_FIELD = "field"; //$NON-NLS-1$
     
-    private final String VALIDATION_MARKER = "validation.validated"; //$NON-NLS-1$
+    private final String VALIDATION_PERMISSION_MARKER = "validation.permission.validated"; //$NON-NLS-1$
 
     private FieldMetadata field;
     private ComplexTypeMetadata complexTypeMetadata;
@@ -76,6 +76,7 @@ public class PermissionValidationRule implements ValidationRule {
     }
 
     private boolean validateFieldRefPermission(FieldMetadata fieldMetadata, ValidationHandler handler) {
+        fieldMetadata.setData(VALIDATION_PERMISSION_MARKER, true);
         String name = fieldMetadata.getName();
         XSDElementDeclaration element = fieldMetadata.getData(MetadataRepository.XSD_ELEMENT);
         
@@ -120,7 +121,7 @@ public class PermissionValidationRule implements ValidationRule {
             ComplexTypeMetadata cTypeMetadata = containedField.getContainedType();
             Collection<FieldMetadata>  fieldMetadatas = cTypeMetadata.getFields();
             for(FieldMetadata fMetadata: fieldMetadatas) {
-                boolean validateMarked = BooleanUtils.isTrue(fMetadata.<Boolean> getData(VALIDATION_MARKER));
+                boolean validateMarked = BooleanUtils.isTrue(fMetadata.<Boolean> getData(VALIDATION_PERMISSION_MARKER));
                 if(!validateMarked) {
                     valid &= validateFieldRefPermission(fMetadata, handler);
                 }
@@ -178,7 +179,8 @@ public class PermissionValidationRule implements ValidationRule {
     private boolean doValidation(ValidationHandler handler, String elementType, String elementName, String permissionType, List<FieldMetadata> roles) {
         boolean valid = true;
         for (FieldMetadata roleMetadata : roles) {
-            if (roleMetadata.getName().toLowerCase().startsWith("system_")) { //$NON-NLS-1$
+            String lowerCaseRoleName = roleMetadata.getName().toLowerCase();
+            if (lowerCaseRoleName.startsWith("system_") || lowerCaseRoleName.equals("administration") || lowerCaseRoleName.equals("super_admin")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 String message = "System role \"" + roleMetadata.getName() + "\" shouldn't be used to set \"" + permissionType //$NON-NLS-1$ //$NON-NLS-2$
                 + "\" permission on "+elementType+" \"" + elementName + "\" ."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 
