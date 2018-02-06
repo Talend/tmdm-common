@@ -28,6 +28,7 @@ import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.SoftFieldRef;
 import org.talend.mdm.commmon.metadata.ValidationError;
 import org.talend.mdm.commmon.metadata.ValidationHandler;
+import org.talend.mdm.commmon.util.core.PermissionConstants;
 import org.w3c.dom.Element;
 
 /**
@@ -35,17 +36,10 @@ import org.w3c.dom.Element;
  *
  */
 public class PermissionValidationRule implements ValidationRule {
-    private final String PERMISSIONTYPE_WRITE = "Write Access"; //$NON-NLS-1$
-    private final String PERMISSIONTYPE_HIDE = "No Access"; //$NON-NLS-1$
-    private final String PERMISSIONTYPE_DENY_CREATE = "No Create Access"; //$NON-NLS-1$
-    private final String PERMISSIONTYPE_DENY_DELETE_PHYSICAL = "No Physic Delete"; //$NON-NLS-1$
-    private final String PERMISSIONTYPE_DENY_DELETE_LOGICAL = "No Logical Delete"; //$NON-NLS-1$
-    private final String PERMISSIONTYPE_WORKFLOW_ACCESS = "Workflow Access"; //$NON-NLS-1$
+    
     private final String ELEMENT_TYPE_ENTITY = "entity"; //$NON-NLS-1$
     private final String ELEMENT_TYPE_FIELD = "field"; //$NON-NLS-1$
     
-    private final String VALIDATION_PERMISSION_MARKER = "validation.permission.validated"; //$NON-NLS-1$
-
     private FieldMetadata field;
     private ComplexTypeMetadata complexTypeMetadata;
     
@@ -76,7 +70,7 @@ public class PermissionValidationRule implements ValidationRule {
     }
 
     private boolean validateFieldRefPermission(FieldMetadata fieldMetadata, ValidationHandler handler) {
-        fieldMetadata.setData(VALIDATION_PERMISSION_MARKER, true);
+        fieldMetadata.setData(PermissionConstants.VALIDATION_PERMISSION_MARKER, true);
         String name = fieldMetadata.getName();
         XSDElementDeclaration element = fieldMetadata.getData(MetadataRepository.XSD_ELEMENT);
         
@@ -109,10 +103,10 @@ public class PermissionValidationRule implements ValidationRule {
                 }
             }
 
-            valid = doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_WRITE, writeUsers);
-            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_HIDE, hideUsers);
-            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_DENY_CREATE, denyCreate);
-            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
+            valid = doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_WRITE, writeUsers);
+            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_HIDE, hideUsers);
+            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_DENY_CREATE, denyCreate);
+            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
         }
         
 
@@ -121,7 +115,7 @@ public class PermissionValidationRule implements ValidationRule {
             ComplexTypeMetadata cTypeMetadata = containedField.getContainedType();
             Collection<FieldMetadata>  fieldMetadatas = cTypeMetadata.getFields();
             for(FieldMetadata fMetadata: fieldMetadatas) {
-                boolean validateMarked = BooleanUtils.isTrue(fMetadata.<Boolean> getData(VALIDATION_PERMISSION_MARKER));
+                boolean validateMarked = BooleanUtils.isTrue(fMetadata.<Boolean> getData(PermissionConstants.VALIDATION_PERMISSION_MARKER));
                 if(!validateMarked) {
                     valid &= validateFieldRefPermission(fMetadata, handler);
                 }
@@ -166,12 +160,12 @@ public class PermissionValidationRule implements ValidationRule {
             }
         }
 
-        boolean valid = doValidation(handler, ELEMENT_TYPE_ENTITY, name, PERMISSIONTYPE_WRITE, writeUsers);
-        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PERMISSIONTYPE_HIDE, hideUsers);
-        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PERMISSIONTYPE_DENY_CREATE, denyCreate);
-        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PERMISSIONTYPE_DENY_DELETE_PHYSICAL, denyDeletePhysical);
-        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PERMISSIONTYPE_DENY_DELETE_LOGICAL, denyDeleteLogical);
-        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
+        boolean valid = doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_WRITE, writeUsers);
+        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_HIDE, hideUsers);
+        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_DENY_CREATE, denyCreate);
+        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_DENY_DELETE_PHYSICAL, denyDeletePhysical);
+        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_DENY_DELETE_LOGICAL, denyDeleteLogical);
+        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
 
         return valid;
     }
@@ -180,9 +174,10 @@ public class PermissionValidationRule implements ValidationRule {
         boolean valid = true;
         for (FieldMetadata roleMetadata : roles) {
             String lowerCaseRoleName = roleMetadata.getName().toLowerCase();
-            if (lowerCaseRoleName.startsWith("system_") || lowerCaseRoleName.equals("administration") || lowerCaseRoleName.equals("super_admin")) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            if (lowerCaseRoleName.startsWith(PermissionConstants.PERMISSION_ROLE_SYSTEM_PREFIX) || lowerCaseRoleName.equals(PermissionConstants.PERMISSION_ROLE_ADMINISTRATION)
+                    || lowerCaseRoleName.equals(PermissionConstants.PERMISSION_ROLE_SUPER_ADMIN)) {
                 String message = "System role \"" + roleMetadata.getName() + "\" shouldn't be used to set \"" + permissionType //$NON-NLS-1$ //$NON-NLS-2$
-                + "\" permission on "+elementType+" \"" + elementName + "\" ."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        + "\" permission on " + elementType + " \"" + elementName + "\" ."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 
                 Element data = roleMetadata.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT);
                 Integer lineNum = roleMetadata.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER);
