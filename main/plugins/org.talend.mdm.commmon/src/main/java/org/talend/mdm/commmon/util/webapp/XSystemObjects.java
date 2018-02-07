@@ -28,8 +28,6 @@ public enum XSystemObjects {
     ROLE_DEFAULT_ADMIN(XObjectType.ROLE, ICoreConstants.SYSTEM_ADMIN_ROLE, false),
     ROLE_DEFAULT_USER(XObjectType.ROLE, ICoreConstants.SYSTEM_INTERACTIVE_ROLE, false),
     ROLE_DEFAULT_WEB(XObjectType.ROLE, ICoreConstants.SYSTEM_WEB_ROLE, false),
-    // readonly for everything, can't be modified
-    ROLE_DEFAULT_VIEWER(XObjectType.ROLE, ICoreConstants.SYSTEM_VIEW_ROLE, true),
     // Data Models
     DM_CONF(XObjectType.DATA_MODEL, "CONF", false), //$NON-NLS-1$
     DM_PROVISIONING(XObjectType.DATA_MODEL, "PROVISIONING", true), //$NON-NLS-1$
