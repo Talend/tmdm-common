@@ -174,8 +174,7 @@ public class PermissionValidationRule implements ValidationRule {
         boolean valid = true;
         for (FieldMetadata roleMetadata : roles) {
             String lowerCaseRoleName = roleMetadata.getName().toLowerCase();
-            if (lowerCaseRoleName.startsWith(PermissionConstants.PERMISSION_ROLE_SYSTEM_PREFIX) || lowerCaseRoleName.equals(PermissionConstants.PERMISSION_ROLE_ADMINISTRATION)
-                    || lowerCaseRoleName.equals(PermissionConstants.PERMISSION_ROLE_SUPER_ADMIN)) {
+            if (lowerCaseRoleName.startsWith(PermissionConstants.PERMISSION_ROLE_SYSTEM_PREFIX) || lowerCaseRoleName.equals(PermissionConstants.PERMISSION_ROLE_ADMINISTRATION)) {
                 String message = "System role \"" + roleMetadata.getName() + "\" shouldn't be used to set \"" + permissionType //$NON-NLS-1$ //$NON-NLS-2$
                         + "\" permission on " + elementType + " \"" + elementName + "\" ."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 
