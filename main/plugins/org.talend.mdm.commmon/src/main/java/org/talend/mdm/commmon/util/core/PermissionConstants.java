@@ -29,5 +29,4 @@ public interface PermissionConstants {
     //
     String PERMISSION_ROLE_SYSTEM_PREFIX = "system_";
     String PERMISSION_ROLE_ADMINISTRATION = "administration";
-    String PERMISSION_ROLE_SUPER_ADMIN = "super_admin";
 }
