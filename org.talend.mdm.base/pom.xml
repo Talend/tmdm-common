@@ -1397,7 +1397,6 @@
                                         <taskdef resource="net/sf/antcontrib/antcontrib.properties" classpathref="maven.plugin.classpath" />
                                         <propertyregex property="product.version.short" input="${product.version}" regexp="\." replace="" global="true" casesensitive="false" override="true" />
                                         <property name="mdm.deploy.dir" value="${storage}/${product.build.id}/${storage.dir}/V${product.version}${revision.filename}/${storage.dir}_${product.version.short}" />
-                                        <property name="tdsc.deploy.dir" value="${storage}/${product.build.id}/datastewardship" />
                                         <echo>mdm.deploy.dir
                                             ${mdm.deploy.dir}</echo>
                                     </target>
