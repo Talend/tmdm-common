@@ -49,7 +49,7 @@ public interface ICoreConstants {
 
     String ADMIN_PERMISSION = "administration";
 
-    String SUPER_ADMIN = SYSTEM_ADMIN_ROLE + "+" + ADMIN_PERMISSION;
+    String SUPER_ADMIN = "Super_Admin";
     
     List<String> SYSTEM_ROLE_LIST = Arrays.asList(SYSTEM_ADMIN_ROLE, SYSTEM_INTERACTIVE_ROLE, SYSTEM_WEB_ROLE, ADMIN_PERMISSION);
 
