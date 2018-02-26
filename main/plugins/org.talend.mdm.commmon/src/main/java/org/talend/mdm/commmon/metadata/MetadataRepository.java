@@ -100,6 +100,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     public static final String XSD_COLUMN_NUMBER = "metadata.xsd.column"; //$NON-NLS-1$
 
     public static final String XSD_DOM_ELEMENT = "metadata.xsd.dom.element"; //$NON-NLS-1$
+    
+    public static final String XSD_ELEMENT = "metadata.xsd.element"; //$NON-NLS-1$
 
     public static final String ANONYMOUS_PREFIX = "X_ANONYMOUS"; //$NON-NLS-1$
 
@@ -653,6 +655,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             // Keep line and column of definition
             type.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             type.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
+            type.setData(XSD_ELEMENT, element);
             type.setData(XSD_DOM_ELEMENT, element.getElement());
             addTypeMetadata(type);
             // Keep usage information
@@ -768,6 +771,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         state.getForeignKeyFilter(), visibilityRule);
                 referenceField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                 referenceField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
+                referenceField.setData(XSD_ELEMENT, element);
                 referenceField.setData(XSD_DOM_ELEMENT, element.getElement());
                 referenceField.setData(MIN_OCCURS, minOccurs);
                 referenceField.setData(MAX_OCCURS, maxOccurs);
@@ -792,6 +796,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                                 visibilityRule);
                         enumField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                         enumField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
+                        enumField.setData(XSD_ELEMENT, element);
                         enumField.setData(XSD_DOM_ELEMENT, element.getElement());
                         enumField.setData(MIN_OCCURS, minOccurs);
                         enumField.setData(MAX_OCCURS, maxOccurs);
@@ -805,6 +810,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                                 fieldType, allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
                         field.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                         field.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
+                        field.setData(XSD_ELEMENT, element);
                         field.setData(XSD_DOM_ELEMENT, element.getElement());
                         field.setData(MIN_OCCURS, minOccurs);
                         field.setData(MAX_OCCURS, maxOccurs);
@@ -819,6 +825,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                             fieldType, allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
                     field.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                     field.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
+                    field.setData(XSD_ELEMENT, element);
                     field.setData(XSD_DOM_ELEMENT, element.getElement());
                     field.setData(MIN_OCCURS, minOccurs);
                     field.setData(MAX_OCCURS, maxOccurs);
@@ -866,6 +873,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                     visibilityRule);
             containedField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             containedField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
+            containedField.setData(XSD_ELEMENT, element);
             containedField.setData(XSD_DOM_ELEMENT, element.getElement());
             containedField.setData(MIN_OCCURS, minOccurs);
             containedField.setData(MAX_OCCURS, maxOccurs);
@@ -884,6 +892,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                     allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
             field.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             field.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
+            field.setData(XSD_ELEMENT, element);
             field.setData(XSD_DOM_ELEMENT, element.getElement());
             field.setData(MIN_OCCURS, minOccurs);
             field.setData(MAX_OCCURS, maxOccurs);

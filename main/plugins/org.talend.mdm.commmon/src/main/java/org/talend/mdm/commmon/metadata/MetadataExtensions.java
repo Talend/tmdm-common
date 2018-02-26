@@ -21,7 +21,8 @@ public class MetadataExtensions implements MetadataExtensible {
     public synchronized void setData(String key, Object data) {
         if (dataMap == null) {
             dataMap = new HashMap<String, Object>() {
-                private static final int THRESHOLD = 10;
+
+                private static final int THRESHOLD = 12;
 
                 @Override
                 public Object put(String s, Object o) {
