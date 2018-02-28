@@ -31,11 +31,13 @@ public final class MDMConfiguration {
      * 
      * @see com.amalto.core.save.generator.AutoIncrementGenerator
      */
-    private static final String SYSTEM_CLUSTER = "system.cluster";
+    public static final String SYSTEM_CLUSTER = "system.cluster";
 
     public static final String ADMIN_PASSWORD = "admin.password";
 
     public static final String TECHNICAL_PASSWORD = "technical.password";
+
+    public static final String HZ_GROUP_NAME = "hz.group.name";
 
     public static final String HZ_GROUP_PASSWORD = "hz.group.password";
 
