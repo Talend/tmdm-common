@@ -169,6 +169,37 @@ public class Compare {
                 if (!rightContent.isEmpty()) { // Not expected at all -> likely a bug
                     throw new IllegalStateException("Elements remain for comparison.");
                 }
+
+                // remove subelement in ContainedComplexTypeMetadata for add
+                if (!diffResults.addChanges.isEmpty()) {
+                    List<MetadataVisitable> containedComplexlist = new ArrayList<>();
+                    List<AddChange> containedComplexChangelist = new ArrayList<>();
+                    List<AddChange> simpleComplexlist = new ArrayList<>();
+
+                    for (AddChange addChange : diffResults.addChanges) {
+                        MetadataVisitable element = addChange.getElement();
+                        if (element instanceof SimpleTypeFieldMetadata) {
+                            simpleComplexlist.add(addChange);
+                        } else {
+                            containedComplexlist.add(element);
+                            containedComplexChangelist.add(addChange);
+                        }
+                    }
+
+                    for (AddChange change : simpleComplexlist) {
+                        FieldMetadata fieldType = (FieldMetadata) change.getElement();
+                        recursionRemoveSimpleFiled(containedComplexlist, change, fieldType, diffResults);
+                    }
+
+                    for (AddChange change : containedComplexChangelist) {
+                        MetadataVisitable fieldType = change.getElement();
+                        if (fieldType instanceof ContainedTypeFieldMetadata && !((ContainedTypeFieldMetadata) fieldType)
+                                .getContainedType().getContainer().getContainingType().equals(leftType)) {
+                            recursionRemoveContainedTypeField(leftType, containedComplexlist, change,
+                                    ((ContainedTypeFieldMetadata) fieldType).getContainedType().getContainer(), diffResults);
+                        }
+                    }
+                }
             }
         }
         
@@ -187,7 +218,34 @@ public class Compare {
                 }
             }
         }
+
         return diffResults;
+    }
+
+    private static void recursionRemoveSimpleFiled(List<MetadataVisitable> containedComplexlist, AddChange change,
+            FieldMetadata fieldType, DiffResults diffResults) {
+        if (containedComplexlist.contains(fieldType.getContainingType())
+                && !fieldType.getContainingType().getContainer().isMandatory()) {
+            diffResults.addChanges.remove(change);
+        } else if (fieldType.getContainingType().getContainer() != null) {
+            FieldMetadata parentFieldType = fieldType.getContainingType().getContainer();
+            recursionRemoveSimpleFiled(containedComplexlist, change, parentFieldType, diffResults);
+        }
+    }
+
+    private static void recursionRemoveContainedTypeField(ComplexTypeMetadata mainType,
+            List<MetadataVisitable> containedComplexlist, AddChange change, MetadataVisitable fieldType,
+            DiffResults diffResults) {
+        if ((fieldType instanceof ContainedTypeFieldMetadata) && containedComplexlist.contains(fieldType)
+                && ((ContainedTypeFieldMetadata) fieldType).isMandatory()) {
+            MetadataVisitable parentFieldType = ((ContainedTypeFieldMetadata) fieldType).getContainedType().getContainer()
+                    .getContainingType().getContainer();
+            recursionRemoveContainedTypeField(mainType, containedComplexlist, change, parentFieldType, diffResults);
+        } else if (((ContainedTypeFieldMetadata) fieldType).getContainedType().getContainer().getContainingType()
+                .equals(mainType)) {
+            diffResults.addChanges.remove(change);
+        }
+
     }
 
     private static class DumpContent extends DefaultMetadataVisitor<List<MetadataVisitable>> {

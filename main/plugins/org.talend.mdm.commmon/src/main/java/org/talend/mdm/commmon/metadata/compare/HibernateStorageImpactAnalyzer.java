@@ -38,8 +38,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 impactSort.get(Impact.LOW).add(addAction);
             } else if (element instanceof FieldMetadata) {
                 if (element instanceof ContainedTypeFieldMetadata) {
-                    // Contained field may change mapping strategy
-                    impactSort.get(Impact.HIGH).add(addAction);
+                    if (((FieldMetadata) element).isMandatory()) {
+                        // Contained field may change mapping strategy
+                        impactSort.get(Impact.HIGH).add(addAction);
+                    } else {
+                        impactSort.get(Impact.LOW).add(addAction);
+                    }
                 } else {
                     String defaultValueRule = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE_RULE);
                     
