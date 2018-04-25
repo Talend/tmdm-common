@@ -150,8 +150,7 @@ public class Compare {
                             }
                         } else {
                             // Added element (only exist in right, not in left).
-                            AddChange addChange = new AddChange(current);
-                            diffResults.addChanges.add(addChange);
+                            diffResults.addChanges.add(new AddChange(current));
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("[ADDED] " + current + " was added.");
                             }
