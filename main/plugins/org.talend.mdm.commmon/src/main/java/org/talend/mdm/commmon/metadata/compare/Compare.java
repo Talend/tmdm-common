@@ -187,7 +187,6 @@ public class Compare {
                 }
             }
         }
-
         return diffResults;
     }
 
