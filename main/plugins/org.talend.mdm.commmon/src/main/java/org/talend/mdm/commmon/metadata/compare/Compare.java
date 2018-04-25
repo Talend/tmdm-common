@@ -57,12 +57,9 @@ public class Compare {
         Collection<ComplexTypeMetadata> leftEntityTypes = left.getUserComplexTypes();
         DiffResults diffResults = new DiffResults();
         compareEntitiesChange(left, right, diffResults);
-        
+
         DumpContent dumpContent = new DumpContent();
         for (ComplexTypeMetadata leftType : leftEntityTypes) {
-            List<MetadataVisitable> containedComplexlist = new ArrayList<>();
-            List<AddChange> containedComplexChangelist = new ArrayList<>();
-            List<AddChange> simpleComplexlist = new ArrayList<>();
             ComplexTypeMetadata rightType = right.getComplexType(leftType.getName());
             if(rightType != null){
                 // Read left content
@@ -155,14 +152,6 @@ public class Compare {
                             // Added element (only exist in right, not in left).
                             AddChange addChange = new AddChange(current);
                             diffResults.addChanges.add(addChange);
-
-                            if (current instanceof SimpleTypeFieldMetadata) {
-                                simpleComplexlist.add(addChange);
-                            } else {
-                                containedComplexlist.add(current);
-                                containedComplexChangelist.add(addChange);
-                            }
-
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("[ADDED] " + current + " was added.");
                             }
@@ -180,24 +169,6 @@ public class Compare {
                 }
                 if (!rightContent.isEmpty()) { // Not expected at all -> likely a bug
                     throw new IllegalStateException("Elements remain for comparison.");
-                }
-
-                // remove subelement in ContainedComplexTypeMetadata for add
-                if (!diffResults.addChanges.isEmpty()) {
-                    for (AddChange change : simpleComplexlist) {
-                        FieldMetadata fieldType = (FieldMetadata) change.getElement();
-                        recursionRemoveSimpleFiled(containedComplexlist, change, fieldType, diffResults);
-                    }
-
-                    for (AddChange change : containedComplexChangelist) {
-                        MetadataVisitable fieldType = change.getElement();
-                        if (fieldType instanceof ContainedTypeFieldMetadata) {
-                            FieldMetadata container = ((ContainedTypeFieldMetadata) fieldType).getContainedType().getContainer();
-                            if (!container.getContainingType().equals(leftType)) {
-                                recursionRemoveContainedTypeField(leftType, containedComplexlist, change, container, diffResults);
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -219,105 +190,6 @@ public class Compare {
         }
 
         return diffResults;
-    }
-
-    /**
-     *        entity
-     *          |
-     *          |__A_optionanl(compplexType )
-     *                 |
-     *                 |___A1(simpleField)
-     *                 |
-     *                 |___A2_mandatory(compplexType)
-     *                          |
-     *                          |__B1(simpleField)
-     *   condition1: containedComplexlist.contains(containingType)
-     *   condition2: !container.isMandatory()
-     *   condition3: container != null
-     *
-     *   recursionRemoveSimpleFiled(arg1, arg2,  A1(simpleField), arg4)
-     *             containingType = A_optionanl(compplexType)
-     *             container = A_optionanl(compplexType)
-     *             #if(condition1 = true && condition2 = true)
-     *                        |
-     *                        |--->diffResults.addChanges.remove(change);
-     *   recursionRemoveSimpleFiled(arg1, arg2,  B1(simpleField), arg4)
-     *             containingType = entity/A_optionanl/A2_mandatory(compplexType)
-     *             container = entity/A_optionanl/A2_mandatory(compplexType)
-     *             #if(condition1 = true && condition2 = false)
-     *             #else(condition3 = true)
-     *                  |
-     *                  |--->recursionRemoveSimpleFiled(arg1, arg2,  entity/A_optionanl, arg4)
-     *                              containingType = entity/A_optionanl
-     *                              container = entity/A_optionanl
-     *                              #if(condition1 = true && condition2 = true)
-     *                                          |
-     *                                          |--->diffResults.addChanges.remove(change);
-     *
-     * @param containedComplexlist
-     * @param change
-     * @param fieldType
-     * @param diffResults
-     */
-    private static void recursionRemoveSimpleFiled(List<MetadataVisitable> containedComplexlist, AddChange change,
-            FieldMetadata fieldType, DiffResults diffResults) {
-        ComplexTypeMetadata containingType = fieldType.getContainingType();
-        FieldMetadata container = containingType.getContainer();
-        if (containedComplexlist.contains(containingType) && !container.isMandatory()) {
-            diffResults.addChanges.remove(change);
-        } else if (container != null) {
-            recursionRemoveSimpleFiled(containedComplexlist, change, container, diffResults);
-        }
-    }
-
-    /**
-     *  entity
-     *    |
-     *    |__A_optionanl(compplexType)
-     *       |
-     *       |__A1(simpleField)
-     *       |
-     *       |__A2_mandatory(compplexType)
-     *       |
-     *       |__A3_optionanl(compplexType)
-     *
-     * condition1: (fieldType instanceof ContainedTypeFieldMetadata)
-     * condition2: containedComplexlist.contains(fieldType)
-     * condition3: ((ContainedTypeFieldMetadata) fieldType).isMandatory()
-     * condition4: containingType.equals(mainType)
-     *
-     * 1. recursionRemoveContainedTypeField(arg1, arg2, arg3, A3_optionanl(compplexType), arg4)
-     *          containingType=A_optionanl
-     *          #if(condition1 = true && condition2 = true && condition3 = false)
-     *          #else if(condition4 = false)
-     *              |
-     *              |--->return
-     *
-     * 2. recursionRemoveContainedTypeField(arg1, arg2, arg3, A2_mandatory(compplexType), arg4)
-     *          containingType=A_optionanl
-     *          #if(condition3 = true && condition3 = true && condition3 = true)
-     *               |--->parentFieldType=A_optionanl
-     *                   |
-     *                   |-->recursionRemoveContainedTypeField(arg1, arg2, arg3, A_optionanl, arg4)
-     *                        containingType=entity
-     *                        #if(condition1  = true && condition2 = true && condition3 = false)
-     *                        #else if(condition4 = true)
-     *                                 |
-     *                                 |--->diffResults.addChanges.remove(change);
-     */
-    private static void recursionRemoveContainedTypeField(ComplexTypeMetadata mainType,
-            List<MetadataVisitable> containedComplexlist, AddChange change, MetadataVisitable fieldType,
-            DiffResults diffResults) {
-        ComplexTypeMetadata containingType = ((ContainedTypeFieldMetadata) fieldType).getContainedType().getContainer()
-                .getContainingType();
-        if ((fieldType instanceof ContainedTypeFieldMetadata) && containedComplexlist.contains(fieldType)
-                && ((ContainedTypeFieldMetadata) fieldType).isMandatory()) {
-            MetadataVisitable parentFieldType = containingType.getContainer();
-            recursionRemoveContainedTypeField(mainType, containedComplexlist, change, parentFieldType, diffResults);
-        } else if (containingType.equals(mainType)) {
-            diffResults.addChanges.remove(change);
-        }
-
     }
 
     private static class DumpContent extends DefaultMetadataVisitor<List<MetadataVisitable>> {

@@ -18,7 +18,6 @@ import java.util.Map;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.talend.mdm.commmon.metadata.*;
 import org.talend.mdm.commmon.util.core.CommonUtil;
 
@@ -40,7 +39,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 if (element instanceof ContainedTypeFieldMetadata) {
                     if (((FieldMetadata) element).isMandatory()) {
                         // Contained field may change mapping strategy
-                        impactSort.get(Impact.HIGH).add(addAction);
+                        boolean isOption = recursionParentFieldOption(diffResult.getAddChanges(), element);
+                        if (isOption) {
+                            impactSort.get(Impact.LOW).add(addAction);
+                        } else {
+                            impactSort.get(Impact.HIGH).add(addAction);
+                        }
                     } else {
                         impactSort.get(Impact.LOW).add(addAction);
                     }
@@ -49,7 +53,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     
                     // TMDM-7895: Newly added element and mandatory should be considered as "high" change
                     if (((FieldMetadata) element).isMandatory() && StringUtils.isBlank(defaultValueRule)) {
-                        impactSort.get(Impact.HIGH).add(addAction);
+                        boolean isOption = recursionParentFieldOption(diffResult.getAddChanges(), element);
+                        if (isOption) {
+                            impactSort.get(Impact.LOW).add(addAction);
+                        } else {
+                            impactSort.get(Impact.HIGH).add(addAction);
+                        }
                     } else {
                         impactSort.get(Impact.LOW).add(addAction);
                     }
@@ -183,5 +192,71 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
             }
         }
         return impactSort;
+    }
+
+    /**
+     *
+     *        entity
+     *          |
+     *          |__A_optionanl(compplexType)
+     *                 |
+     *                 |___A1_mandatory(simpleField)
+     *                 |
+     *                 |___A2_optionnal(simpleField)
+     *                 |
+     *                 |___A3_mandatory(compplexType)
+     *                          |
+     *                          |__B1_mandatory(simpleField)
+     *
+     *  condition1:((FieldMetadata) element).isMandatory()
+     *  condition2:((FieldMetadata) element).getContainingType() instanceof ContainedComplexTypeMetadata
+     *
+     * 1. recursionParentFieldOption(arg1, A1_mandatory(simpleField))
+     *          |
+     *          |-->if(condition1 = true, condition2 = true)
+     *                 |
+     *                 |-->contained = A_optionanl(compplexType)
+     *                 |-->loop
+     *                      |-->return true;
+     *
+     * 2. recursionParentFieldOption(arg1, B1_mandatory(simpleField))
+     *          |
+     *          |-->if(condition1 = true, condition2 = true)
+     *                 |
+     *                 |-->contained = A3_mandatory(compplexType)
+     *                 |-->loop
+     *                       |-->nothing to do
+     *                 |-->recursionParentFieldOption(arg1, A3_mandatory(compplexType))
+     *                        |
+     *                        |-->if(condition1 = true, condition2 = true)
+     *                                 |
+     *                                 |---contained = A_optionanl(compplexType)
+     *                                 |-->loop
+     *                                      |-->return true
+     *
+     * 3. recursionParentFieldOption(arg1, A3_mandatory(compplexType))
+     *          |
+     *          |-->if(condition1 = true, condition2 = true)
+     *                 |
+     *                 |contained = A_optionanl(compplexType)
+     *                 |-->loop
+     *                      |-->return true;
+     *
+     * @param addChanges all AddChange list
+     * @param element  current element to recursion
+     * @return return true if element's parent(or parent's parent) is not mandatory, else return false
+     */
+    private boolean recursionParentFieldOption(List<AddChange> addChanges, MetadataVisitable element) {
+        if (((FieldMetadata) element).isMandatory()
+                && ((FieldMetadata) element).getContainingType() instanceof ContainedComplexTypeMetadata) {
+            ContainedComplexTypeMetadata contained = (ContainedComplexTypeMetadata) ((FieldMetadata) element).getContainingType();
+            for (AddChange addChange : addChanges) {
+                if (addChange.getElement().equals(contained) && !contained.getContainer().isMandatory()) {
+                    return true;
+                }
+            }
+            return recursionParentFieldOption(addChanges, contained.getContainer());
+        }
+        return false;
     }
 }
