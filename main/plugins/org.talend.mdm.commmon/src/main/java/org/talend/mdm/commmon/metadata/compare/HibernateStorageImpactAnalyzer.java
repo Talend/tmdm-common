@@ -209,10 +209,14 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
     /**
      * Check if an element's root parent is optional or not.
      *
-     * <pre>
-     * Entity | __A_optional_complexType | ___A1_mandatory_simpleField | ___A2_optionnal_simpleField | ___A3_mandatory_complexType
-     *         | __B1_mandatory_simpleField
-     * </pre>
+     *<pre>
+     * Entity
+     *   |__A_optionanl_compplexType
+     *          |___A1_mandatory_simpleField
+     *          |___A2_optionnal_simpleField
+     *          |___A3_mandatory_compplexType
+     *                  |__B1_mandatory_simpleField
+     *</pre>
      * 
      * As above, add A_optional_complexType to Entity, all the changes for A_optional_complexType's child elements
      * should be LOW priority. So for A1_mandatory_simpleField, A2_optionnal_simpleField, A3_mandatory_complexType,
