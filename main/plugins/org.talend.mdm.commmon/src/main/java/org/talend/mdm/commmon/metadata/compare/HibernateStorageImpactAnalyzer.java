@@ -31,30 +31,36 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
             impactSort.put(impact, new LinkedList<Change>());
         }
         // Add actions
+        analyzeAddChange(diffResult, impactSort);
+        // Remove actions
+        analyzeRemoveChange(diffResult, impactSort);
+        // Modify actions
+        analyzeModifyChange(diffResult, impactSort);
+        return impactSort;
+    }
+
+    protected void analyzeAddChange(Compare.DiffResults diffResult, Map<Impact, List<Change>> impactSort) {
         for (AddChange addAction : diffResult.getAddChanges()) {
             MetadataVisitable element = addAction.getElement();
             if (element instanceof ComplexTypeMetadata) {
                 impactSort.get(Impact.LOW).add(addAction);
             } else if (element instanceof FieldMetadata) {
-                if (element instanceof ContainedTypeFieldMetadata) {
+                if (element instanceof ContainedTypeFieldMetadata) { // Newly added complex field
                     if (((FieldMetadata) element).isMandatory()) {
-                        // Contained field may change mapping strategy
-                        if (isRootParentOptional(diffResult.getAddChanges(), element)) {
+                        if (hasOptionalAncestor(diffResult.getAddChanges(), (FieldMetadata) element)) {
                             impactSort.get(Impact.LOW).add(addAction);
-                        } else {
+                        } else {// With mandatory ancestor
                             impactSort.get(Impact.HIGH).add(addAction);
                         }
                     } else {
                         impactSort.get(Impact.LOW).add(addAction);
                     }
-                } else {
+                } else { // Newly added simple field
                     String defaultValueRule = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE_RULE);
-                    
-                    // TMDM-7895: Newly added element and mandatory should be considered as "high" change
                     if (((FieldMetadata) element).isMandatory() && StringUtils.isBlank(defaultValueRule)) {
-                        if (isRootParentOptional(diffResult.getAddChanges(), element)) {
+                        if (hasOptionalAncestor(diffResult.getAddChanges(), (FieldMetadata) element)) {
                             impactSort.get(Impact.LOW).add(addAction);
-                        } else {
+                        } else {// With mandatory ancestor
                             impactSort.get(Impact.HIGH).add(addAction);
                         }
                     } else {
@@ -63,15 +69,19 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 }
             }
         }
-        // Remove actions
+    }
+
+    protected void analyzeRemoveChange(Compare.DiffResults diffResult, Map<Impact, List<Change>> impactSort) {
         for (RemoveChange removeAction : diffResult.getRemoveChanges()) {
             MetadataVisitable element = removeAction.getElement();
             if (element instanceof ComplexTypeMetadata) {
                 impactSort.get(Impact.MEDIUM).add(removeAction);
-            } else if (element instanceof SimpleTypeFieldMetadata && !(((FieldMetadata)element).getContainingType() instanceof ContainedComplexTypeMetadata)) {
+            } else if (element instanceof SimpleTypeFieldMetadata
+                    && !(((FieldMetadata) element).getContainingType() instanceof ContainedComplexTypeMetadata)) {
                 impactSort.get(Impact.MEDIUM).add(removeAction);
-            } else if (element instanceof SimpleTypeFieldMetadata && ((FieldMetadata)element).getContainingType().getContainer() != null && 
-                    ((FieldMetadata)element).getContainingType().getContainer() instanceof ContainedTypeFieldMetadata) {
+            } else if (element instanceof SimpleTypeFieldMetadata
+                    && ((FieldMetadata) element).getContainingType().getContainer() != null
+                    && ((FieldMetadata) element).getContainingType().getContainer() instanceof ContainedTypeFieldMetadata) {
                 impactSort.get(Impact.HIGH).add(removeAction);
             } else if (element instanceof ContainedTypeFieldMetadata) {
                 impactSort.get(Impact.HIGH).add(removeAction);
@@ -81,7 +91,9 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 throw new NotImplementedException();
             }
         }
-        // Modify actions
+    }
+
+    protected void analyzeModifyChange(Compare.DiffResults diffResult, Map<Impact, List<Change>> impactSort) {
         for (ModifyChange modifyAction : diffResult.getModifyChanges()) {
             MetadataVisitable element = modifyAction.getElement();
             if (element instanceof ComplexTypeMetadata) {
@@ -105,8 +117,9 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                  */
                 if (element instanceof SimpleTypeFieldMetadata
                         && MetadataUtils.getSuperConcreteType(((FieldMetadata) element).getType()).getName().equals("string")
-                        && Integer.valueOf((String) (currentLength == null ? STRING_DEFAULT_LENGTH : currentLength)).compareTo(
-                                Integer.valueOf((String) (previousLength == null ? STRING_DEFAULT_LENGTH : previousLength))) > 0) {
+                        && Integer.valueOf((String) (currentLength == null ? STRING_DEFAULT_LENGTH : currentLength))
+                                .compareTo(Integer.valueOf(
+                                        (String) (previousLength == null ? STRING_DEFAULT_LENGTH : previousLength))) > 0) {
                     impactSort.get(Impact.LOW).add(modifyAction);
                 } else if (!ObjectUtils.equals(previousLength, currentLength)) {
                     // Won't be able to change constraint for max length
@@ -139,7 +152,8 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 } else if (previous.isMandatory() != current.isMandatory()) {
                     if (element instanceof SimpleTypeFieldMetadata) {
                         if (((FieldMetadata) element).getContainingType() instanceof ContainedComplexTypeMetadata
-                                && !((FieldMetadata) element).getContainingType().getName().startsWith(MetadataRepository.ANONYMOUS_PREFIX)) {
+                                && !((FieldMetadata) element).getContainingType().getName()
+                                        .startsWith(MetadataRepository.ANONYMOUS_PREFIX)) {
                             impactSort.get(Impact.HIGH).add(modifyAction);
                         } else {
                             if (!previous.isMandatory() && current.isMandatory()) {
@@ -175,12 +189,13 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                         }
                     }
                 }
-                
-                if(previous instanceof ReferenceFieldMetadata){
-                    if(current instanceof ReferenceFieldMetadata){
-                        ReferenceFieldMetadata previousFieldMetadata = (ReferenceFieldMetadata)previous;
-                        ReferenceFieldMetadata currentFieldMetadata = (ReferenceFieldMetadata)current;
-                        if(!previousFieldMetadata.getReferencedType().getName().equals(currentFieldMetadata.getReferencedType().getName())){
+
+                if (previous instanceof ReferenceFieldMetadata) {
+                    if (current instanceof ReferenceFieldMetadata) {
+                        ReferenceFieldMetadata previousFieldMetadata = (ReferenceFieldMetadata) previous;
+                        ReferenceFieldMetadata currentFieldMetadata = (ReferenceFieldMetadata) current;
+                        if (!previousFieldMetadata.getReferencedType().getName()
+                                .equals(currentFieldMetadata.getReferencedType().getName())) {
                             impactSort.get(Impact.HIGH).add(modifyAction);
                         }
                     } else {
@@ -189,27 +204,25 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 }
             }
         }
-        return impactSort;
     }
 
     /**
      * Check if an element's root parent is optional or not.
      *
-     *<pre>
-     * Entity
-     *   |__A_optionanl_compplexType
-     *          |___A1_mandatory_simpleField
-     *          |___A2_optionnal_simpleField
-     *          |___A3_mandatory_compplexType
-     *                  |__B1_mandatory_simpleField
-     *</pre>
-     * As above, add A_optionanl_compplexType to Entity, all the changes for A_optionanl_compplexType's child elements should be LOW priority.
-     * So for A1_mandatory_simpleField, A2_optionnal_simpleField, A3_mandatory_compplexType, B1_mandatory_simpleField will all return TRUE
+     * <pre>
+     * Entity | __A_optional_complexType | ___A1_mandatory_simpleField | ___A2_optionnal_simpleField | ___A3_mandatory_complexType
+     *         | __B1_mandatory_simpleField
+     * </pre>
+     * 
+     * As above, add A_optional_complexType to Entity, all the changes for A_optional_complexType's child elements
+     * should be LOW priority. So for A1_mandatory_simpleField, A2_optionnal_simpleField, A3_mandatory_complexType,
+     * B1_mandatory_simpleField will all return TRUE
+     * 
      * @param addChanges
      * @param element
      * @return
      */
-    private boolean isRootParentOptional(List<AddChange> addChanges, MetadataVisitable element) {
+    private boolean hasOptionalAncestor(List<AddChange> addChanges, FieldMetadata element) {
         if (((FieldMetadata) element).getContainingType() instanceof ContainedComplexTypeMetadata) {
             ContainedComplexTypeMetadata contained = (ContainedComplexTypeMetadata) ((FieldMetadata) element).getContainingType();
             for (AddChange addChange : addChanges) {
@@ -217,7 +230,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     return true;
                 }
             }
-            return isRootParentOptional(addChanges, contained.getContainer());
+            return hasOptionalAncestor(addChanges, contained.getContainer());
         }
         return false;
     }
