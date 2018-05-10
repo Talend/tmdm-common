@@ -28,15 +28,15 @@ public class XmlSchemaWalker {
 
     public static void walk(XSDSchema xmlSchema, XSDVisitor visitor) {
         visitor.visitSchema(xmlSchema);
-        // Visit element first (create MDM entity types)
-        EList elements = xmlSchema.getElementDeclarations();
-        for (Object element : elements) {
-            walk(((XSDElementDeclaration) element), visitor);
-        }
         // Visit remaining types (sometimes used in case of inheritance by entity types).
         EList types = xmlSchema.getTypeDefinitions();
         for (Object type : types) {
             walk(((XSDTypeDefinition) type), visitor);
+        }
+        // Visit element first (create MDM entity types)
+        EList elements = xmlSchema.getElementDeclarations();
+        for (Object element : elements) {
+            walk(((XSDElementDeclaration) element), visitor);
         }
     }
 
