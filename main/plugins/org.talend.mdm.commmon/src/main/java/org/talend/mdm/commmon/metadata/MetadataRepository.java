@@ -529,7 +529,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     @Override
     public void visitComplexType(XSDComplexTypeDefinition type) {
         String typeName = type.getName();
-        boolean isNonInstantiableType = currentTypeStack.isEmpty();
+        boolean isNonInstantiableType = currentTypeStack.isEmpty() || currentTypeStack.peek() == null;
         if (isNonInstantiableType) {
             if (nonInstantiableTypes.get(getUserNamespace()) != null) {
                 if (nonInstantiableTypes.get(getUserNamespace()).containsKey(typeName)) {
@@ -886,6 +886,18 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             }
             setLocalizedNames(containedField, state.getLocaleToLabel());
             setLocalizedDescriptions(containedField, state.getLocaleToDescription());
+
+            if (schemaType instanceof XSDComplexTypeDefinition) {
+                EList types = schemaType.getSchema().getTypeDefinitions();
+                if (types.contains(schemaType)) {
+                    currentTypeStack.push(null);
+                    {
+                        XmlSchemaWalker.walk(schemaType, this);
+                    }
+                    currentTypeStack.pop();
+                }
+            }
+
             return containedField;
         } else {
             FieldMetadata field = new SimpleTypeFieldMetadata(containingType, false, isMany, isMandatory, fieldName, fieldType,
