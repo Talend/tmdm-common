@@ -23,6 +23,10 @@ import org.talend.mdm.commmon.util.core.CommonUtil;
 
 public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
 
+    private static final String OPTIONAL = "Optional"; //$NON-NLS-1$
+
+    private static final String MANDATORY = "Mandatory"; //$NON-NLS-1$
+
     protected final String STRING_DEFAULT_LENGTH = "255"; //$NON-NLS-1$
 
     public Map<Impact, List<Change>> analyzeImpacts(Compare.DiffResults diffResult) {
@@ -47,7 +51,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
             } else if (element instanceof FieldMetadata) {
                 if (element instanceof ContainedTypeFieldMetadata) { // Newly added complex field
                     if (((FieldMetadata) element).isMandatory()) {
-                        if (hasOptionalAncestor(diffResult.getAddChanges(), (FieldMetadata) element)) {
+                        if (hasAncestor(diffResult.getAddChanges(), (FieldMetadata) element, OPTIONAL)) {
                             impactSort.get(Impact.LOW).add(addAction);
                         } else {// With mandatory ancestor
                             impactSort.get(Impact.HIGH).add(addAction);
@@ -58,7 +62,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 } else { // Newly added simple field
                     String defaultValueRule = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE_RULE);
                     if (((FieldMetadata) element).isMandatory() && StringUtils.isBlank(defaultValueRule)) {
-                        if (hasOptionalAncestor(diffResult.getAddChanges(), (FieldMetadata) element)) {
+                        if (hasAncestor(diffResult.getAddChanges(), (FieldMetadata) element, OPTIONAL)) {
                             impactSort.get(Impact.LOW).add(addAction);
                         } else {// With mandatory ancestor
                             impactSort.get(Impact.HIGH).add(addAction);
@@ -72,14 +76,19 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
     }
 
     protected void analyzeRemoveChange(Compare.DiffResults diffResult, Map<Impact, List<Change>> impactSort) {
-        for (RemoveChange removeAction : diffResult.getRemoveChanges()) {
+        List<RemoveChange> removeChanges = diffResult.getRemoveChanges();
+        for (RemoveChange removeAction : removeChanges) {
             MetadataVisitable element = removeAction.getElement();
-            if (element instanceof ComplexTypeMetadata) {
-                impactSort.get(Impact.MEDIUM).add(removeAction);
-            } else if (element instanceof ContainedTypeFieldMetadata) {
+            if (element instanceof ContainedTypeFieldMetadata) {
                 impactSort.get(Impact.HIGH).add(removeAction);
-            } else if (element instanceof FieldMetadata) {
+            } else if (element instanceof ComplexTypeMetadata ) {
                 impactSort.get(Impact.MEDIUM).add(removeAction);
+            } else if (element instanceof FieldMetadata) {
+                if (hasAncestor(removeChanges, (FieldMetadata) element, StringUtils.EMPTY)) {
+                    impactSort.get(Impact.HIGH).add(removeAction);
+                } else {
+                    impactSort.get(Impact.MEDIUM).add(removeAction);
+                }
             } else {
                 throw new NotImplementedException();
             }
@@ -193,34 +202,49 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
     }
 
     /**
-     * Check if an element's root parent is optional or not.
+     * Check if an element's root parent is exist with occurrence(Mandatory, Optional)
      *
      *<pre>
      * Entity
-     *   |__A_optionanl_compplexType
+     *   |__A_compplexType
      *          |___A1_mandatory_simpleField
      *          |___A2_optionnal_simpleField
      *          |___A3_mandatory_compplexType
      *                  |__B1_mandatory_simpleField
      *</pre>
      * 
-     * As above, add A_optional_complexType to Entity, all the changes for A_optional_complexType's child elements
-     * should be LOW priority. So for A1_mandatory_simpleField, A2_optionnal_simpleField, A3_mandatory_complexType,
-     * B1_mandatory_simpleField will all return TRUE
+     * As above, add A_complexType(Mandatory, Optional) to Entity, So for A1_mandatory_simpleField, A2_optionnal_simpleField, A3_mandatory_complexType,
+     * B1_mandatory_simpleField use check their ancestor, return TRUE if A_compplexType's occurrence(Mandatory, Optional) is same with parameter occurrence
      * 
-     * @param addChanges
+     * @param changes
      * @param element
+     * @param occurrence Mandatory, Optional
      * @return
      */
-    private boolean hasOptionalAncestor(List<AddChange> addChanges, FieldMetadata element) {
+    private boolean hasAncestor(List<? extends Change> changes, FieldMetadata element, String occurrence) {
         if (((FieldMetadata) element).getContainingType() instanceof ContainedComplexTypeMetadata) {
             ContainedComplexTypeMetadata contained = (ContainedComplexTypeMetadata) ((FieldMetadata) element).getContainingType();
-            for (AddChange addChange : addChanges) {
-                if (addChange.getElement().equals(contained) && !contained.getContainer().isMandatory()) {
-                    return true;
+            for (Change change : changes) {
+                boolean isExist = change.getElement().equals(contained) || change.getElement().equals(contained.getContainer());
+                switch (occurrence) {
+                case OPTIONAL:
+                    if (isExist && !contained.getContainer().isMandatory()) {
+                        return true;
+                    }
+                    break;
+                case MANDATORY:
+                    if (isExist && contained.getContainer().isMandatory()) {
+                        return true;
+                    }
+                    break;
+                default:
+                    if (isExist) {
+                        return true;
+                    }
+                    break;
                 }
             }
-            return hasOptionalAncestor(addChanges, contained.getContainer());
+            return hasAncestor(changes, contained.getContainer(), occurrence);
         }
         return false;
     }
