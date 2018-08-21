@@ -344,4 +344,14 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
         }
         return localizedDescription;
     }
+
+    @Override
+    public List<String> getNoAddRoles() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getNoRemoveRoles() {
+        throw new UnsupportedOperationException();
+    }
 }

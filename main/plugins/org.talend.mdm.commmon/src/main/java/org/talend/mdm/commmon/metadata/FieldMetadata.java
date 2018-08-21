@@ -152,4 +152,26 @@ public interface FieldMetadata extends MetadataVisitable, MetadataExtensible {
     String getDescription(Locale locale);
 
     String getVisibilityRule();
+
+    /**
+     * @return The Permission Operation Role List, the return list is a collection class that is used for storing No_Add right Role list, 
+     * the method is related with {@link #getWriteUsers()} and {@link #getNoRemoveRoles()}. now just support for ReferenceFieldMetadata type.
+     * The Value is denoted as <b>existing Role information</b>, like Demo_Manager/Demo_User.<p>
+     * <pre>
+     *  <value>[Demo_User, Demo_Manager]</value>
+     * </pre>
+     * @since 7.1
+     */
+    List<String> getNoAddRoles();
+
+    /**
+     * @return The Permission Operation Role List, the return list is a collection class that is used for storing No_Remove right Role list, 
+     * the method is related with {@link #getWriteUsers()} and {@link #getNoAddRoles()}. now just support for ReferenceFieldMetadata type.
+     * The Value is denoted as <b>existing Role information</b>, like Demo_Manager/Demo_User.<p>
+     * <pre>
+     *  <value>[Demo_User, Demo_Manager]</value>
+     * </pre>
+     * @since 7.1
+     */
+    List<String> getNoRemoveRoles();
 }

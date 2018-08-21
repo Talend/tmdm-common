@@ -10,7 +10,11 @@
 
 package org.talend.mdm.commmon.metadata;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 
@@ -172,5 +176,15 @@ public class UnresolvedFieldMetadata implements FieldMetadata {
     @Override
     public String getDescription(Locale locale) {
         return StringUtils.EMPTY;
+    }
+
+    @Override
+    public List<String> getNoAddRoles() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getNoRemoveRoles() {
+        throw new UnsupportedOperationException();
     }
 }

@@ -11,13 +11,14 @@
 
 package org.talend.mdm.commmon.metadata;
 
-import org.talend.mdm.commmon.metadata.validation.ValidationFactory;
-import org.talend.mdm.commmon.metadata.validation.ValidationRule;
-
-import javax.xml.XMLConstants;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+
+import javax.xml.XMLConstants;
+
+import org.talend.mdm.commmon.metadata.validation.ValidationFactory;
+import org.talend.mdm.commmon.metadata.validation.ValidationRule;
 
 public class CompoundFieldMetadata extends MetadataExtensions implements FieldMetadata {
 
@@ -200,6 +201,16 @@ public class CompoundFieldMetadata extends MetadataExtensions implements FieldMe
 
     @Override
     public String getDescription(Locale locale) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getNoAddRoles() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getNoRemoveRoles() {
         throw new UnsupportedOperationException();
     }
 }

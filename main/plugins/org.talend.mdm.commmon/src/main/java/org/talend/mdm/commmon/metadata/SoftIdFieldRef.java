@@ -260,4 +260,14 @@ public class SoftIdFieldRef implements FieldMetadata {
     public String getDescription(Locale locale) {
         return StringUtils.EMPTY;
     }
+
+    @Override
+    public List<String> getNoAddRoles() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getNoRemoveRoles() {
+        throw new UnsupportedOperationException();
+    }
 }

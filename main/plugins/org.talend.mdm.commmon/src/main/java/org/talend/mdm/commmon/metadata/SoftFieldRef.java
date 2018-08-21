@@ -11,12 +11,16 @@
 
 package org.talend.mdm.commmon.metadata;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.mdm.commmon.metadata.validation.ValidationFactory;
 import org.talend.mdm.commmon.metadata.validation.ValidationRule;
 import org.w3c.dom.Element;
-
-import java.util.*;
 
 /**
  *
@@ -230,5 +234,15 @@ public class SoftFieldRef implements FieldMetadata {
             return StringUtils.EMPTY;
         }
         return localizedDescription;
+    }
+
+    @Override
+    public List<String> getNoAddRoles() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<String> getNoRemoveRoles() {
+        throw new UnsupportedOperationException();
     }
 }

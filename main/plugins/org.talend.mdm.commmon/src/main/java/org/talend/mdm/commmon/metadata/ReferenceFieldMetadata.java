@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.talend.mdm.commmon.metadata.validation.ValidationFactory;
 import org.talend.mdm.commmon.metadata.validation.ValidationRule;
@@ -66,6 +67,48 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
     private int cachedHashCode;
 
     private String visibilityRule;
+    
+    private final List<String> noAddRoles;
+
+    private final List<String> noRemoveRoles;
+
+    public ReferenceFieldMetadata(ComplexTypeMetadata containingType,
+            boolean isKey,
+            boolean isMany,
+            boolean isMandatory,
+            String name,
+            ComplexTypeMetadata referencedType,
+            FieldMetadata referencedField,
+            List<FieldMetadata> foreignKeyInfo,
+            String foreignKeyInfoFormat,
+            boolean fkIntegrity,
+            boolean allowFKIntegrityOverride,
+            TypeMetadata fieldType,
+            List<String> allowWriteUsers,
+            List<String> hideUsers,
+            List<String> workflowAccessRights,
+            String foreignKeyFilter,
+            String visibilityRule) {
+        this(containingType,
+                isKey,
+                isMany,
+                isMandatory,
+                name,
+                referencedType,
+                referencedField,
+                foreignKeyInfo,
+                foreignKeyInfoFormat,
+                fkIntegrity,
+                allowFKIntegrityOverride,
+                fieldType,
+                allowWriteUsers,
+                hideUsers,
+                workflowAccessRights,
+                foreignKeyFilter,
+                visibilityRule,
+                Collections.<String>emptyList(),
+                Collections.<String>emptyList());
+    }
 
     public ReferenceFieldMetadata(ComplexTypeMetadata containingType,
                                   boolean isKey,
@@ -83,7 +126,9 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                                   List<String> hideUsers,
                                   List<String> workflowAccessRights,
                                   String foreignKeyFilter,
-                                  String visibilityRule) {
+                                  String visibilityRule,
+                                  List<String> noAddRoles,
+                                  List<String> noRemoveRoles) {
         this.isMandatory = isMandatory;
         this.name = name;
         this.referencedField = referencedField;
@@ -103,6 +148,8 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
         this.workflowAccessRights = workflowAccessRights;
         this.foreignKeyFilter = foreignKeyFilter;
         this.visibilityRule = visibilityRule;
+        this.noAddRoles = noAddRoles;
+        this.noRemoveRoles = noRemoveRoles;
     }
 
     public String getForeignKeyFilter() {
@@ -293,7 +340,9 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                 hideUsers,
                 workflowAccessRights, 
                 foreignKeyFilter,
-                visibilityRule);
+                visibilityRule,
+                noRemoveRoles,
+                noRemoveRoles);
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
         if (dataMap != null) {
@@ -418,4 +467,13 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
         return localizedDescription;
     }
 
+    @Override
+    public List<String> getNoAddRoles() {
+        return noAddRoles;
+    }
+
+    @Override
+    public List<String> getNoRemoveRoles() {
+        return noRemoveRoles;
+    }
 }

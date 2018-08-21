@@ -768,7 +768,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 ReferenceFieldMetadata referenceField = new ReferenceFieldMetadata(containingType, false, isMany, isMandatory,
                         fieldName, (ComplexTypeMetadata) referencedType, referencedField, foreignKeyInfo, foreignKeyInfoFormat,
                         fkIntegrity, fkIntegrityOverride, fieldType, allowWriteUsers, hideUsers, workflowAccessRights,
-                        state.getForeignKeyFilter(), visibilityRule);
+                        state.getForeignKeyFilter(), visibilityRule, state.getNoAddRoles(), state.getNoRemoveRoles());
                 referenceField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                 referenceField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
                 referenceField.setData(XSD_ELEMENT, element);

@@ -19,6 +19,10 @@ import org.w3c.dom.Element;
 
 public class UserAccessProcessor implements XmlSchemaAnnotationProcessor {
 
+    private static final String NO_ADD = "X_No_Add"; //$NON-NLS-1$
+
+    private static final String NO_REMOVE = "X_No_Remove"; //$NON-NLS-1$
+
     @Override
     public void process(MetadataRepository repository, ComplexTypeMetadata type, XSDAnnotation annotation, XmlSchemaAnnotationProcessorState state) {
         if (annotation != null) {
@@ -41,8 +45,26 @@ public class UserAccessProcessor implements XmlSchemaAnnotationProcessor {
                     state.getWorkflowAccessRights().add(textContent);
                 } else if ("X_Visible_Rule".equals(source)) { //$NON-NLS-1$
                     state.setVisibilityRule(textContent);
+                } else if (NO_ADD.equals(source)) {
+                    handleAddRightInfo(repository, state, appInfo);
+                } else if (NO_REMOVE.equals(source)) {
+                    handleRemoveRightInfo(repository, state, appInfo);
                 }
             }
+        }
+    }
+
+    private void handleAddRightInfo(MetadataRepository repository, XmlSchemaAnnotationProcessorState state, Element appInfo) {
+        String textContent = appInfo.getTextContent();
+        if (!state.getNoAddRoles().contains(textContent)) {
+            state.getNoAddRoles().add(textContent);
+        }
+    }
+
+    private void handleRemoveRightInfo(MetadataRepository repository, XmlSchemaAnnotationProcessorState state, Element appInfo) {
+        String textContent = appInfo.getTextContent();
+        if (!state.getNoRemoveRoles().contains(textContent)) {
+            state.getNoRemoveRoles().add(textContent);
         }
     }
 }

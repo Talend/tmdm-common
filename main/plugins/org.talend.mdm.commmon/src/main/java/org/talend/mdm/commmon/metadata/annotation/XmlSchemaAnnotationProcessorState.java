@@ -30,6 +30,10 @@ public class XmlSchemaAnnotationProcessorState {
     private final List<String> hide = new LinkedList<String>();
 
     private final List<String> allowWrite = new LinkedList<String>();
+    
+    private final List<String> noAddRoles = new LinkedList<String>();
+
+    private final List<String> noRemoveRoles = new LinkedList<String>();
 
     private final List<String> denyCreate = new LinkedList<String>();
 
@@ -141,6 +145,14 @@ public class XmlSchemaAnnotationProcessorState {
 
     public List<String> getAllowWrite() {
         return allowWrite;
+    }
+
+    public List<String> getNoAddRoles() {
+        return noAddRoles;
+    }
+
+    public List<String> getNoRemoveRoles() {
+        return noRemoveRoles;
     }
 
     public List<String> getDenyCreate() {

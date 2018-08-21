@@ -27,7 +27,6 @@ import java.util.StringTokenizer;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.validation.ValidationFactory;
 import org.talend.mdm.commmon.metadata.validation.ValidationRule;
 
@@ -117,7 +116,7 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
         this(nameSpace, name, allowWrite, denyCreate, hideUsers, physicalDelete, logicalDelete, schematron, primaryKeyInfo,
                 lookupFields, isInstantiable, false, workflowAccessRights);
     }
-    
+
     public ComplexTypeMetadataImpl(String nameSpace,
             String name,
             List<String> allowWrite,
