@@ -201,19 +201,6 @@ public final class MDMConfiguration {
         }
     }
 
-    public static EDBType getDBType() {
-        Object dbType = getConfiguration().get("xmldb.type");
-        if (dbType != null && dbType.toString().equals(EDBType.QIZX.getName())) {
-            return EDBType.QIZX;
-        }
-        return EDBType.EXIST;
-    }
-
-    public static boolean isExistDb() {
-        Object dbType = getConfiguration().get("xmldb.type");
-        return !(dbType != null && !dbType.toString().equals(EDBType.EXIST.getName()));
-    }
-
     public static String getAdminPassword() {
         String password = getConfiguration().getProperty("admin.password");
         password = password == null ? "talend" : password;
