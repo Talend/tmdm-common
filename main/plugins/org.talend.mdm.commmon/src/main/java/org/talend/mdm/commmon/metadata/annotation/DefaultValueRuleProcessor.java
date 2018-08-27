@@ -41,7 +41,8 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
         boolean isValue = false;
 
         if (StringUtils.isNotBlank(text)) {
-            if (StringUtils.startsWith(text, "\"") && StringUtils.endsWith(text, "\"")) { //$NON-NLS-1$ //$NON-NLS-2$
+            String[] searchStrings = new String[]{"\"", "'"}; //$NON-NLS-1$
+            if (StringUtils.startsWithAny(text, searchStrings) && StringUtils.endsWithAny(text, searchStrings)) {
                 isValue = true;
             } else if (NumberUtils.isNumber(text)) {
                 isValue = true;
