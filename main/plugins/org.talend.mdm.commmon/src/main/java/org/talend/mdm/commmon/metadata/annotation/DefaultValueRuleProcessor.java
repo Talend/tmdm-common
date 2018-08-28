@@ -29,7 +29,7 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
                 String source = appInfo.getAttribute("source"); //$NON-NLS-1$
 
                 if ("X_Default_Value_Rule".equals(source)) { //$NON-NLS-1$
-                    if (isValue(appInfo.getTextContent())) {
+                    if (isValue(appInfo.getTextContent().trim())) {
                         state.setDefaultValueRule(appInfo.getTextContent());
                     }
                 }
@@ -41,10 +41,7 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
         boolean isValue = false;
 
         if (StringUtils.isNotBlank(text)) {
-            String quote = "\""; //$NON-NLS-1$
-            String singleQuotationMarks = "'"; //$NON-NLS-1$
-            if ((text.startsWith(quote) || text.startsWith(singleQuotationMarks))
-                    && (text.endsWith(quote) || text.endsWith(singleQuotationMarks))) {
+            if (text.matches("('.*?'|\".*?\")")) { //$NON-NLS-1$
                 isValue = true;
             } else if (NumberUtils.isNumber(text)) {
                 isValue = true;
