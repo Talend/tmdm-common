@@ -341,7 +341,7 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                 workflowAccessRights, 
                 foreignKeyFilter,
                 visibilityRule,
-                noRemoveRoles,
+                noAddRoles,
                 noRemoveRoles);
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
