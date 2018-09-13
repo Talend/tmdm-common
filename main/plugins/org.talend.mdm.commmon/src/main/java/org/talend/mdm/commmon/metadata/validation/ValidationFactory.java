@@ -51,7 +51,10 @@ public class ValidationFactory {
     }
 
     public static ValidationRule getRule(MetadataRepository repository) {
-        return new CircularDependencyValidationRule(repository);
+        List<ValidationRule> rules = new LinkedList<ValidationRule>();
+        rules.add(new CircularDependencyValidationRule(repository));
+        rules.add(new CircularComplexTypeValidationRule(repository));
+        return new CompositeValidationRule(rules.toArray(new ValidationRule[rules.size()]));
     }
 
     public static ValidationRule getRule(SoftFieldRef field) {
