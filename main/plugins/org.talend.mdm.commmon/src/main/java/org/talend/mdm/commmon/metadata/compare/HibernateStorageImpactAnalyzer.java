@@ -85,6 +85,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 impactSort.get(Impact.HIGH).add(removeAction);
             } else if (element instanceof ContainedTypeFieldMetadata) {
                 impactSort.get(Impact.HIGH).add(removeAction);
+            } else if (element instanceof ReferenceFieldMetadata) {
+                if (removeAction.isContainsData()) {
+                    impactSort.get(Impact.HIGH).add(removeAction);
+                } else {
+                    impactSort.get(Impact.MEDIUM).add(removeAction);
+                }
             } else if (element instanceof FieldMetadata) {
                 impactSort.get(Impact.MEDIUM).add(removeAction);
             } else {

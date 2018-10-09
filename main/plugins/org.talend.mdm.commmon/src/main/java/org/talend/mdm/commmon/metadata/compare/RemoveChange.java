@@ -20,6 +20,8 @@ public class RemoveChange extends Change {
 
     private ResourceBundle bundle;
 
+    private boolean containsData;
+
     RemoveChange(MetadataVisitable element) {
         super(element);
     }
@@ -58,4 +60,13 @@ public class RemoveChange extends Change {
         });
 
     }
+
+    public boolean isContainsData() {
+        return containsData;
+    }
+
+    public void setContainsData(boolean containsData) {
+        this.containsData = containsData;
+    }
+
 }

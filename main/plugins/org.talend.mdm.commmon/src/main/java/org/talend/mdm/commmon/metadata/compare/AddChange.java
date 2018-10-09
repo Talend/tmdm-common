@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 import org.talend.mdm.commmon.metadata.*;
 
-class AddChange extends Change {
+public class AddChange extends Change {
 
     private ResourceBundle bundle;
 
