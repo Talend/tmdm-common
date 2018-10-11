@@ -29,4 +29,18 @@ public abstract class Change {
     }
 
     public abstract String getMessage(Locale locale);
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        Change obj = (Change) o;
+        return this.element.equals(obj.element);
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.element.hashCode();
+    }
 }
