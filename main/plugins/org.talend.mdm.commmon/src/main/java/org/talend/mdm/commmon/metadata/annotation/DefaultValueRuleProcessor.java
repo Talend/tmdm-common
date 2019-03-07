@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -30,7 +30,10 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
 
                 if ("X_Default_Value_Rule".equals(source)) { //$NON-NLS-1$
                     if (isValue(appInfo.getTextContent().trim())) {
-                        state.setDefaultValueRule(appInfo.getTextContent());
+                        state.setDefaultValue(appInfo.getTextContent().trim());
+                    }
+                    if(StringUtils.isNotBlank(appInfo.getTextContent())){
+                        state.setDefaultValueRule(appInfo.getTextContent().trim());
                     }
                 }
             }

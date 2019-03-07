@@ -105,6 +105,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
 
     public static final String ANONYMOUS_PREFIX = "X_ANONYMOUS"; //$NON-NLS-1$
 
+    public static final String DEFAULT_VALUE = "default.value"; //$NON-NLS-1$
+
     public static final String DEFAULT_VALUE_RULE = "default.value.rule"; //$NON-NLS-1$
 
     public static final String FN_TRUE = "fn:true()"; //$NON-NLS-1$
@@ -778,6 +780,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 referenceField.setData(MAX_OCCURS, maxOccurs);
                 setLocalizedNames(referenceField, state.getLocaleToLabel());
                 setLocalizedDescriptions(referenceField, state.getLocaleToDescription());
+                setDefaultValue(referenceField, state.getDefaultValue());
                 setDefaultValueRule(referenceField, state.getDefaultValueRule());
                 setFieldData(simpleSchemaType, referenceField);
                 return referenceField;
@@ -803,6 +806,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         enumField.setData(MAX_OCCURS, maxOccurs);
                         setLocalizedNames(enumField, state.getLocaleToLabel());
                         setLocalizedDescriptions(enumField, state.getLocaleToDescription());
+                        setDefaultValue(enumField, state.getDefaultValue());
                         setDefaultValueRule(enumField, state.getDefaultValueRule());
                         setFieldData(simpleSchemaType, enumField);
                         return enumField;
@@ -817,6 +821,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                         field.setData(MAX_OCCURS, maxOccurs);
                         setLocalizedNames(field, state.getLocaleToLabel());
                         setLocalizedDescriptions(field, state.getLocaleToDescription());
+                        setDefaultValue(field, state.getDefaultValue());
                         setDefaultValueRule(field, state.getDefaultValueRule());
                         setFieldData(simpleSchemaType, field);
                         return field;
@@ -832,6 +837,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                     field.setData(MAX_OCCURS, maxOccurs);
                     setLocalizedNames(field, state.getLocaleToLabel());
                     setLocalizedDescriptions(field, state.getLocaleToDescription());
+                    setDefaultValue(field, state.getDefaultValue());
                     setDefaultValueRule(field, state.getDefaultValueRule());
                     setFieldData(simpleSchemaType, field);
                     return field;
@@ -964,6 +970,12 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     private static void setLocalizedDescriptions(FieldMetadata field, Map<Locale, String> descriptions) {
         for (Map.Entry<Locale, String> entry : descriptions.entrySet()) {
             field.registerDescription(entry.getKey(), entry.getValue());
+        }
+    }
+
+    private static void setDefaultValue(FieldMetadata field, String defaultValue) {
+        if (StringUtils.isNotBlank(defaultValue)) {
+            field.setData(DEFAULT_VALUE, defaultValue);
         }
     }
 

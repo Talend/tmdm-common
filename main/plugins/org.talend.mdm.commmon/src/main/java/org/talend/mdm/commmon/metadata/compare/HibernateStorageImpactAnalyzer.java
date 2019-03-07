@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
  * 
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -56,8 +56,8 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                         impactSort.get(Impact.LOW).add(addAction);
                     }
                 } else { // Newly added simple field
-                    String defaultValueRule = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE_RULE);
-                    if (((FieldMetadata) element).isMandatory() && StringUtils.isBlank(defaultValueRule)) {
+                    String defaultValue = ((FieldMetadata) element).getData(MetadataRepository.DEFAULT_VALUE);
+                    if (((FieldMetadata) element).isMandatory() && StringUtils.isBlank(defaultValue)) {
                         if (hasOptionalAncestor(diffResult.getAddChanges(), (FieldMetadata) element)) {
                             impactSort.get(Impact.LOW).add(addAction);
                         } else {// With mandatory ancestor
@@ -159,12 +159,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     if (element instanceof SimpleTypeFieldMetadata) {
                         if (!previous.isMandatory() && current.isMandatory()) {
                             // Won't be able to change constraint
-                            String defaultValueRule = ((FieldMetadata) current).getData(MetadataRepository.DEFAULT_VALUE_RULE);
+                            String defaultValue = ((FieldMetadata) current).getData(MetadataRepository.DEFAULT_VALUE);
                             if (!modifyAction.isHasNullValue()) {
                                 impactSort.get(Impact.LOW).add(modifyAction);
-                            } else if (modifyAction.isHasNullValue() && StringUtils.isBlank(defaultValueRule)) {
+                            } else if (modifyAction.isHasNullValue() && StringUtils.isBlank(defaultValue)) {
                                 impactSort.get(Impact.HIGH).add(modifyAction);
-                            } else if (modifyAction.isHasNullValue() && StringUtils.isNotBlank(defaultValueRule)) {
+                            } else if (modifyAction.isHasNullValue() && StringUtils.isNotBlank(defaultValue)) {
                                 impactSort.get(Impact.MEDIUM).add(modifyAction);
                             }
                         } else if (previous.isMandatory() && !current.isMandatory()) {
