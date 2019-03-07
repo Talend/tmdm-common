@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -52,6 +52,8 @@ public class XmlSchemaAnnotationProcessorState {
     private boolean fkIntegrity = true; // Default is to enforce FK integrity
 
     private boolean fkIntegrityOverride = false; // Default is to disable FK integrity check
+
+    private boolean isFKMainRender = false; // default is not render in main tab
 
     private TypeMetadata fieldType;
 
@@ -233,5 +235,13 @@ public class XmlSchemaAnnotationProcessorState {
 
     public void setDefaultValueRule(String defaultValueRule) {
         this.defaultValueRule = defaultValueRule;
+    }
+
+    public boolean isFKMainRender() {
+        return isFKMainRender;
+    }
+
+    public void setFKMainRender(boolean FKMainRender) {
+        isFKMainRender = FKMainRender;
     }
 }

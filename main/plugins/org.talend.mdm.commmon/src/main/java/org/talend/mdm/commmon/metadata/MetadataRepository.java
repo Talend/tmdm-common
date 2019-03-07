@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
  * 
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -736,6 +736,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
         boolean isReference = state.isReference();
         boolean fkIntegrity = state.isFkIntegrity();
         boolean fkIntegrityOverride = state.isFkIntegrityOverride();
+        boolean isFKMainRender = state.isFKMainRender();
         List<FieldMetadata> foreignKeyInfo = state.getForeignKeyInfo();
         String foreignKeyInfoFormat = state.getForeignKeyInfoFormat();
         TypeMetadata fieldType = state.getFieldType();
@@ -768,7 +769,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 ReferenceFieldMetadata referenceField = new ReferenceFieldMetadata(containingType, false, isMany, isMandatory,
                         fieldName, (ComplexTypeMetadata) referencedType, referencedField, foreignKeyInfo, foreignKeyInfoFormat,
                         fkIntegrity, fkIntegrityOverride, fieldType, allowWriteUsers, hideUsers, workflowAccessRights,
-                        state.getForeignKeyFilter(), visibilityRule, state.getNoAddRoles(), state.getNoRemoveRoles());
+                        state.getForeignKeyFilter(), visibilityRule, state.getNoAddRoles(), state.getNoRemoveRoles(), isFKMainRender);
                 referenceField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
                 referenceField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
                 referenceField.setData(XSD_ELEMENT, element);
