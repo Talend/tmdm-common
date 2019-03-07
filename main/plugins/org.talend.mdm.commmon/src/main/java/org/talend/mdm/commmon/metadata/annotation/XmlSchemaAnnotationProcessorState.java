@@ -241,7 +241,7 @@ public class XmlSchemaAnnotationProcessorState {
         return isFKMainRender;
     }
 
-    public void setFKMainRender(boolean FKMainRender) {
-        this.isFKMainRender = FKMainRender;
+    public void setFKMainRender(boolean isFKMainRender) {
+        this.isFKMainRender = isFKMainRender;
     }
 }
