@@ -387,7 +387,8 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                 foreignKeyFilter,
                 visibilityRule,
                 noAddRoles,
-                noRemoveRoles);
+                noRemoveRoles,
+                isFKMainRender);
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
         if (dataMap != null) {
