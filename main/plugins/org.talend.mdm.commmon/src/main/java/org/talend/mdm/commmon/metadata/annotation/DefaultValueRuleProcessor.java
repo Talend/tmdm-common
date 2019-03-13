@@ -32,7 +32,7 @@ public class DefaultValueRuleProcessor implements XmlSchemaAnnotationProcessor {
                     if (isValue(appInfo.getTextContent().trim())) {
                         state.setDefaultValue(appInfo.getTextContent().trim());
                     }
-                    if(StringUtils.isNotBlank(appInfo.getTextContent())){
+                    if (StringUtils.isNotBlank(appInfo.getTextContent())) {
                         state.setDefaultValueRule(appInfo.getTextContent().trim());
                     }
                 }
