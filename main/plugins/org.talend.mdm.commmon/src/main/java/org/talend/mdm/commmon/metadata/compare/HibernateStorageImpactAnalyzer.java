@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -23,7 +24,7 @@ import org.talend.mdm.commmon.util.core.CommonUtil;
 
 public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
 
-    protected final String STRING_DEFAULT_LENGTH = "255"; //$NON-NLS-1$
+    public static final String STRING_DEFAULT_LENGTH = "255"; //$NON-NLS-1$
 
     public Map<Impact, List<Change>> analyzeImpacts(Compare.DiffResults diffResult) {
         Map<Impact, List<Change>> impactSort = new EnumMap<Impact, List<Change>>(Impact.class);
@@ -121,12 +122,16 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 /*
                  * HIGH IMPACT CHANGES
                  */
-                if (element instanceof SimpleTypeFieldMetadata
-                        && MetadataUtils.getSuperConcreteType(((FieldMetadata) element).getType()).getName().equals("string")
-                        && Integer.valueOf((String) (currentLength == null ? STRING_DEFAULT_LENGTH : currentLength))
-                                .compareTo(Integer.valueOf(
-                                        (String) (previousLength == null ? STRING_DEFAULT_LENGTH : previousLength))) > 0) {
-                    impactSort.get(Impact.LOW).add(modifyAction);
+                int currentLengthInt = Integer.parseInt((currentLength == null ? STRING_DEFAULT_LENGTH : (String) currentLength));
+                int previousLengthInt = Integer.parseInt((previousLength == null ? STRING_DEFAULT_LENGTH : (String) previousLength));
+
+                if (element instanceof SimpleTypeFieldMetadata && currentLengthInt > previousLengthInt && MetadataUtils
+                        .getSuperConcreteType(((FieldMetadata) element).getType()).getName().equals("string")) {
+                    if (MapUtils.getBooleanValue(modifyAction.getData(), ModifyChange.CHANGE_TO_CLOB)) {
+                        impactSort.get(Impact.HIGH).add(modifyAction);
+                    } else {
+                        impactSort.get(Impact.LOW).add(modifyAction);
+                    }
                 } else if (!ObjectUtils.equals(previousLength, currentLength)) {
                     // Won't be able to change constraint for max length
                     impactSort.get(Impact.HIGH).add(modifyAction);
@@ -160,11 +165,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                         if (!previous.isMandatory() && current.isMandatory()) {
                             // Won't be able to change constraint
                             String defaultValue = ((FieldMetadata) current).getData(MetadataRepository.DEFAULT_VALUE);
-                            if (!modifyAction.isHasNullValue()) {
+                            boolean isHasNullValue = MapUtils.getBooleanValue(modifyAction.getData(), ModifyChange.HAS_NULL_VALUE);
+                            if (!isHasNullValue) {
                                 impactSort.get(Impact.LOW).add(modifyAction);
-                            } else if (modifyAction.isHasNullValue() && StringUtils.isBlank(defaultValue)) {
+                            } else if (isHasNullValue && StringUtils.isBlank(defaultValue)) {
                                 impactSort.get(Impact.HIGH).add(modifyAction);
-                            } else if (modifyAction.isHasNullValue() && StringUtils.isNotBlank(defaultValue)) {
+                            } else if (isHasNullValue && StringUtils.isNotBlank(defaultValue)) {
                                 impactSort.get(Impact.MEDIUM).add(modifyAction);
                             }
                         } else if (previous.isMandatory() && !current.isMandatory()) {

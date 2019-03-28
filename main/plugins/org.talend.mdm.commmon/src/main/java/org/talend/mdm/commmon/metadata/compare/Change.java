@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
  * 
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -10,7 +10,9 @@
 
 package org.talend.mdm.commmon.metadata.compare;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import org.talend.mdm.commmon.metadata.MetadataVisitable;
 
@@ -30,6 +32,8 @@ public abstract class Change {
 
     public abstract String getMessage(Locale locale);
 
+    private Map<String, Object> data = new HashMap<>();
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -42,5 +46,13 @@ public abstract class Change {
     @Override
     public int hashCode() {
         return 31 * this.element.hashCode();
+    }
+
+    public Map<String, Object> getData() {
+        return data;
+    }
+
+    public void addData(String key, Object value){
+        this.data.put(key, value);
     }
 }

@@ -11,20 +11,20 @@
 package org.talend.mdm.commmon.metadata.compare;
 
 import java.text.MessageFormat;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.talend.mdm.commmon.metadata.*;
 
 public class ModifyChange extends Change {
 
+    public static final String CHANGE_TO_CLOB = "changToClob";
+
+    public static final String HAS_NULL_VALUE = "hasNullValue";
+
     private final MetadataVisitable current;
 
     private ResourceBundle bundle;
-
-    private boolean hasNullValue;
 
     public ModifyChange(MetadataVisitable previous, MetadataVisitable current) {
         super(previous);
@@ -39,13 +39,6 @@ public class ModifyChange extends Change {
         return current;
     }
 
-    public boolean isHasNullValue() {
-        return hasNullValue;
-    }
-
-    public void setHasNullValue(boolean hasNullValue) {
-        this.hasNullValue = hasNullValue;
-    }
 
     @Override
     public String getMessage(Locale locale) {
