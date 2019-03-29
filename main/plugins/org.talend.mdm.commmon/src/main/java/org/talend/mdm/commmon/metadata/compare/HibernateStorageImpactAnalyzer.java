@@ -126,7 +126,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                 int oldLength = Integer.parseInt((previousLength == null ? STRING_DEFAULT_LENGTH : (String) previousLength));
 
                 String fieldType = MetadataUtils.getSuperConcreteType(((FieldMetadata) element).getType()).getName();
-                if (element instanceof SimpleTypeFieldMetadata && fieldType.equals("string") && newLength > oldLength) {
+                if (element instanceof SimpleTypeFieldMetadata && fieldType.equals("string") && newLength > oldLength) { //$NON-NLS-1$
                     if (MapUtils.getBooleanValue(modifyAction.getData(), Change.CHANGE_TO_CLOB)) {
                         impactSort.get(Impact.HIGH).add(modifyAction);
                     } else {
