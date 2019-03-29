@@ -24,7 +24,7 @@ import org.talend.mdm.commmon.util.core.CommonUtil;
 
 public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
 
-    public static final String STRING_DEFAULT_LENGTH = "255"; //$NON-NLS-1$
+    protected static final String STRING_DEFAULT_LENGTH = "255"; //$NON-NLS-1$
 
     public Map<Impact, List<Change>> analyzeImpacts(Compare.DiffResults diffResult) {
         Map<Impact, List<Change>> impactSort = new EnumMap<Impact, List<Change>>(Impact.class);
