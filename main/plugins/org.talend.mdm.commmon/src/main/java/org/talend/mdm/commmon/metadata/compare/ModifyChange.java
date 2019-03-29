@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
  * 
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -17,10 +17,6 @@ import java.util.ResourceBundle;
 import org.talend.mdm.commmon.metadata.*;
 
 public class ModifyChange extends Change {
-
-    public static final String CHANGE_TO_CLOB = "changToClob";
-
-    public static final String HAS_NULL_VALUE = "hasNullValue";
 
     private final MetadataVisitable current;
 

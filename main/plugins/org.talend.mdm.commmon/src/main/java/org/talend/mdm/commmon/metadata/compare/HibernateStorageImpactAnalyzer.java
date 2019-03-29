@@ -127,7 +127,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
 
                 if (element instanceof SimpleTypeFieldMetadata && currentLengthInt > previousLengthInt && MetadataUtils
                         .getSuperConcreteType(((FieldMetadata) element).getType()).getName().equals("string")) {
-                    if (MapUtils.getBooleanValue(modifyAction.getData(), ModifyChange.CHANGE_TO_CLOB)) {
+                    if (MapUtils.getBooleanValue(modifyAction.getData(), Change.CHANGE_TO_CLOB)) {
                         impactSort.get(Impact.HIGH).add(modifyAction);
                     } else {
                         impactSort.get(Impact.LOW).add(modifyAction);
@@ -165,7 +165,7 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                         if (!previous.isMandatory() && current.isMandatory()) {
                             // Won't be able to change constraint
                             String defaultValue = ((FieldMetadata) current).getData(MetadataRepository.DEFAULT_VALUE);
-                            boolean isHasNullValue = MapUtils.getBooleanValue(modifyAction.getData(), ModifyChange.HAS_NULL_VALUE);
+                            boolean isHasNullValue = MapUtils.getBooleanValue(modifyAction.getData(), Change.HAS_NULL_VALUE);
                             if (!isHasNullValue) {
                                 impactSort.get(Impact.LOW).add(modifyAction);
                             } else if (isHasNullValue && StringUtils.isBlank(defaultValue)) {
