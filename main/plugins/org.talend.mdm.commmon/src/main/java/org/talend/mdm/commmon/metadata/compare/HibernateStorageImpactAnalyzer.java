@@ -134,7 +134,12 @@ public class HibernateStorageImpactAnalyzer implements ImpactAnalyzer {
                     }
                 } else if (!ObjectUtils.equals(previousLength, currentLength)) {
                     // Won't be able to change constraint for max length
-                    impactSort.get(Impact.HIGH).add(modifyAction);
+                    if (MapUtils.getBooleanValue(modifyAction.getData(), Change.TEXT_TO_TEXT)) {
+                        impactSort.get(Impact.LOW).add(modifyAction);
+                    } else {
+                        impactSort.get(Impact.HIGH).add(modifyAction);
+                    }
+
                 } else if (!ObjectUtils.equals(previousTotalDigits, currentTotalDigits)) {
                     // TMDM-8022: issues about custom decimal type totalDigits/fractionDigits.
                     impactSort.get(Impact.HIGH).add(modifyAction);

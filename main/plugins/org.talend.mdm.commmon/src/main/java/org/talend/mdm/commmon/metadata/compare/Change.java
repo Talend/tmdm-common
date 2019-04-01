@@ -22,6 +22,8 @@ public abstract class Change {
 
     public static final String HAS_NULL_VALUE = "hasNullValue"; //$NON-NLS-1$
 
+    public static final String TEXT_TO_TEXT = "textToText"; //$NON-NLS-1$
+
     protected static final String MESSAGE_BUNDLE_NAME = "org.talend.mdm.commmon.metadata.compare.i18n.messages"; //$NON-NLS-1$
 
     protected final MetadataVisitable element;
