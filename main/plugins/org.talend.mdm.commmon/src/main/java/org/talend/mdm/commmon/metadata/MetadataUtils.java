@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2018 Talend Inc. - www.talend.com
+ * Copyright (C) 2006-2019 Talend Inc. - www.talend.com
  *
  * This source code is available under agreement available at
  * %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -505,15 +505,7 @@ public class MetadataUtils {
                                 break;
                             }
                         } while (currentLineNumber != lineNumber);
-                        if (dependencyPath.size() >= 1) {
-                            if (sortType == SortType.STRICT) {
-                                dependencyPath.add(getType(types, lineNumber)); // Include cycle start to get a better exception
-                            }
-                            // message.
-                            if (!listExistsInAnotherList(cycles, dependencyPath)) {
-                                cycles.add(dependencyPath);
-                            }
-                        }
+                        addDepencyToCycleList(sortType, types, lineNumber, cycles, dependencyPath);
                     }
                     lineNumber++;
                 }
@@ -539,14 +531,7 @@ public class MetadataUtils {
                                     dependencyPath.add(types.get(j));
                                     dependencyGraph[j][i]--;
                                 }
-                                if (dependencyPath.size() >= 1) {
-                                    if (sortType == SortType.STRICT) {
-                                        dependencyPath
-                                                .add(getType(types, lineNumber)); // Include cycle start to get a better exception
-                                    }
-                                    // message.
-                                    cycles.add(dependencyPath);
-                                }
+                                addDepencyToCycleList(sortType, types, lineNumber, cycles, dependencyPath);
                             }
                         }
                     }
@@ -645,6 +630,18 @@ public class MetadataUtils {
         return sortedTypes;
     }
 
+    private static void addDepencyToCycleList(SortType sortType, List<ComplexTypeMetadata> types, int lineNumber,
+            List<List<ComplexTypeMetadata>> cycles, List<ComplexTypeMetadata> dependencyPath) {
+        if (dependencyPath.size() >= 1) {
+            if (sortType == SortType.STRICT) {
+                dependencyPath.add(getType(types, lineNumber)); // Include cycle start to get a better exception  message.
+            }
+            if (!listExistsInAnotherList(cycles, dependencyPath)) {
+                cycles.add(dependencyPath);
+            }
+        }
+    }
+
     private static boolean equalsTwoArray(byte[][] byte1, byte[][] byte2) {
         if (byte1.length != byte2.length) {
             return false;
@@ -681,6 +678,18 @@ public class MetadataUtils {
         for (List<ComplexTypeMetadata> source : sourceList) {
             if (source.equals(checkList)) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasIncomingEdgesExceptSelf(byte[][] graph) {
+        for (int i = 0; i < graph.length;i++){
+            for (int j = 0; j < graph[i].length;j++){
+                byte column = graph[i][j];
+                if(column > 0 && i != j){
+                    return true;
+                }
             }
         }
         return false;
@@ -772,18 +781,6 @@ public class MetadataUtils {
         for (byte column : line) {
             if (column > 0) {
                 return true;
-            }
-        }
-        return false;
-    }
-
-    private static boolean hasIncomingEdgesExceptSelf(byte[][] graph) {
-        for (int i = 0; i < graph.length;i++){
-            for (int j = 0; j < graph[i].length;j++){
-                byte column = graph[i][j];
-                if(column > 0 && i != j){
-                    return true;
-                }
             }
         }
         return false;
