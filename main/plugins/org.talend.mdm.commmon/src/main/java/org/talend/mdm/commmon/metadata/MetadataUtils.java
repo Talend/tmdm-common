@@ -431,7 +431,7 @@ public class MetadataUtils {
          * networks", Communications of the ACM"
          */
         List<ComplexTypeMetadata> sortedTypes = new LinkedList<>();
-        Set<ComplexTypeMetadata> noIncomingEdges = new HashSet<>();
+        List<ComplexTypeMetadata> noIncomingEdges = new LinkedList<>();
         int lineNumber = 0;
         for (byte[] line : dependencyGraph) {
             if (!hasIncomingEdges(line)) {
