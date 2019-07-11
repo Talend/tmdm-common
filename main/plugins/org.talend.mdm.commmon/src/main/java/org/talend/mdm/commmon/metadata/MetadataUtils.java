@@ -319,6 +319,7 @@ public class MetadataUtils {
 
                 @Override
                 public byte[] visit(ComplexTypeMetadata complexType) {
+                    // if the complexType is not one entrty, it also to be checked
                     super.visit(complexType);
                     if (processedTypes.contains(complexType)) {
                         return lineContent;
@@ -466,6 +467,14 @@ public class MetadataUtils {
             Map<List<ComplexTypeMetadata>, ComplexTypeMetadata> map = new HashMap<>();
             byte[][] previousGraph = deepCopyArray(dependencyGraph);
             // use dependency graph matrix to get cyclic dependencies (if any).
+            /**
+             * if the type contains below reference chain
+             * A->A1->B->C
+             * A->A2->E->F
+             * A->A3->H->G
+             *
+             * it should cycle all the referneces(A1, A2, A3) to check mutual dependency,
+             */
             do {
                 lineNumber = 0;
                 for (byte[] line : dependencyGraph) {
@@ -521,9 +530,18 @@ public class MetadataUtils {
                         }
                     }
                     lineNumber = 0;
+                    /**
+                     * Dependency matrix
+                     *   0 1 2
+                     * 0 0 0 0
+                     * 1 0 0 1
+                     * 2 0 0 0
+                     *
+                     * if dependencyGraph[1][2] is > 0, need add the [2, 1] into the dependency list
+                     */
                     for (int j = 0; j < dependencyGraph.length; j++) {
                         byte[] line = dependencyGraph[j];
-                        if (hasIncomingEdges(line)) { // unresolved dependency (means this is a cycle start).
+                        if (hasIncomingEdges(line)) {
                             for (int i = 0; i < line.length; i++) {
                                 List<ComplexTypeMetadata> dependencyPath = new LinkedList<>();
                                 if (line[i] > 0) {
@@ -574,6 +592,16 @@ public class MetadataUtils {
                 });
 
                 //check the correct sort
+                /**
+                 * if the cycles contains below chain:
+                 *   [S]->[G]->[EP]->[EA]->[C]
+                 *   [S]->[I]->[EP]->[EA]->[C]
+                 *   [C]->[S]->[U]->[EA]
+                 *   [G]->[EP]->[EA]->[C]
+                 *
+                 *  for [EA] and [C], it have 3 times for EA is before C, and 1 times for EA is after C,
+                 *  so it will be set the EA is before C
+                 */
                 Set<ComplexTypeMetadata> nonSortedTypes = new HashSet<>();
                 for (List<ComplexTypeMetadata> cycle : cycles) {
                     nonSortedTypes.addAll(cycle);
@@ -614,6 +642,13 @@ public class MetadataUtils {
                     }
                 }
                 //Re-sort
+                /**
+                 * for below chain,
+                 *  [SE]->[G]->[EP]->[EA]->[C]
+                 *  [SC]->[I]->[EP]->[EA]->[C]
+                 * it need to merge to one chain and keep origin order:
+                 *  [SE]->[G]->[SC]->[I]->[EP]->[EA]->[C]
+                 */
                 LinkedList<ComplexTypeMetadata> ordersList = new LinkedList<>();
                 if (cycles.size() >= 1) {
                     ordersList.addAll(cycles.get(0));
@@ -643,6 +678,12 @@ public class MetadataUtils {
     }
 
     private static boolean equalsTwoArray(byte[][] byte1, byte[][] byte2) {
+        if (byte1 == null && byte2 == null) {
+            return true;
+        }
+        if ((byte1 == null && byte2 != null) || (byte1 != null && byte2 == null)) {
+            return false;
+        }
         if (byte1.length != byte2.length) {
             return false;
         }
