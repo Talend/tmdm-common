@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.xml.XMLConstants;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.log4j.Logger;
 
@@ -66,7 +67,7 @@ public class MetadataUtils {
         List<ComplexTypeMetadata> sortedTypes = sortTypes(repository, SortType.LENIENT);
         int totalNumber = sortedTypes.size();
 
-        Map<ComplexTypeMetadata, Long> entityRank = new HashMap<ComplexTypeMetadata, Long>();
+        Map<ComplexTypeMetadata, Long> entityRank = new HashMap<>();
         for (ComplexTypeMetadata currentType : sortedTypes) {
             if (currentType.isInstantiable()) {
                 double rank = totalNumber;
@@ -216,7 +217,7 @@ public class MetadataUtils {
      * cyclic dependency. Error message contains information on where the cycle is.
      */
     public static List<ComplexTypeMetadata> sortTypes(MetadataRepository repository, SortType sortType) {
-        List<ComplexTypeMetadata> types = new ArrayList<ComplexTypeMetadata>(repository.getUserComplexTypes());
+        List<ComplexTypeMetadata> types = new ArrayList<>(repository.getUserComplexTypes());
         return _sortTypes(repository, types, sortType);
     }
 
@@ -296,7 +297,7 @@ public class MetadataUtils {
          * Compute additional data for topological sorting
          */
         // Ensure to get only top level types (TMDM-7235)
-        final List<ComplexTypeMetadata> types = new ArrayList<ComplexTypeMetadata>();
+        final List<ComplexTypeMetadata> types = new ArrayList<>();
         for (ComplexTypeMetadata currentType : typesSubSet) {
             if (currentType instanceof ContainedComplexTypeMetadata) {
                 types.add(currentType.getEntity());
@@ -310,14 +311,16 @@ public class MetadataUtils {
         for (final ComplexTypeMetadata type : types) {
             dependencyGraph[getId(type, types)] = type.accept(new DefaultMetadataVisitor<byte[]>() {
 
-                final Set<TypeMetadata> processedTypes = new HashSet<TypeMetadata>();
+                final Set<TypeMetadata> processedTypes = new HashSet<>();
 
-                final Set<TypeMetadata> processedReferences = new HashSet<TypeMetadata>();
+                final Set<TypeMetadata> processedReferences = new HashSet<>();
 
                 final byte[] lineContent = new byte[typeNumber]; // Stores dependencies of current type
 
                 @Override
                 public byte[] visit(ComplexTypeMetadata complexType) {
+                    // if the complexType is not one entrty, it also to be checked
+                    super.visit(complexType);
                     if (processedTypes.contains(complexType)) {
                         return lineContent;
                     } else {
@@ -333,7 +336,6 @@ public class MetadataUtils {
                                 }
                             }
                         }
-                        super.visit(complexType);
                     }
                     if (complexType.isInstantiable()) {
                         processedTypes.clear();
@@ -429,8 +431,8 @@ public class MetadataUtils {
          * TOPOLOGICAL SORTING See "Kahn, A. B. (1962), "Topological sorting of large
          * networks", Communications of the ACM"
          */
-        List<ComplexTypeMetadata> sortedTypes = new LinkedList<ComplexTypeMetadata>();
-        Set<ComplexTypeMetadata> noIncomingEdges = new HashSet<ComplexTypeMetadata>();
+        List<ComplexTypeMetadata> sortedTypes = new LinkedList<>();
+        List<ComplexTypeMetadata> noIncomingEdges = new LinkedList<>();
         int lineNumber = 0;
         for (byte[] line : dependencyGraph) {
             if (!hasIncomingEdges(line)) {
@@ -461,64 +463,114 @@ public class MetadataUtils {
         }
         // Check for cycles
         if (sortedTypes.size() < dependencyGraph.length) {
-            lineNumber = 0;
-            List<List<ComplexTypeMetadata>> cycles = new LinkedList<List<ComplexTypeMetadata>>();
+            List<List<ComplexTypeMetadata>> cycles = new LinkedList<>();
+            Map<List<ComplexTypeMetadata>, ComplexTypeMetadata> map = new HashMap<>();
+            byte[][] previousGraph = deepCopyArray(dependencyGraph);
             // use dependency graph matrix to get cyclic dependencies (if any).
-            for (byte[] line : dependencyGraph) {
-                if (hasIncomingEdges(line)) { // unresolved dependency (means this is a cycle start).
-                    List<ComplexTypeMetadata> dependencyPath = new LinkedList<ComplexTypeMetadata>();
-                    int currentLineNumber = lineNumber;
-                    do {
-                        ComplexTypeMetadata type = getType(types, currentLineNumber);
-                        if (dependencyPath.contains(type)) {
-                            break;
-                        }
-                        dependencyPath.add(type);
-                        InboundReferences incomingReferences = new InboundReferences(type);
-                        Set<ReferenceFieldMetadata> incomingFields = repository.accept(incomingReferences);
-                        boolean hasMetDependency = false;
-                        for (ReferenceFieldMetadata incomingField : incomingFields) {
-                            ComplexTypeMetadata containingType = repository.getComplexType(incomingField.getEntityTypeName());
-                            // Containing type might be null if incoming reference is in the reusable type definition
-                            // (but we only care about the entity relations, so use of the reusable types
-                            // in entities).
-                            if (containingType != null && !containingType.equals(type)) {
-                                int currentDependency = getId(containingType, types);
-                                if (hasIncomingEdges(dependencyGraph[currentDependency])) {
-                                    dependencyGraph[currentLineNumber][currentDependency]--;
-                                    currentLineNumber = currentDependency;
-                                    hasMetDependency = true;
-                                    break;
+            /**
+             * if the type contains below reference chain
+             * A->A1->B->C
+             * A->A2->E->F
+             * A->A3->H->G
+             *
+             * it should cycle all the referneces(A1, A2, A3) to check mutual dependency,
+             */
+            do {
+                lineNumber = 0;
+                for (byte[] line : dependencyGraph) {
+                    if (hasIncomingEdges(line)) { // unresolved dependency (means this is a cycle start).
+                        List<ComplexTypeMetadata> dependencyPath = new LinkedList<>();
+                        int currentLineNumber = lineNumber;
+                        do {
+                            ComplexTypeMetadata type = getType(types, currentLineNumber);
+                            if (dependencyPath.contains(type)) {
+                                break;
+                            }
+                            dependencyPath.add(type);
+                            InboundReferences incomingReferences = new InboundReferences(type);
+                            Set<ReferenceFieldMetadata> incomingFields = repository.accept(incomingReferences);
+                            boolean hasMetDependency = false;
+                            for (ReferenceFieldMetadata incomingField : incomingFields) {
+                                ComplexTypeMetadata containingType = repository.getComplexType(incomingField.getEntityTypeName());
+                                // Containing type might be null if incoming reference is in the reusable type definition
+                                // (but we only care about the entity relations, so use of the reusable types
+                                // in entities).
+                                if (containingType != null && !containingType.equals(type)) {
+                                    int currentDependency = getId(containingType, types);
+                                    List<ComplexTypeMetadata> list = new LinkedList<>(dependencyPath);
+                                    list.add(containingType);
+                                    if (hasIncomingEdges(dependencyGraph[currentDependency]) && !map.containsKey(list)) {
+                                        if (dependencyGraph[currentDependency][currentLineNumber] > 0) {
+                                            dependencyGraph[currentDependency][currentLineNumber]--;
+                                        }
+                                        currentLineNumber = currentDependency;
+                                        hasMetDependency = true;
+                                        map.put(list, containingType);
+                                        break;
+                                    }
                                 }
                             }
+                            if (!hasMetDependency) {
+                                break;
+                            }
+                        } while (currentLineNumber != lineNumber);
+                        addDepencyToCycleList(sortType, types, lineNumber, cycles, dependencyPath);
+                    }
+                    lineNumber++;
+                }
+                if (!equalsTwoArray(previousGraph, dependencyGraph)) {
+                    previousGraph = deepCopyArray(dependencyGraph);
+                } else {
+                    //remove dependency by itself
+                    for (int i = 0; i < dependencyGraph.length; i++) {
+                        for (int j = 0; j < dependencyGraph[i].length; j++) {
+                            if (i == j && dependencyGraph[i][j] > 0) {
+                                dependencyGraph[i][j] = 0;
+                            }
                         }
-                        if (!hasMetDependency) {
-                            break;
+                    }
+                    lineNumber = 0;
+                    /**
+                     * Dependency matrix
+                     *   0 1 2
+                     * 0 0 0 0
+                     * 1 0 0 1
+                     * 2 0 0 0
+                     *
+                     * if dependencyGraph[1][2] is > 0, need add the [2, 1] into the dependency list
+                     */
+                    for (int j = 0; j < dependencyGraph.length; j++) {
+                        byte[] line = dependencyGraph[j];
+                        if (hasIncomingEdges(line)) {
+                            for (int i = 0; i < line.length; i++) {
+                                List<ComplexTypeMetadata> dependencyPath = new LinkedList<>();
+                                if (line[i] > 0) {
+                                    dependencyPath.add(types.get(i));
+                                    dependencyPath.add(types.get(j));
+                                    dependencyGraph[j][i]--;
+                                }
+                                addDepencyToCycleList(sortType, types, lineNumber, cycles, dependencyPath);
+                            }
                         }
-                    } while (currentLineNumber != lineNumber);
-                    if (dependencyPath.size() >= 1) {
-                        dependencyPath.add(getType(types, lineNumber)); // Include cycle start to get a better exception
-                        // message.
-                        cycles.add(dependencyPath);
                     }
                 }
-                lineNumber++;
-            }
+            } while (hasIncomingEdgesExceptSelf(dependencyGraph));
             // Depending on sort type, report as exception or switch to a "best effort" sort
             switch (sortType) {
             case STRICT:
                 if (!cycles.isEmpty()) { // Found cycle(s): report it/them as exception
                     Iterator<List<ComplexTypeMetadata>> cyclesIterator = cycles.iterator();
-                    Map<ComplexTypeMetadata, List<FieldMetadata>> cycleHints = new HashMap<ComplexTypeMetadata, List<FieldMetadata>>();
+                    Map<ComplexTypeMetadata, List<FieldMetadata>> cycleHints = new HashMap<>();
                     while (cyclesIterator.hasNext()) {
                         Iterator<ComplexTypeMetadata> dependencyPathIterator = cyclesIterator.next().iterator();
                         ComplexTypeMetadata previous = null;
                         while (dependencyPathIterator.hasNext()) {
                             ComplexTypeMetadata currentType = dependencyPathIterator.next();
-                            ArrayList<FieldMetadata> fields = new ArrayList<FieldMetadata>();
+                            ArrayList<FieldMetadata> fields = new ArrayList<>();
                             cycleHints.put(currentType, fields);
                             if (previous != null) {
-                                Set<ReferenceFieldMetadata> inboundReferences = repository.accept(new InboundReferences(currentType));
+                                Set<ReferenceFieldMetadata> inboundReferences = repository
+                                        .accept(new InboundReferences(currentType));
                                 for (ReferenceFieldMetadata inboundReference : inboundReferences) {
                                     ComplexTypeMetadata entity = repository.getComplexType(inboundReference.getEntityTypeName());
                                     if (entity != null) {
@@ -534,31 +586,189 @@ public class MetadataUtils {
             case LENIENT:
                 Collections.sort(cycles, new Comparator<List<ComplexTypeMetadata>>() {
 
-                    @Override
-                    public int compare(List<ComplexTypeMetadata> o1, List<ComplexTypeMetadata> o2) {
-                        if (o1.size() > o2.size()) {
-                            return -1;
-                        } else if (o1.size() < o2.size()) {
-                            return 1;
-                        } else {
-                            return 0;
-                        }
+                    @Override public int compare(List<ComplexTypeMetadata> o1, List<ComplexTypeMetadata> o2) {
+                        return Integer.compare(o2.size(), o1.size());
                     }
                 });
+
+                //check the correct sort
+                /**
+                 * if the cycles contains below chain:
+                 *   [S]->[G]->[EP]->[EA]->[C]
+                 *   [S]->[I]->[EP]->[EA]->[C]
+                 *   [C]->[S]->[U]->[EA]
+                 *   [G]->[EP]->[EA]->[C]
+                 *
+                 *  for [EA] and [C], it have 3 times for EA is before C, and 1 times for EA is after C,
+                 *  so it will be set the EA is before C
+                 */
+                Set<ComplexTypeMetadata> nonSortedTypes = new HashSet<>();
                 for (List<ComplexTypeMetadata> cycle : cycles) {
-                    cycle.remove(cycle.size() - 1);
-                    for (ComplexTypeMetadata cycleElement : cycle) {
-                        if (!sortedTypes.contains(cycleElement)) {
-                            sortedTypes.add(cycleElement);
+                    nonSortedTypes.addAll(cycle);
+                }
+                List<ComplexTypeMetadata> complexTypeMetadataList = new ArrayList<>(nonSortedTypes);
+                byte[][] graph = new byte[complexTypeMetadataList.size()][complexTypeMetadataList.size()];
+                for (int i = 0; i < complexTypeMetadataList.size(); i++) {
+                    ComplexTypeMetadata complexTypeMetadata = complexTypeMetadataList.get(i);
+                    for (int j = 0; j < complexTypeMetadataList.size(); j++) {
+                        ComplexTypeMetadata nextComplexTypeMetadata = complexTypeMetadataList.get(j);
+                        if (complexTypeMetadata == nextComplexTypeMetadata) {
+                            continue;
+                        }
+                        int count = 0;
+                        for (List<ComplexTypeMetadata> cycle : cycles) {
+                            int mainIndex = cycle.indexOf(complexTypeMetadata);
+                            int nextIndex = cycle.indexOf(nextComplexTypeMetadata);
+                            if (mainIndex >= 0 && nextIndex >= 0) {
+                                if (mainIndex < nextIndex) {
+                                    graph[i][j] += 1;
+                                } else {
+                                    count++;
+                                }
+                            }
+                        }
+                        if (count > 0 && graph[i][j] > count) {
+                            for (List<ComplexTypeMetadata> cycle : cycles) {
+                                int mainIndex = cycle.indexOf(complexTypeMetadata);
+                                int nextIndex = cycle.indexOf(nextComplexTypeMetadata);
+                                if (mainIndex >= 0 && nextIndex >= 0) {
+                                    if (mainIndex > nextIndex) {
+                                        cycle.remove(complexTypeMetadata);
+                                        cycle.add(nextIndex, complexTypeMetadata);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
+                //Re-sort
+                /**
+                 * for below chain,
+                 *  [SE]->[G]->[EP]->[EA]->[C]
+                 *  [SC]->[I]->[EP]->[EA]->[C]
+                 * it need to merge to one chain and keep origin order:
+                 *  [SE]->[G]->[SC]->[I]->[EP]->[EA]->[C]
+                 */
+                LinkedList<ComplexTypeMetadata> ordersList = new LinkedList<>();
+                if (cycles.size() >= 1) {
+                    ordersList.addAll(cycles.get(0));
+                }
+                for (int i = 1; i < cycles.size(); i++) {
+                    addResultList(ordersList, cycles.get(i));
+                }
+                sortedTypes.addAll(ordersList);
                 break;
             default:
                 throw new NotImplementedException("Sort '" + sortType + "' is not implemented.");
             }
         }
         return sortedTypes;
+    }
+
+    private static void addDepencyToCycleList(SortType sortType, List<ComplexTypeMetadata> types, int lineNumber,
+            List<List<ComplexTypeMetadata>> cycles, List<ComplexTypeMetadata> dependencyPath) {
+        if (dependencyPath.size() >= 1) {
+            if (sortType == SortType.STRICT) {
+                dependencyPath.add(getType(types, lineNumber)); // Include cycle start to get a better exception  message.
+            }
+            if (!listExistsInAnotherList(cycles, dependencyPath)) {
+                cycles.add(dependencyPath);
+            }
+        }
+    }
+
+    private static boolean equalsTwoArray(byte[][] byte1, byte[][] byte2) {
+        if (byte1 == null && byte2 == null) {
+            return true;
+        }
+        if ((byte1 == null && byte2 != null) || (byte1 != null && byte2 == null)) {
+            return false;
+        }
+        if (byte1.length != byte2.length) {
+            return false;
+        }
+        for (int i = 0; i < byte1.length; i++) {
+            if (byte1[i].length != byte2[i].length) {
+                return false;
+            }
+            for (int j = 0; j < byte1[i].length; j++) {
+                if (byte1[i][j] != byte2[i][j]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private static byte[][] deepCopyArray(byte[][] source) {
+        byte[][] target = new byte[source.length][];
+        for (int i = 0; i < source.length; i++) {
+            target[i] = ArrayUtils.clone(source[i]);
+        }
+        return target;
+    }
+
+    private static boolean listExistsInAnotherList(List<List<ComplexTypeMetadata>> sourceList,
+            List<ComplexTypeMetadata> checkList) {
+        if (checkList == null || checkList.isEmpty()) {
+            return false;
+        }
+        if (sourceList == null || sourceList.isEmpty()) {
+            return false;
+        }
+        for (List<ComplexTypeMetadata> source : sourceList) {
+            if (source.equals(checkList)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasIncomingEdgesExceptSelf(byte[][] graph) {
+        for (int i = 0; i < graph.length;i++){
+            for (int j = 0; j < graph[i].length;j++){
+                byte column = graph[i][j];
+                if(column > 0 && i != j){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static void addResultList(LinkedList<ComplexTypeMetadata> ordersList, List<ComplexTypeMetadata> cycleList) {
+        int start = 0;
+        int end = 0;
+        boolean exists = false;
+        boolean hasNoContains = false;
+        List<ComplexTypeMetadata> copyCycleList = new LinkedList<>(cycleList);
+        ComplexTypeMetadata complexTypeMetadata = null;
+        for (int j = 0; j < cycleList.size(); j++) {
+            complexTypeMetadata = cycleList.get(j);
+            if (!hasNoContains) {
+                start = j;
+                hasNoContains = !ordersList.contains(complexTypeMetadata);
+            }
+            exists = ordersList.contains(complexTypeMetadata);
+            if (exists && hasNoContains) {
+                end = cycleList.indexOf(complexTypeMetadata);
+                copyCycleList.remove(complexTypeMetadata);
+                break;
+            } else if (exists) {
+                copyCycleList.remove(complexTypeMetadata);
+            }
+        }
+        if (exists && hasNoContains) {
+            ordersList.addAll(ordersList.indexOf(complexTypeMetadata), cycleList.subList(start, end));
+            copyCycleList.removeAll(cycleList.subList(start, end));
+        }
+        if (!exists && hasNoContains) {
+            ordersList.add(complexTypeMetadata);
+            copyCycleList.remove(complexTypeMetadata);
+        }
+        if (!copyCycleList.isEmpty()) {
+            addResultList(ordersList, copyCycleList);
+        }
     }
 
     private static StringBuilder logDependencyMatrix(byte[][] dependencyGraph) {
@@ -670,7 +880,7 @@ public class MetadataUtils {
      * @return
      */
     public static boolean isAnonymousType(ComplexTypeMetadata type) {
-       return type.getName().startsWith("X_ANONYMOUS"); //$NON-NLS-1$
+        return type.getName().startsWith("X_ANONYMOUS"); //$NON-NLS-1$
     }
 }
 
