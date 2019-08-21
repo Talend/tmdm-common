@@ -43,8 +43,8 @@
 
         <xalan.version>2.7.1</xalan.version>
         <saxon.version>9.0.0.8</saxon.version>
-        <audit.version>0.20.0</audit.version>
         <jaxb.version>2.3.0</jaxb.version>
+        <daikon.version>1.6.0</daikon.version>
     </properties>
     <repositories>
         <repository>
@@ -656,7 +656,7 @@
             <dependency>
                 <groupId>org.talend.daikon</groupId>
                 <artifactId>daikon-audit</artifactId>
-                <version>${audit.version}</version>
+                <version>${daikon.version}</version>
             </dependency>
 
             <!-- 3rd party dependencies -->
