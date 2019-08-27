@@ -19,7 +19,7 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang.StringUtils;
-import org.talend.utils.security.AES;
+import org.talend.utils.security.BouncyCastleEncryption;
 
 public class Crypt {
 
@@ -124,7 +124,7 @@ public class Crypt {
         if (data == null || data.isEmpty()) {
             return StringUtils.EMPTY;
         }
-        String encryptedData = AES.getInstance().encrypt(data) + ENCRYPT;
+        String encryptedData = BouncyCastleEncryption.getInstance().encrypt(data) + ENCRYPT;
         return encryptedData;
     }
 
@@ -137,7 +137,7 @@ public class Crypt {
             return encryptedData;
         }
         encryptedData = encryptedData.substring(0, encryptedData.length() - ENCRYPT.length());
-        String decryptedData = AES.getInstance().decrypt(encryptedData);
+        String decryptedData = BouncyCastleEncryption.getInstance().decrypt(encryptedData);
         return decryptedData;
     }
 
