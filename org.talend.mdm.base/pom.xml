@@ -44,7 +44,7 @@
         <xalan.version>2.7.1</xalan.version>
         <saxon.version>9.0.0.8</saxon.version>
         <jaxb.version>2.3.0</jaxb.version>
-        <daikon.version>1.6.0</daikon.version>
+        <daikon.version>1.5.0</daikon.version>
     </properties>
     <repositories>
         <repository>
