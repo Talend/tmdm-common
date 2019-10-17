@@ -25,7 +25,7 @@
         <gwt.dnd.version>3.1.2</gwt.dnd.version>
 
         <apache.httpcomponents.version>4.5.10</apache.httpcomponents.version>
-        <spring.version>4.3.7.RELEASE</spring.version>
+        <spring.version>4.3.23.RELEASE</spring.version>
         <spring.security.version>4.2.2.RELEASE</spring.security.version>
         <cxf.version>3.2.9</cxf.version>
         <powermock.version>1.4.12</powermock.version>
@@ -1147,7 +1147,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>${spring.version}</version>
+                <version>4.3.7.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -1167,7 +1167,7 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
-                <version>4.2.4.RELEASE</version>
+                <version>4.2.13.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
