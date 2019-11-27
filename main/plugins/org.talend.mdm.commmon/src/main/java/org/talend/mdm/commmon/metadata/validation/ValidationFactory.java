@@ -84,6 +84,7 @@ public class ValidationFactory {
         rules.add(new FieldTypeValidationRule(field));
         rules.add(new VisibilityValidationRule(field));
         rules.add(new PermissionValidationRule(field));
+        rules.add(new ElementNameValidationRule(field));
         return new CompositeValidationRule(rules.toArray(new ValidationRule[rules.size()]));
     }
 
@@ -103,6 +104,7 @@ public class ValidationFactory {
         rules.add(new VisibilityValidationRule(field));
         rules.add(new CircleFieldInheritanceRule(field));
         rules.add(new PermissionValidationRule(field));
+        rules.add(new ElementNameValidationRule(field));
         return new CompositeValidationRule(rules.toArray(new ValidationRule[rules.size()]));
     }
 
@@ -140,6 +142,7 @@ public class ValidationFactory {
         rules.add(new PrimaryKeyInfoValidationRule(type));
         rules.add(new XSDAttributeValidationRule(type));
         rules.add(new PermissionValidationRule(type));
+        rules.add(new ElementNameValidationRule(type));
         if (!type.isInstantiable()) {
             rules.add(new UnusedReusableTypeValidationRule(type));
         } else {
