@@ -36,41 +36,47 @@ public class ElementNameValidationRule implements ValidationRule {
         if (ctype != null) {
             boolean isEntity = ctype.isInstantiable(); 
             if(isEntity && !isValid(ctype.getName())) {
-                handler.error( ctype, "Name of entity '" + ctype.getName() + "' contains invalid character.",
+                handler.error(ctype, "Name of entity '" + ctype.getName() + "' contains invalid character",
                         ctype.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
                         ctype.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
                         ctype.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
                         ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
+
                 return false;
             } else if(!isEntity && !isValid(ctype.getName())) {
-                handler.error( ctype, "Name of complex type '" + ctype.getName() + "' contains invalid character.",
+                handler.error(ctype, "Name of complex type '" + ctype.getName() + "' contains invalid character",
                         ctype.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
                         ctype.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
                         ctype.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
                         ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
+
                 return false;
             }
         }
 
         if (stype != null) {
              if(!isValid(stype.getName())) {
-                 handler.error( stype, "Name of field '" + stype.getName() + "' contains invalid character.",
+                handler.error(stype, "Name of field '" + stype.getName() + "' contains invalid character",
                          stype.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
                          stype.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
                          stype.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
                          ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
+
                  return false;
              }
         }
         
         if(containerField != null) {
             if(!isValid(containerField.getName())) {
-                handler.error( containerField, "Name of field '" + containerField.getName() + "' contains invalid character.",
-                        containerField.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
-                        containerField.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
-                        containerField.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
-                        ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
-                return false;
+                if (!containerField.getPath().startsWith(containerField.getEntityTypeName())) {
+                    handler.error(containerField, "Name of field '" + containerField.getName() + "' contains invalid character",
+                            containerField.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
+                            containerField.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
+                            containerField.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
+                            ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
+
+                    return false;
+                }
             }
         }
         
