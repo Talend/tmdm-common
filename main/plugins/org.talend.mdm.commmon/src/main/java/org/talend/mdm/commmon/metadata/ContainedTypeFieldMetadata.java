@@ -58,6 +58,8 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
 
     private boolean isReference;
 
+    private boolean isFieldReferenceToEntity;// if is a field referenced to another entity
+
     public ContainedTypeFieldMetadata(ComplexTypeMetadata containingType,
             boolean isMany,
             boolean isMandatory,
@@ -67,7 +69,8 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
             List<String> hideUsers,
             List<String> workflowAccessRights,
             String visibilityRule) {
-        this(containingType,isMany,isMandatory,name,fieldType,false,allowWriteUsers,hideUsers,workflowAccessRights,visibilityRule);
+        this(containingType, isMany, isMandatory, name, fieldType, false, false, allowWriteUsers, hideUsers, workflowAccessRights,
+                visibilityRule);
     }
 
     public ContainedTypeFieldMetadata(ComplexTypeMetadata containingType,
@@ -76,7 +79,7 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
             String name,
             ComplexTypeMetadata fieldType,
             boolean isReference,
-            List<String> allowWriteUsers,
+            boolean isFieldReferenceToEntity, List<String> allowWriteUsers,
             List<String> hideUsers,
             List<String> workflowAccessRights,
             String visibilityRule) {
@@ -87,6 +90,7 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
         this.isMandatory = isMandatory;
         this.fieldType = ContainedComplexTypeMetadata.contain(fieldType, this);
         this.isReference = isReference;
+        this.isFieldReferenceToEntity = isFieldReferenceToEntity;
         this.containingType = containingType;
         this.declaringType = containingType;
         this.isMany = isMany;
@@ -219,11 +223,11 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
         ContainedTypeFieldMetadata copy;
         if (fieldType instanceof ContainedComplexTypeMetadata) {
             copy = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory, name,
-                    ((ContainedComplexTypeMetadata) fieldType).getContainedType(), isReference,
+                    ((ContainedComplexTypeMetadata) fieldType).getContainedType(), isReference, isFieldReferenceToEntity,
                     allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
         } else {
             copy = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory, name, fieldType, isReference,
-                    allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
+                    isFieldReferenceToEntity, allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
         }
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
@@ -261,6 +265,10 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
 
     public boolean isReference() {
         return this.isReference;
+    }
+
+    public boolean isFieldReferenceToEntity() {
+        return this.isFieldReferenceToEntity;
     }
 
     @Override

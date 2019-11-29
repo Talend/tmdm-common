@@ -56,7 +56,7 @@ public class ElementNameValidationRule implements ValidationRule {
 
         if (stype != null) {
              if(!isValid(stype.getName())) {
-                handler.error(stype, "Name of field '" + stype.getName() + "' contains invalid character",
+                handler.error(stype, "Name of simple type field '" + stype.getName() + "' contains invalid character",
                          stype.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
                          stype.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
                          stype.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
@@ -67,16 +67,15 @@ public class ElementNameValidationRule implements ValidationRule {
         }
         
         if(containerField != null) {
-            if(!isValid(containerField.getName())) {
-                if (!containerField.getPath().startsWith(containerField.getEntityTypeName())) {
-                    handler.error(containerField, "Name of field '" + containerField.getName() + "' contains invalid character",
-                            containerField.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
-                            containerField.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
-                            containerField.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
-                            ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
+            if (!isValid(containerField.getName()) && !containerField.isFieldReferenceToEntity()) {
+                handler.error(containerField,
+                        "Name of complex type field '" + containerField.getName() + "' contains invalid character",
+                        containerField.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
+                        containerField.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
+                        containerField.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
+                        ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
 
-                    return false;
-                }
+                return false;
             }
         }
         

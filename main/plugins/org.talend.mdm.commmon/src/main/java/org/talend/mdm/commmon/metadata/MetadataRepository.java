@@ -742,18 +742,19 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             }
             if (element.getResolvedElementDeclaration() != null
                     && element.getResolvedElementDeclaration().getTargetNamespace() == null) {
-                fieldMetadata = createFieldMetadata(element.getResolvedElementDeclaration(), currentTypeStack.peek(), minOccurs,
-                        maxOccurs);
+                fieldMetadata = createFieldMetadata(element.getResolvedElementDeclaration(),
+                        element.getResolvedElementDeclaration() != element, currentTypeStack.peek(),
+                        minOccurs, maxOccurs);
             } else {
-                fieldMetadata = createFieldMetadata(element, currentTypeStack.peek(), minOccurs, maxOccurs);
+                fieldMetadata = createFieldMetadata(element, false, currentTypeStack.peek(), minOccurs, maxOccurs);
             }
             currentTypeStack.peek().addField(fieldMetadata);
         }
     }
 
     // TODO Refactor!
-    private FieldMetadata createFieldMetadata(XSDElementDeclaration element, ComplexTypeMetadata containingType, int minOccurs,
-            int maxOccurs) {
+    private FieldMetadata createFieldMetadata(XSDElementDeclaration element, boolean isFieldReferenceToEntity, ComplexTypeMetadata containingType,
+            int minOccurs, int maxOccurs) {
         String fieldName = element.getName();
         if (maxOccurs > 0 && minOccurs > maxOccurs) { // Eclipse XSD does not check this
             throw new IllegalArgumentException("Can not parse information on field '" + element.getQName() + "' of type '"
@@ -772,7 +773,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
         }
         boolean isMandatory = minOccurs > 0;
         boolean isContained = false;
-        boolean isReference = state.isReference();
+        boolean isAnnotationReference = state.isReference();// fk reference, lookup field reference
         boolean fkIntegrity = state.isFkIntegrity();
         boolean fkIntegrityOverride = state.isFkIntegrityOverride();
         boolean isFKMainRender = state.isFKMainRender();
@@ -804,7 +805,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
             fieldType.setData(XSD_DOM_ELEMENT, element.getElement());
             fieldType.setData(MIN_OCCURS, minOccurs);
             fieldType.setData(MAX_OCCURS, maxOccurs);
-            if (isReference) {
+            if (isAnnotationReference) {
                 ReferenceFieldMetadata referenceField = new ReferenceFieldMetadata(containingType, false, isMany, isMandatory,
                         fieldName, (ComplexTypeMetadata) referencedType, referencedField, foreignKeyInfo, foreignKeyInfoFormat,
                         fkIntegrity, fkIntegrityOverride, fieldType, allowWriteUsers, hideUsers, workflowAccessRights,
@@ -913,8 +914,8 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
         }
         if (isContained) {
             ContainedTypeFieldMetadata containedField = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory,
-                    fieldName, (ComplexTypeMetadata) fieldType, isReference, allowWriteUsers, hideUsers, workflowAccessRights,
-                    visibilityRule);
+                    fieldName, (ComplexTypeMetadata) fieldType, isAnnotationReference, isFieldReferenceToEntity, allowWriteUsers,
+                    hideUsers, workflowAccessRights, visibilityRule);
             containedField.setData(XSD_LINE_NUMBER, XSDParser.getStartLine(element.getElement()));
             containedField.setData(XSD_COLUMN_NUMBER, XSDParser.getStartColumn(element.getElement()));
             containedField.setData(XSD_ELEMENT, element);
