@@ -79,6 +79,13 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
             String name,
             ComplexTypeMetadata fieldType,
             boolean isReference,
+            List<String> allowWriteUsers, List<String> hideUsers, List<String> workflowAccessRights, String visibilityRule) {
+        this(containingType, isMany, isMandatory, name, fieldType, isReference, false, allowWriteUsers, hideUsers,
+                workflowAccessRights, visibilityRule);
+    }
+
+    public ContainedTypeFieldMetadata(ComplexTypeMetadata containingType, boolean isMany, boolean isMandatory, String name,
+            ComplexTypeMetadata fieldType, boolean isReference,
             boolean isFieldReferenceToEntity, List<String> allowWriteUsers,
             List<String> hideUsers,
             List<String> workflowAccessRights,
