@@ -4,6 +4,7 @@ import java.util.regex.Pattern;
 
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadataImpl;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
+import org.talend.mdm.commmon.metadata.FieldMetadata;
 import org.talend.mdm.commmon.metadata.MetadataRepository;
 import org.talend.mdm.commmon.metadata.SimpleTypeFieldMetadata;
 import org.talend.mdm.commmon.metadata.ValidationError;
@@ -44,13 +45,16 @@ public class ElementNameValidationRule implements ValidationRule {
 
                 return false;
             } else if(!isEntity && !isValid(ctype.getName())) {
-                handler.error(ctype, "Name of complex type '" + ctype.getName() + "' contains invalid character",
-                        ctype.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
-                        ctype.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
-                        ctype.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
-                        ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
+                FieldMetadata container = ctype.getContainer();
+                if (container == null) {// 'null' means it's top level complex type
+                    handler.error(ctype, "Name of complex type '" + ctype.getName() + "' contains invalid character",
+                            ctype.<Element> getData(MetadataRepository.XSD_DOM_ELEMENT),
+                            ctype.<Integer> getData(MetadataRepository.XSD_LINE_NUMBER),
+                            ctype.<Integer> getData(MetadataRepository.XSD_COLUMN_NUMBER),
+                            ValidationError.NAME_CONTAINS_INVALID_CHARACTER);
 
-                return false;
+                    return false;
+                }
             }
         }
 
