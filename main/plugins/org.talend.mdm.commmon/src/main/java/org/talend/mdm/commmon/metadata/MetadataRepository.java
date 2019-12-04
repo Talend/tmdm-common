@@ -167,7 +167,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     private final Map<String, Map<String, TypeMetadata>> entityTypes = new HashMap<String, Map<String, TypeMetadata>>();
 
     // designed to element(entity without key info) name validation check
-    private final Map<String, Map<String, TypeMetadata>> entityTypes_withoutPk = new HashMap<String, Map<String, TypeMetadata>>();
+    private final Map<String, Map<String, TypeMetadata>> entityTypesWithoutPk = new HashMap<String, Map<String, TypeMetadata>>();
 
     private final Map<String, Map<String, TypeMetadata>> nonInstantiableTypes = new HashMap<String, Map<String, TypeMetadata>>();
 
@@ -253,7 +253,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
     }
 
     private Collection<ComplexTypeMetadata> getUserComplexTypesWithoutPK() {
-        return _getUserComplexTypes(entityTypes_withoutPk);
+        return _getUserComplexTypes(entityTypesWithoutPk);
     }
 
     private Collection<ComplexTypeMetadata> _getUserComplexTypes(Map<String, Map<String, TypeMetadata>> entityTypes) {
@@ -351,7 +351,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
         // "Freeze" all reusable type usages in the data model.
         freezeUsages();
         entityTypes.put(getUserNamespace(), freezeTypes(entityTypes.get(getUserNamespace())));
-        entityTypes_withoutPk.put(getUserNamespace(), freezeTypes(entityTypes_withoutPk.get(getUserNamespace())));
+        entityTypesWithoutPk.put(getUserNamespace(), freezeTypes(entityTypesWithoutPk.get(getUserNamespace())));
         // Validate types
         for (TypeMetadata type : getUserComplexTypes()) {
             if (!XMLConstants.W3C_XML_SCHEMA_NS_URI.equals(type.getNamespace())) {
@@ -484,7 +484,7 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
 
     public void close() {
         entityTypes.clear();
-        entityTypes_withoutPk.clear();
+        entityTypesWithoutPk.clear();
         nonInstantiableTypes.clear();
     }
 
@@ -722,12 +722,12 @@ public class MetadataRepository implements MetadataVisitable, XSDVisitor, Serial
                 Map<String, TypeMetadata> userEntityTypes = entityTypes.get(getUserNamespace());
                 if (userEntityTypes != null) {
                     // record entity type without any key info
-                    Map<String, TypeMetadata> userEntityTypes_withoutPK = entityTypes_withoutPk.get(getUserNamespace());
-                    if (userEntityTypes_withoutPK == null) {
-                        userEntityTypes_withoutPK = new HashMap<>();
-                        entityTypes_withoutPk.put(getUserNamespace(), userEntityTypes_withoutPK);
+                    Map<String, TypeMetadata> userEntityTypesWithoutPK = entityTypesWithoutPk.get(getUserNamespace());
+                    if (userEntityTypesWithoutPK == null) {
+                        userEntityTypesWithoutPK = new HashMap<>();
+                        entityTypesWithoutPk.put(getUserNamespace(), userEntityTypesWithoutPK);
                     }
-                    userEntityTypes_withoutPK.put(type.getName(), userEntityTypes.get(type.getName()));
+                    userEntityTypesWithoutPK.put(type.getName(), userEntityTypes.get(type.getName()));
 
                     userEntityTypes.remove(type.getName());
                 }
