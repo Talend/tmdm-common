@@ -13,7 +13,6 @@ package org.talend.mdm.commmon.util.core;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -227,13 +226,33 @@ public final class MDMConfiguration {
         }
     }
 
-    public static String getTransactionConcurrentRequests() {
-        Properties properties = MDMConfiguration.getConfiguration();
-        return properties.getProperty(TRANSACTION_REQUESTS);
+    public static int getTransactionConcurrent() {
+        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_REQUESTS);
+        if (config != null) {
+            try {
+                return Integer.valueOf(config);
+            } catch (Exception e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_REQUESTS, e);
+                }
+                return 0;
+            }
+        }
+        return 0;
     }
 
-    public static String getTransactionConcurrentWaitMilliseconds() {
-        Properties properties = MDMConfiguration.getConfiguration();
-        return properties.getProperty(TRANSACTION_WAIT_MILLISECONDS);
+    public static long getTransactionWaitMilliseconds() {
+        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_WAIT_MILLISECONDS);
+        if (config != null) {
+            try {
+                return Long.valueOf(config);
+            } catch (Exception e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_WAIT_MILLISECONDS, e);
+                }
+                return 10L;
+            }
+        }
+        return 10L;
     }
 }
