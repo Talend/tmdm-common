@@ -13,6 +13,7 @@ package org.talend.mdm.commmon.util.core;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.PropertiesConfiguration;
@@ -65,6 +66,10 @@ public final class MDMConfiguration {
     public static final String SCIM_USER = "scim.username";
 
     public static final String SCIM_PASSWORD = "scim.password";
+
+    public static final String TRANSACTION_REQUESTS = "transaction.concurrent.requests";
+
+    public static final String TRANSACTION_WAIT_MILLISECONDS = "transaction.concurrent.wait.milliseconds";
 
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
@@ -222,4 +227,13 @@ public final class MDMConfiguration {
         }
     }
 
+    public static String getTransactionConcurrentRequests() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(TRANSACTION_REQUESTS);
+    }
+
+    public static String getTransactionConcurrentWaitMilliseconds() {
+        Properties properties = MDMConfiguration.getConfiguration();
+        return properties.getProperty(TRANSACTION_WAIT_MILLISECONDS);
+    }
 }
