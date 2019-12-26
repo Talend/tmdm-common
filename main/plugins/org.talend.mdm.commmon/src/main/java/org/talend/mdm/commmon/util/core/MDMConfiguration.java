@@ -226,6 +226,12 @@ public final class MDMConfiguration {
         }
     }
 
+    /*
+     * For transaction concurrency control, will affect SOAP API and Transaction Service, 
+     * see: com.amalto.core.delegator.IXtentisWSDelegator.partialPutItem, putItem,
+     *  putItemArray, putItemWithReport, putItemWithCustomReport, putItemWithReportArray,
+     *  and com.amalto.core.storage.transaction.TransactionService.rollback, commit
+     */
     public static int getTransactionConcurrent() {
         String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_REQUESTS);
         if (config != null) {
