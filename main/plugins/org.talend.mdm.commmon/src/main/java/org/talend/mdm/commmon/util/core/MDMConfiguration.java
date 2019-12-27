@@ -66,7 +66,7 @@ public final class MDMConfiguration {
 
     public static final String SCIM_PASSWORD = "scim.password";
 
-    public static final String TRANSACTION_REQUESTS = "transaction.concurrent.requests";
+    public static final String TRANSACTION_MAX_REQUESTS = "transaction.concurrent.max.requests";
 
     public static final String TRANSACTION_WAIT_MILLISECONDS = "transaction.concurrent.wait.milliseconds";
 
@@ -234,14 +234,14 @@ public final class MDMConfiguration {
      * IXtentisWSDelegator#putItemWithCustomReport(), IXtentisWSDelegator#putItemWithReportArray(),
      * TransactionService#rollback(), TransactionService#commit()}
      */
-    public static int getTransactionConcurrent() {
-        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_REQUESTS);
+    public static int getTransactionMaxRequests() {
+        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_MAX_REQUESTS);
         if (config != null) {
             try {
                 return Integer.valueOf(config);
             } catch (Exception e) {
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_REQUESTS, e);
+                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_MAX_REQUESTS, e);
                 }
                 return 0;
             }
