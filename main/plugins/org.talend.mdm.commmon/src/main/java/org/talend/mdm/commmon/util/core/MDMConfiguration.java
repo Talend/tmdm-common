@@ -66,10 +66,6 @@ public final class MDMConfiguration {
 
     public static final String SCIM_PASSWORD = "scim.password";
 
-    public static final String TRANSACTION_MAX_REQUESTS = "transaction.concurrent.max.requests";
-
-    public static final String TRANSACTION_WAIT_MILLISECONDS = "transaction.concurrent.wait.milliseconds";
-
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
@@ -226,41 +222,4 @@ public final class MDMConfiguration {
         }
     }
 
-    /**
-     * For transaction concurrency control, will affect SOAP API and Transaction Service.
-     * @see
-     * IXtentisWSDelegator#partialPutItem(), IXtentisWSDelegator#putItem(),
-     * IXtentisWSDelegator#putItemArray(), IXtentisWSDelegator#putItemWithReport(),
-     * IXtentisWSDelegator#putItemWithCustomReport(), IXtentisWSDelegator#putItemWithReportArray(),
-     * TransactionService#rollback(), TransactionService#commit()}
-     */
-    public static int getTransactionMaxRequests() {
-        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_MAX_REQUESTS);
-        if (config != null) {
-            try {
-                return Integer.valueOf(config);
-            } catch (Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_MAX_REQUESTS, e);
-                }
-                return 0;
-            }
-        }
-        return 0;
-    }
-
-    public static long getTransactionWaitMilliseconds() {
-        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_WAIT_MILLISECONDS);
-        if (config != null) {
-            try {
-                return Long.valueOf(config);
-            } catch (Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_WAIT_MILLISECONDS, e);
-                }
-                return 10L;
-            }
-        }
-        return 10L;
-    }
 }
