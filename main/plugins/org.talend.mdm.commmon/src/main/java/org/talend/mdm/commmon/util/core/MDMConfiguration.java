@@ -233,9 +233,9 @@ public final class MDMConfiguration {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Failed to read configuration: " + TRANSACTION_WAIT_MILLISECONDS, e);
                 }
-                return 10L;
+                return 0L;
             }
         }
-        return 10L;
+        return 0L;
     }
 }
