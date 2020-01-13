@@ -66,6 +66,8 @@ public final class MDMConfiguration {
 
     public static final String SCIM_PASSWORD = "scim.password";
 
+    public static final String TRANSACTION_WAIT_MILLISECONDS = "transaction.concurrent.wait.milliseconds";
+
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
@@ -222,4 +224,18 @@ public final class MDMConfiguration {
         }
     }
 
+    public static long getTransactionWaitMilliseconds() {
+        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_WAIT_MILLISECONDS);
+        if (config != null) {
+            try {
+                return Long.valueOf(config);
+            } catch (Exception e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_WAIT_MILLISECONDS, e);
+                }
+                return 0L;
+            }
+        }
+        return 0L;
+    }
 }
