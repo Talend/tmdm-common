@@ -223,19 +223,4 @@ public final class MDMConfiguration {
             return Integer.MAX_VALUE;
         }
     }
-
-    public static long getTransactionWaitMilliseconds() {
-        String config = MDMConfiguration.getConfiguration().getProperty(TRANSACTION_WAIT_MILLISECONDS);
-        if (config != null) {
-            try {
-                return Long.valueOf(config);
-            } catch (Exception e) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Failed to read configuration: " + TRANSACTION_WAIT_MILLISECONDS, e);
-                }
-                return 0L;
-            }
-        }
-        return 0L;
-    }
 }
