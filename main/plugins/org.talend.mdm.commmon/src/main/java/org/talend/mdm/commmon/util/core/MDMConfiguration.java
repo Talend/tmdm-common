@@ -66,8 +66,6 @@ public final class MDMConfiguration {
 
     public static final String SCIM_PASSWORD = "scim.password";
 
-    public static final String TRANSACTION_WAIT_MILLISECONDS = "transaction.concurrent.wait.milliseconds";
-
     private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
