@@ -28,7 +28,7 @@
         <spring.version>4.3.7.RELEASE</spring.version>
         <spring.security.version>4.2.2.RELEASE</spring.security.version>
         <cxf.version>3.2.9</cxf.version>
-        <powermock.version>1.4.12</powermock.version>
+        <powermock.version>1.7.4</powermock.version>
         <hibernate.search.version>5.0.1.Final</hibernate.search.version>
 
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -457,7 +457,7 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
-                <version>4.8.2</version>
+                <version>4.13</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
