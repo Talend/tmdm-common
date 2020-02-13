@@ -73,6 +73,7 @@ public class EncryptUtil {
             if (file.exists()) {
                 PropertiesConfiguration config = new PropertiesConfiguration();
                 config.setDelimiterParsingDisabled(true);
+                config.setEncoding("UTF-8");
                 config.load(file);
                 if (file.getName().equals("mdm.conf")) { //$NON-NLS-1$
                     dataSourceName = config.getString(DB_DEFAULT_DATASOURCE) == null ? StringUtils.EMPTY : config
