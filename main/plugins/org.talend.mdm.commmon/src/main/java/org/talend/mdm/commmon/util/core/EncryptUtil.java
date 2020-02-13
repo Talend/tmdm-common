@@ -18,6 +18,7 @@ import static org.talend.mdm.commmon.util.core.MDMConfiguration.TDS_PASSWORD;
 import static org.talend.mdm.commmon.util.core.MDMConfiguration.TECHNICAL_PASSWORD;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -73,7 +74,7 @@ public class EncryptUtil {
             if (file.exists()) {
                 PropertiesConfiguration config = new PropertiesConfiguration();
                 config.setDelimiterParsingDisabled(true);
-                config.setEncoding("UTF-8");
+                config.setEncoding(StandardCharsets.UTF_8.name());
                 config.load(file);
                 if (file.getName().equals("mdm.conf")) { //$NON-NLS-1$
                     dataSourceName = config.getString(DB_DEFAULT_DATASOURCE) == null ? StringUtils.EMPTY : config
