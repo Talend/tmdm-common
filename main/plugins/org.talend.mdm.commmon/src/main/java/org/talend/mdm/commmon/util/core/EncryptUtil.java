@@ -104,6 +104,7 @@ public class EncryptUtil {
             if (file.exists()) {
                 XMLConfiguration config = new XMLConfiguration();
                 config.setDelimiterParsingDisabled(true);
+                config.setEncoding(StandardCharsets.UTF_8.name());
                 config.load(file);
                 List<Object> dataSources = config.getList("datasource.[@name]"); //$NON-NLS-1$
                 int index = -1;
