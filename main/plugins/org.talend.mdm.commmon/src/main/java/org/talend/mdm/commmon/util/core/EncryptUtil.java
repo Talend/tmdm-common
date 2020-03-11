@@ -29,6 +29,7 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
+import org.apache.http.Consts;
 import org.apache.log4j.Logger;;
 
 public class EncryptUtil {
@@ -74,7 +75,7 @@ public class EncryptUtil {
             if (file.exists()) {
                 PropertiesConfiguration config = new PropertiesConfiguration();
                 config.setDelimiterParsingDisabled(true);
-                config.setEncoding(StandardCharsets.UTF_8.name());
+                config.setEncoding(Consts.UTF_8.name());
                 config.load(file);
                 if (file.getName().equals("mdm.conf")) { //$NON-NLS-1$
                     dataSourceName = config.getString(DB_DEFAULT_DATASOURCE) == null ? StringUtils.EMPTY : config
@@ -104,7 +105,7 @@ public class EncryptUtil {
             if (file.exists()) {
                 XMLConfiguration config = new XMLConfiguration();
                 config.setDelimiterParsingDisabled(true);
-                config.setEncoding(StandardCharsets.UTF_8.name());
+                config.setEncoding(Consts.UTF_8.name());
                 config.load(file);
                 List<Object> dataSources = config.getList("datasource.[@name]"); //$NON-NLS-1$
                 int index = -1;
