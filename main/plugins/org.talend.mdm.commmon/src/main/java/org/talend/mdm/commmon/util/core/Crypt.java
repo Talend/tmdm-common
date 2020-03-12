@@ -11,6 +11,7 @@
 package org.talend.mdm.commmon.util.core;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -19,7 +20,6 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.http.Consts;
 import org.talend.utils.security.BouncyCastleEncryption;
 
 public class Crypt {
@@ -36,7 +36,7 @@ public class Crypt {
 		byte[] key = new byte[8];
 		byte[] bytes ;
 		try {
-			bytes = sharedSecret.getBytes(Consts.UTF_8.name());
+			bytes = sharedSecret.getBytes(StandardCharsets.UTF_8.name());
 		} catch (UnsupportedEncodingException uee) {
 			throw new ShortBufferException("The shared secret cannot be used as a key");
 		}
@@ -71,7 +71,7 @@ public class Crypt {
 		try {
 			Cipher cipher = Cipher.getInstance(this.algorithm);
 			cipher.init(Cipher.ENCRYPT_MODE, this.keySpec);
-			return cipher.doFinal(text.getBytes(Consts.UTF_8));
+			return cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
 		} catch (Exception e) {
 			return null;
 		}

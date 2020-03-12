@@ -12,11 +12,11 @@ package org.talend.mdm.commmon.util.core;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.http.Consts;
 import org.apache.log4j.Logger;
 
 /**
@@ -156,7 +156,7 @@ public final class MDMConfiguration {
             try {
                 PropertiesConfiguration config = new PropertiesConfiguration();
                 config.setDelimiterParsingDisabled(true);
-                config.setEncoding(Consts.UTF_8.name());
+                config.setEncoding(StandardCharsets.UTF_8.name());
                 config.load(file);
                 // Decrypt the passwords in mdm.conf
                 config.setProperty(ADMIN_PASSWORD, Crypt.decrypt(config.getString(ADMIN_PASSWORD)));
