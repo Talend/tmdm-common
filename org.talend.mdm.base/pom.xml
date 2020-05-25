@@ -41,7 +41,7 @@
         <mdm.app.dir>${dev.tomcat.home}/webapps/talendmdm</mdm.app.dir>
         <jacoco.exec.file>${project.parent.build.directory}/${project.artifactId}.exec</jacoco.exec.file>
 
-        <xalan.version>2.7.1</xalan.version>
+        <xalan.version>2.7.2</xalan.version>
         <saxon.version>9.0.0.8</saxon.version>
         <jaxb.version>2.3.0</jaxb.version>
         <jakarta.jaxb.version>2.3.2</jakarta.jaxb.version>
