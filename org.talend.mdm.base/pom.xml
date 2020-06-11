@@ -46,6 +46,7 @@
         <jaxb.version>2.3.0</jaxb.version>
         <jakarta.jaxb.version>2.3.2</jakarta.jaxb.version>
         <daikon.version>1.5.0</daikon.version>
+        <apache.taglibs.version>1.2.5</apache.taglibs.version>
     </properties>
     <repositories>
         <repository>
@@ -1310,10 +1311,15 @@
 	            <version>6.0.18.Final</version>
 	        </dependency>
             <dependency>
-                <groupId>jstl</groupId>
-                <artifactId>jstl</artifactId>
-                <version>1.2</version>
-            </dependency>
+	            <groupId>org.apache.taglibs</groupId>
+	            <artifactId>taglibs-standard-spec</artifactId>
+	            <version>${apache.taglibs.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.taglibs</groupId>
+	            <artifactId>taglibs-standard-impl</artifactId>
+	            <version>${apache.taglibs.version}</version>
+	        </dependency>
             <dependency>
                 <groupId>io.swagger</groupId>
                 <artifactId>swagger-jaxrs</artifactId>
