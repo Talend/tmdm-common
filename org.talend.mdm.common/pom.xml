@@ -67,7 +67,7 @@
         </dependency>
         <dependency>
             <groupId>org.talend</groupId>
-            <artifactId>org.talend.utils</artifactId>                
+            <artifactId>org.talend.utils</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
