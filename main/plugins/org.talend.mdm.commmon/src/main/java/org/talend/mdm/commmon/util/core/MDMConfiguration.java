@@ -17,7 +17,8 @@ import java.util.Properties;
 
 import org.apache.commons.configuration.ConfigurationConverter;
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Handles the mdm.conf file
@@ -67,7 +68,7 @@ public final class MDMConfiguration {
 
     public static final String SCIM_PASSWORD = "scim.password";
 
-    private static final Logger LOGGER = Logger.getLogger(MDMConfiguration.class);
+    private static final Logger LOGGER = LogManager.getLogger(MDMConfiguration.class);
 
     private static MDMConfiguration instance;
 

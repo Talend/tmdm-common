@@ -12,14 +12,15 @@
 package org.talend.mdm.commmon.metadata;
 
 import org.apache.commons.collections.map.MultiKeyMap;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.w3c.dom.Element;
 
 import java.util.*;
 
 public class DefaultValidationHandler implements ValidationHandler {
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultValidationHandler.class);
+    private static final Logger LOGGER = LogManager.getLogger(DefaultValidationHandler.class);
 
     private final Map<ValidationError, MultiKeyMap> errors = new HashMap<ValidationError, MultiKeyMap>();
 

@@ -15,14 +15,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * Default visitor for data model classes in package org.talend.mdm.commmon.metadata.
  */
 public class DefaultMetadataVisitor<T> implements MetadataVisitor<T> {
 
-    private static final Logger LOGGER = Logger.getLogger(DefaultMetadataVisitor.class);
+    private static final Logger LOGGER = LogManager.getLogger(DefaultMetadataVisitor.class);
 
     protected static boolean isDatabaseMandatory(FieldMetadata field, TypeMetadata declaringType) {
         boolean isDatabaseMandatory = field.isMandatory() && declaringType.isInstantiable();

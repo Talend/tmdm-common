@@ -25,7 +25,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * DOC aiming class global comment. Detailled comment
@@ -34,7 +35,7 @@ public class ZipToFile {
 
     public static final int BUFFER = 1024;// buf size
 
-    private static final Logger log = Logger.getLogger(ZipToFile.class);
+    private static final Logger log = LogManager.getLogger(ZipToFile.class);
 
     public static void deleteDirectory(File dir) {
         // modified by honghb ,fix bug 21552

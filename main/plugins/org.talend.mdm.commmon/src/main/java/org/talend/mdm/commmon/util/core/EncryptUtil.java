@@ -29,11 +29,12 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;;
 
 public class EncryptUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(EncryptUtil.class);
+    private static final Logger LOGGER = LogManager.getLogger(EncryptUtil.class);
 
     private static String DB_DEFAULT_DATASOURCE = "db.default.datasource"; //$NON-NLS-1$
 

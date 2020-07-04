@@ -12,7 +12,8 @@ package org.talend.mdm.commmon.metadata.validation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.DefaultMetadataVisitor;
@@ -29,7 +30,7 @@ import org.w3c.dom.Element;
  */
 public class CircularComplexTypeValidationRule implements ValidationRule {
 
-    private static final Logger LOGGER = Logger.getLogger(CircularComplexTypeValidationRule.class);
+    private static final Logger LOGGER = LogManager.getLogger(CircularComplexTypeValidationRule.class);
 
     private final MetadataRepository repository;
 
