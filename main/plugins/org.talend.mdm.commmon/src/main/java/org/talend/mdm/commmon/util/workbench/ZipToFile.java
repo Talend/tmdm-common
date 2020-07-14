@@ -35,7 +35,7 @@ public class ZipToFile {
 
     public static final int BUFFER = 1024;// buf size
 
-    private static final Logger log = LogManager.getLogger(ZipToFile.class);
+    private static final Logger LOGGER = LogManager.getLogger(ZipToFile.class);
 
     public static void deleteDirectory(File dir) {
         // modified by honghb ,fix bug 21552
@@ -179,7 +179,7 @@ public class ZipToFile {
                         os.write(buf, 0, readLen);
                     }
                 } catch (IOException e) {
-                    log.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 } finally {
                     try {
                         if (is != null) {
@@ -197,7 +197,7 @@ public class ZipToFile {
                 }
             }
         } catch (IOException e) {
-            log.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw e;
         } finally {
             if (zfile != null) {
