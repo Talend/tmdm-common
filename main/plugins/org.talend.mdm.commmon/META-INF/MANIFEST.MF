@@ -17,6 +17,4 @@ Export-Package: org.talend.mdm.commmon.metadata,
  org.talend.mdm.commmon.util.hash.impl,
  org.talend.mdm.commmon.util.webapp,
  org.talend.mdm.commmon.util.workbench
-Bundle-ClassPath: lib/log4j-api-2.12.1.jar,
- lib/log4j-core-2.12.1.jar,
- .
+Import-Package: org.slf4j

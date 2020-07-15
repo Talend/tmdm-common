@@ -27,12 +27,12 @@ import javax.xml.XMLConstants;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.NotImplementedException;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MetadataUtils {
 
-    private static final Logger LOGGER = LogManager.getLogger(MetadataUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataUtils.class);
 
     private MetadataUtils() {
     }

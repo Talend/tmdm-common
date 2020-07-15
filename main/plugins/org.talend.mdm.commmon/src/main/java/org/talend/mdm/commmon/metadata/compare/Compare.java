@@ -23,8 +23,8 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.talend.mdm.commmon.metadata.ComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedComplexTypeMetadata;
 import org.talend.mdm.commmon.metadata.ContainedTypeFieldMetadata;
@@ -42,7 +42,7 @@ import org.talend.mdm.commmon.util.core.CommonUtil;
 
 public class Compare {
 
-    private static final Logger LOGGER = LogManager.getLogger(Compare.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Compare.class);
 
     /**
      * Compare two {@link org.talend.mdm.commmon.metadata.MetadataRepository repositories} and return the differences

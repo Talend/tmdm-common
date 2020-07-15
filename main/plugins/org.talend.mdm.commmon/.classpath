@@ -5,7 +5,5 @@
     <classpathentry kind="src" path="src/main/resources" />
     <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" />
     <classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER" />
-    <classpathentry exported="true" kind="lib" path="lib/log4j-api-2.12.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/log4j-core-2.12.1.jar"/>
     <classpathentry kind="output" path="bin" />
 </classpath>
