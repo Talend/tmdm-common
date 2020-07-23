@@ -20,8 +20,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
@@ -539,7 +541,7 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
 
     @Override
     public Collection<ComplexTypeMetadata> getSubTypes() {
-        List<ComplexTypeMetadata> subTypes = new LinkedList<ComplexTypeMetadata>();
+        Queue<ComplexTypeMetadata> subTypes = new ConcurrentLinkedQueue<ComplexTypeMetadata>();
         for (ComplexTypeMetadata subType : this.subTypes) {
             subTypes.add(subType);
             subTypes.addAll(subType.getSubTypes());
@@ -549,7 +551,7 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
 
     @Override
     public Collection<ComplexTypeMetadata> getDirectSubTypes() {
-        List<ComplexTypeMetadata> subTypes = new LinkedList<ComplexTypeMetadata>();
+        Queue<ComplexTypeMetadata> subTypes = new ConcurrentLinkedQueue<ComplexTypeMetadata>();
         for (ComplexTypeMetadata subType : this.subTypes) {
             subTypes.add(subType);
         }
@@ -568,9 +570,9 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
         }
         // Gets fields from super types.
         if (!superTypes.isEmpty()) {
-            Collection<FieldMetadata> thisTypeFields = new LinkedList<FieldMetadata>(fieldMetadata.values());
+            Collection<FieldMetadata> thisTypeFields = new ConcurrentLinkedQueue<FieldMetadata>(fieldMetadata.values());
             fieldMetadata.clear();
-            List<TypeMetadata> thisSuperTypes = new LinkedList<TypeMetadata>(superTypes);
+            Queue<TypeMetadata> thisSuperTypes = new ConcurrentLinkedQueue<TypeMetadata>(superTypes);
             superTypes.clear();
             // Only accept super types with same instantiable status (if more than one).
             // TODO Type should use declareUsage iso. super type for this!
@@ -607,7 +609,7 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
         }
         isFrozen = true;
         // Freeze all fields.
-        Collection<FieldMetadata> values = new LinkedList<FieldMetadata>(fieldMetadata.values());
+        Collection<FieldMetadata> values = new ConcurrentLinkedQueue<FieldMetadata>(fieldMetadata.values());
         for (FieldMetadata value : values) {
             FieldMetadata frozenFieldDeclaration = value.freeze();
             fieldMetadata.put(value.getName(), frozenFieldDeclaration);
