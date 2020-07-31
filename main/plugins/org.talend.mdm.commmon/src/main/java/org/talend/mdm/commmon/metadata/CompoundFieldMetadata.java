@@ -37,7 +37,11 @@ public class CompoundFieldMetadata extends MetadataExtensions implements FieldMe
     }
 
     public String getName() {
-        throw new UnsupportedOperationException();
+        String name = ""; //$NON-NLS-1$
+        for (FieldMetadata field : fields) {
+            name += "[" + field.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return name;
     }
 
     public boolean isKey() {

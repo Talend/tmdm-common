@@ -168,6 +168,10 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
         }
         FieldMetadata foundField;
         if (path.indexOf('/') < 0) {
+            // handle CompoundField [id0][id1] from same field's composite key
+            if (path.indexOf('[') >= 0) {
+                path = path.substring(path.indexOf("[") + 1, path.indexOf("]"));
+            }
             foundField = fieldMetadata.get(path); // Shortcut for direct look up for a field (no path involved).
             if (foundField == null) {
                 for (TypeMetadata superType : superTypes) {
