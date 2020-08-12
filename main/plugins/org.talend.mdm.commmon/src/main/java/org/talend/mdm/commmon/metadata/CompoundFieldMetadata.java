@@ -12,11 +12,14 @@
 package org.talend.mdm.commmon.metadata;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.xml.XMLConstants;
 
+import org.apache.commons.lang.StringUtils;
 import org.talend.mdm.commmon.metadata.validation.ValidationFactory;
 import org.talend.mdm.commmon.metadata.validation.ValidationRule;
 
@@ -27,6 +30,10 @@ public class CompoundFieldMetadata extends MetadataExtensions implements FieldMe
     private boolean isFrozen;
 
     private int cachedHashCode;
+
+    private final Map<Locale, String> localeToLabel = new HashMap<Locale, String>();
+
+    private final Map<Locale, String> localeToDescription = new HashMap<Locale, String>();
 
     public CompoundFieldMetadata(FieldMetadata... fields) {
         this.fields = fields;
@@ -113,11 +120,16 @@ public class CompoundFieldMetadata extends MetadataExtensions implements FieldMe
 
     @Override
     public void registerName(Locale locale, String name) {
+        localeToLabel.put(locale, name);
     }
 
     @Override
     public String getName(Locale locale) {
-        throw new UnsupportedOperationException();
+        String localizedName = localeToLabel.get(locale);
+        if (localizedName == null) {
+            return getName();
+        }
+        return localizedName;
     }
 
     @Override
@@ -201,11 +213,16 @@ public class CompoundFieldMetadata extends MetadataExtensions implements FieldMe
 
     @Override
     public void registerDescription(Locale locale, String description) {
+        localeToDescription.put(locale, description);
     }
 
     @Override
     public String getDescription(Locale locale) {
-        throw new UnsupportedOperationException();
+        String localizedDescription = localeToDescription.get(locale);
+        if (localizedDescription == null) {
+            return StringUtils.EMPTY;
+        }
+        return localizedDescription;
     }
 
     @Override
