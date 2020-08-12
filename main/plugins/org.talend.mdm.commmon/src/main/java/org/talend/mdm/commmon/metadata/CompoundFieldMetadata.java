@@ -44,7 +44,7 @@ public class CompoundFieldMetadata extends MetadataExtensions implements FieldMe
     }
 
     public String getName() {
-        String name = ""; //$NON-NLS-1$
+        String name = StringUtils.EMPTY;
         for (FieldMetadata field : fields) {
             name += "[" + field.getName() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
         }
