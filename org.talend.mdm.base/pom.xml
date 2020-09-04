@@ -643,7 +643,7 @@
             <dependency>
                 <groupId>org.talend</groupId>
                 <artifactId>org.talend.utils</artifactId>
-                <version>7.3.1</version>
+                <version>7.4.1-SNAPSHOT</version>
                 <exclusions>
                     <exclusion>
                         <groupId>log4j</groupId>
