@@ -71,6 +71,13 @@ public interface Types {
         Types.UNSIGNED_SHORT));
 
     /**
+     * Convenience constants for all byte type.
+     */
+    Set<String> BYTES = new HashSet<String>(Arrays.asList(
+        Types.BYTE,
+        Types.UNSIGNED_BYTE));
+
+    /**
      * Convenience constant for all date types.
      */
     String[] DATES = new String[] { Types.DATE,
