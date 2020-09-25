@@ -14,7 +14,6 @@ package org.talend.mdm.commmon.metadata;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 
 /**
  * Constants for all Xml Schema simple types supported in MDM.
@@ -69,6 +68,21 @@ public interface Types {
     Set<String> SHORTS = new HashSet<String>(Arrays.asList(
         Types.SHORT,
         Types.UNSIGNED_SHORT));
+
+    /**
+     * Convenience constants for all double type.
+     */
+    Set<String> DOUBLES = new HashSet<String>(Arrays.asList(
+        Types.DECIMAL,
+        Types.DOUBLE,
+        Types.UNSIGNED_DOUBLE));
+
+    /**
+     * Convenience constants for all byte type.
+     */
+    Set<String> BYTES = new HashSet<String>(Arrays.asList(
+        Types.BYTE,
+        Types.UNSIGNED_BYTE));
 
     /**
      * Convenience constant for all date types.
