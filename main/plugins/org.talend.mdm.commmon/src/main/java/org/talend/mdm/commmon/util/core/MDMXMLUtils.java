@@ -14,11 +14,14 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,10 +30,19 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.talend.mdm.commmon.util.exception.XmlBeanDefinitionException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.helpers.XMLReaderFactory;
@@ -66,6 +78,8 @@ public class MDMXMLUtils {
     private static final SAXParserFactory SAX_PARSER_FACTORY;
 
     private static final XMLInputFactory XML_INPUT_FACTORY;
+
+    private static final TransformerFactory TRANSFORMER_FACTORY;
 
     static {
         try {
@@ -109,6 +123,13 @@ public class MDMXMLUtils {
             throw new XmlBeanDefinitionException("Error occurred while initializing SAXParserFactory", e);
         }
 
+        try {
+            TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+            TRANSFORMER_FACTORY.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (Exception e) {
+            throw new XmlBeanDefinitionException("Error occurred while initializing TransformerFactory, \n caused by ", e);
+        }
+
         XML_INPUT_FACTORY = XMLInputFactory.newInstance();
         XML_INPUT_FACTORY.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
         XML_INPUT_FACTORY.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
@@ -145,6 +166,18 @@ public class MDMXMLUtils {
             return SAX_PARSER_FACTORY.newSAXParser();
         } catch (Exception e) {
             throw new XmlBeanDefinitionException("Error occurred while creating a SAXParserFactory from SAXParser.", e);
+        }
+    }
+
+    public static Transformer getTransformer() {
+        try {
+            Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+            transformer.setOutputProperty(OutputKeys.ENCODING, StandardCharsets.UTF_8.toString());
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            return transformer;
+        } catch (Exception e) {
+            throw new XmlBeanDefinitionException("Error occurred while creating a Transformer from TransformerFactory. \n caused by ", e);
         }
     }
 
@@ -213,5 +246,84 @@ public class MDMXMLUtils {
         Pattern pattern = Pattern.compile("<!ENTITY\\s+\\S*\\s+[SYSTEM|PUBLIC]{1}.+?>", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(rawXml);
         return matcher.find();
+    }
+
+    /**
+     * Utility class, extract some part of an XML. If you have an xml and want to extract some part of that. you may use
+     * below {{@link #unwrap()} to get it. like:
+     * 
+     * <pre>
+     * &lt;root&gt;
+     *  &lt;Product&gt;
+     *      &lt;ID&gt;11&lt;/ID&gt;
+     *      &lt;Name&gt;alan&lt;/Name&gt;
+     *  &lt;/Product&gt;
+     *  &lt;Product&gt;
+     *      &lt;ID&gt;22&lt;/ID&gt;
+     *      &lt;Name&gt;emily&lt;/Name&gt;
+     *  &lt;/Product&gt;
+     * &lt;/root&gt;
+     * </pre>
+     * 
+     * using <b>[tagname:"Product",index:1]</b>, will get part of xml as follows:
+     * 
+     * <pre>
+     *  &lt;Product&gt;
+     *      &lt;ID&gt;22&lt;/ID&gt;
+     *      &lt;Name&gt;emily&lt;/Name&gt;
+     *  &lt;/Product&gt;
+     * </pre>
+     * 
+     * @param doc : XML
+     * @param tagName : root node name of part of XML.
+     * @param index : child
+     * @return : the part of xml which comes inside <b>tagName</b>
+     * @throws ParserConfigurationException
+     */
+    public static Document unwrap(Document doc, String tagName, int index) throws ParserConfigurationException {
+        assert doc != null : "Document is null";
+        assert tagName != null : "tagName is null";
+        assert index >= 0 : "Index (zero based) must be greater than or equal to zero";
+        NodeList nodeList = doc.getElementsByTagName(tagName);
+        if (nodeList.getLength() <= index) {
+            // only return the whole xml
+            LOGGER.warn("Index [" + index + "] is invalid because the value is out of bounds " + nodeList.getLength()
+                    + ", so only return the raw xml");
+            return doc;
+        }
+        Node node = nodeList.item(index);
+        Optional<DocumentBuilder> dBuilder = getDocumentBuilder();
+        if (dBuilder.isPresent()) {
+            Document result = dBuilder.get().newDocument();
+            Node importNode = result.importNode(node, true);
+            result.appendChild(importNode);
+            return result;
+        } else {
+            return doc;
+        }
+    }
+
+    /**
+     * Utility class to convert outputstream to a string using String initializer in Java.
+     * <p>
+     * If you want to unwrap a node, you can use another method {{@link #unwrap()} to get the part of xml,then you can
+     * perform the following method {#{@link transformXMLToString} to simply convert the OutputStream to finalString
+     * using String's toString which created a string writer.
+     * 
+     * @param doc : the xml want to convert to string
+     * @return a String that want to pull out
+     * @throws Exception
+     */
+    public static String transformXMLToString(Document doc) throws Exception {
+        assert doc != null : "Document is null";
+        Transformer transformer = getTransformer();
+        DOMSource source = new DOMSource(doc);
+        String content = StringUtils.EMPTY;
+        try (StringWriter stringWriter = new StringWriter();) {
+            StreamResult result = new StreamResult(stringWriter);
+            transformer.transform(source, result);
+            content = stringWriter.toString();
+        }
+        return content;
     }
 }
