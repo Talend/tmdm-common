@@ -994,12 +994,12 @@
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-core-asl</artifactId>
-                <version>1.9.14-TALEND</version>
+                <version>1.9.15-TALEND</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
                 <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.14-TALEND</version>
+                <version>1.9.15-TALEND</version>
             </dependency>
             <!-- TODO 2 restlet libraries in same project? -->
             <dependency>
