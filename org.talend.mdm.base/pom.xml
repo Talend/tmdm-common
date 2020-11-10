@@ -132,11 +132,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>saxon</id>
-            <name>Open Geospatial Consortium</name>
-            <url>https://svn.opengeospatial.org/ogc-projects/cite/maven</url>
-        </repository>
     </repositories>
 
 
