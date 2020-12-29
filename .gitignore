@@ -1,4 +1,9 @@
 *.iml
+.project
+.classpath
+!main/plugins/org.talend.mdm.commmon/.project
+!main/plugins/org.talend.mdm.commmon/.classpath
 target/
 bin/
 .settings/
+.idea/
