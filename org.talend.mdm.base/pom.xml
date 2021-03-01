@@ -659,6 +659,10 @@
                         <groupId>com.fasterxml.jackson.core</groupId>
                         <artifactId>jackson-annotations</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.ant</groupId>
+                        <artifactId>ant</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -672,11 +676,6 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
                 <version>2.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.ant</groupId>
-                <artifactId>ant</artifactId>
-                <version>1.7.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
