@@ -824,29 +824,29 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-			<dependency>
-				<groupId>org.hibernate</groupId>
-				<artifactId>hibernate-core</artifactId>
-				<version>5.4.29.Final</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.javassist</groupId>
-						<artifactId>javassist</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.glassfish.jaxb</groupId>
-						<artifactId>txw2</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.jvnet.staxex</groupId>
-						<artifactId>stax-ex</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.sun.xml.fastinfoset</groupId>
-						<artifactId>FastInfoset</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>5.4.29.Final</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.javassist</groupId>
+                        <artifactId>javassist</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.glassfish.jaxb</groupId>
+                        <artifactId>txw2</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.jvnet.staxex</groupId>
+                        <artifactId>stax-ex</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sun.xml.fastinfoset</groupId>
+                        <artifactId>FastInfoset</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 			<dependency>
 			    <groupId>com.sun.istack</groupId>
 			    <artifactId>istack-commons-runtime</artifactId>
