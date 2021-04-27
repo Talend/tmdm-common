@@ -45,7 +45,7 @@
         <saxon.version>9.0.0.8</saxon.version>
         <jaxb.version>2.3.0</jaxb.version>
         <jakarta.jaxb.version>2.3.2</jakarta.jaxb.version>
-        <daikon.version>1.8.0</daikon.version>
+        <daikon.version>5.5.0</daikon.version>
         <apache.taglibs.version>1.2.5</apache.taglibs.version>
         <org.bouncycastle.version>1.68</org.bouncycastle.version>
     </properties>
@@ -669,6 +669,20 @@
                 <groupId>org.talend.daikon</groupId>
                 <artifactId>daikon-audit</artifactId>
                 <version>${daikon.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.talend.daikon</groupId>
+                        <artifactId>audit-log4j1</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.talend.daikon</groupId>
+                        <artifactId>audit-kafka</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>co.elastic.logging</groupId>
+                        <artifactId>ecs-logging-core</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- 3rd party dependencies -->
@@ -1074,7 +1088,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.25</version>
+                <version>1.7.26</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -1239,7 +1253,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.2.1</version>
+                <version>3.8.1</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
