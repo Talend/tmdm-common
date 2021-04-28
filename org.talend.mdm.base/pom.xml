@@ -678,10 +678,6 @@
                         <groupId>org.talend.daikon</groupId>
                         <artifactId>audit-kafka</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>co.elastic.logging</groupId>
-                        <artifactId>ecs-logging-core</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
 
