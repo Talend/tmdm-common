@@ -24,7 +24,7 @@
         <gwt.gxt.version>2.2.5-gwt22</gwt.gxt.version>
         <gwt.dnd.version>3.1.2</gwt.dnd.version>
 
-        <apache.httpcomponents.version>4.5.10</apache.httpcomponents.version>
+        <apache.httpcomponents.version>4.5.13</apache.httpcomponents.version>
         <spring.version>4.3.23.RELEASE</spring.version>
         <spring.security.version>4.2.13.RELEASE</spring.security.version>
         <cxf.version>3.3.6</cxf.version>
