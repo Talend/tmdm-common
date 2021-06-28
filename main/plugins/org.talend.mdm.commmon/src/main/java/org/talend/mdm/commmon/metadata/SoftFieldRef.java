@@ -193,11 +193,6 @@ public class SoftFieldRef implements FieldMetadata {
     }
 
     @Override
-    public List<String> getWorkflowAccessRights() {
-        return getField().getWorkflowAccessRights();
-    }
-
-    @Override
     public boolean isMany() {
         return getField().isMany();
     }

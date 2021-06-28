@@ -285,11 +285,6 @@ public class SoftTypeRef implements ComplexTypeMetadata {
     }
 
     @Override
-    public List<String> getWorkflowAccessRights() {
-        return getTypeAsComplex().getWorkflowAccessRights();
-    }
-
-    @Override
     public List<String> getDenyCreate() {
         return getTypeAsComplex().getDenyCreate();
     }

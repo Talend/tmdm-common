@@ -70,8 +70,6 @@ public class XmlSchemaAnnotationProcessorState {
 
     private List<FieldMetadata> lookupFields = Collections.emptyList();
 
-    private final List<String> workflowAccessRights = new LinkedList<String>();
-
     private String visibilityRule;
 
     private String foreignKeyFilter = StringUtils.EMPTY;
@@ -196,10 +194,6 @@ public class XmlSchemaAnnotationProcessorState {
 
     public List<FieldMetadata> getLookupFields() {
         return lookupFields;
-    }
-
-    public List<String> getWorkflowAccessRights() {
-        return this.workflowAccessRights;
     }
 
     public void registerTypeName(Locale locale, String label) {
