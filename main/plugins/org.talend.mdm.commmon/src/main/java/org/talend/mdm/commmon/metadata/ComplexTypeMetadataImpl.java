@@ -91,7 +91,7 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
         this(nameSpace, name, Collections.<String> emptyList(), Collections.<String> emptyList(),
                 Collections.<String> emptyList(), Collections.<String> emptyList(), Collections.<String> emptyList(),
                 StringUtils.EMPTY, Collections.<FieldMetadata> emptyList(), Collections.<FieldMetadata> emptyList(),
-                isInstantiable, isAbstract, Collections.<String> emptyList());
+                isInstantiable, isAbstract);
     }
 
     public ComplexTypeMetadataImpl(String nameSpace, String name, List<String> allowWrite, List<String> denyCreate,
