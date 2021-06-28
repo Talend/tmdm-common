@@ -40,9 +40,6 @@ public class UserAccessProcessor implements XmlSchemaAnnotationProcessor {
                     state.getDenyLogicalDelete().add(textContent);
                 } else if ("X_Deny_PhysicalDelete".equals(source)) { //$NON-NLS-1$
                     state.getDenyPhysicalDelete().add(textContent);
-                } else if ("X_Workflow".equals(source)) {  //$NON-NLS-1$
-                    // including Writable, Read-only and Hidden
-                    state.getWorkflowAccessRights().add(textContent);
                 } else if ("X_Visible_Rule".equals(source)) { //$NON-NLS-1$
                     state.setVisibilityRule(textContent);
                 } else if (NO_ADD.equals(source)) {
