@@ -70,12 +70,6 @@ public interface FieldMetadata extends MetadataVisitable, MetadataExtensible {
     List<String> getWriteUsers();
 
     /**
-     * @return The {@link List} of workflow roles (including writable, read-only and hidden roles. format: role
-     * name#processId+processVersion#access rights).
-     */
-    List<String> getWorkflowAccessRights();
-
-    /**
      * @return <code>true</code> if field contains multiple values (i.e. a sequence of values).
      */
     boolean isMany();

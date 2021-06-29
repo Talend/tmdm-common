@@ -36,8 +36,6 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
 
     private final List<String> hideUsers;
 
-    private final List<String> workflowAccessRights;
-
     private final boolean isMandatory;
 
     private final Map<Locale, String> localeToLabel = new HashMap<Locale, String>();
@@ -67,9 +65,8 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
             ComplexTypeMetadata fieldType,
             List<String> allowWriteUsers,
             List<String> hideUsers,
-            List<String> workflowAccessRights,
             String visibilityRule) {
-        this(containingType, isMany, isMandatory, name, fieldType, false, false, allowWriteUsers, hideUsers, workflowAccessRights,
+        this(containingType, isMany, isMandatory, name, fieldType, false, false, allowWriteUsers, hideUsers,
                 visibilityRule);
     }
 
@@ -79,16 +76,15 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
             String name,
             ComplexTypeMetadata fieldType,
             boolean isReference,
-            List<String> allowWriteUsers, List<String> hideUsers, List<String> workflowAccessRights, String visibilityRule) {
+            List<String> allowWriteUsers, List<String> hideUsers, String visibilityRule) {
         this(containingType, isMany, isMandatory, name, fieldType, isReference, false, allowWriteUsers, hideUsers,
-                workflowAccessRights, visibilityRule);
+                 visibilityRule);
     }
 
     public ContainedTypeFieldMetadata(ComplexTypeMetadata containingType, boolean isMany, boolean isMandatory, String name,
             ComplexTypeMetadata fieldType, boolean isReference,
             boolean isFieldReferenceToEntity, List<String> allowWriteUsers,
             List<String> hideUsers,
-            List<String> workflowAccessRights,
             String visibilityRule) {
         if (fieldType == null) {
             throw new IllegalArgumentException("Contained type cannot be null.");
@@ -104,7 +100,6 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
         this.name = name;
         this.allowWriteUsers = allowWriteUsers;
         this.hideUsers = hideUsers;
-        this.workflowAccessRights = workflowAccessRights;
     }
 
     @Override
@@ -231,10 +226,10 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
         if (fieldType instanceof ContainedComplexTypeMetadata) {
             copy = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory, name,
                     ((ContainedComplexTypeMetadata) fieldType).getContainedType(), isReference, isFieldReferenceToEntity,
-                    allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
+                    allowWriteUsers, hideUsers, visibilityRule);
         } else {
             copy = new ContainedTypeFieldMetadata(containingType, isMany, isMandatory, name, fieldType, isReference,
-                    isFieldReferenceToEntity, allowWriteUsers, hideUsers, workflowAccessRights, visibilityRule);
+                    isFieldReferenceToEntity, allowWriteUsers, hideUsers, visibilityRule);
         }
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
@@ -248,11 +243,6 @@ public class ContainedTypeFieldMetadata extends MetadataExtensions implements Fi
     @Override
     public List<String> getHideUsers() {
         return hideUsers;
-    }
-
-    @Override
-    public List<String> getWorkflowAccessRights() {
-        return this.workflowAccessRights;
     }
 
     @Override

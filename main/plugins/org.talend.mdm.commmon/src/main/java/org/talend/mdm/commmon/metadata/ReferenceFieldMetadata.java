@@ -34,8 +34,7 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
     private final List<String> hideUsers;
 
     private final List<String> writeUsers;
-    
-    private final List<String> workflowAccessRights;
+
     private final String foreignKeyFilter;
 
     private final boolean isMandatory;
@@ -88,7 +87,6 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                                   TypeMetadata fieldType,
                                   List<String> allowWriteUsers,
                                   List<String> hideUsers,
-                                  List<String> workflowAccessRights,
                                   String foreignKeyFilter,
                                   String visibilityRule) {
         this(containingType,
@@ -105,7 +103,6 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                 fieldType,
                 allowWriteUsers,
                 hideUsers,
-                workflowAccessRights,
                 foreignKeyFilter,
                 visibilityRule,
                 Collections.<String>emptyList(),
@@ -126,7 +123,6 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                                   TypeMetadata fieldType,
                                   List<String> allowWriteUsers,
                                   List<String> hideUsers,
-                                  List<String> workflowAccessRights,
                                   String foreignKeyFilter,
                                   String visibilityRule,
                                   List<String> noAddRoles,
@@ -145,7 +141,6 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                 fieldType,
                 allowWriteUsers,
                 hideUsers,
-                workflowAccessRights,
                 foreignKeyFilter,
                 visibilityRule,
                 noAddRoles,
@@ -167,7 +162,6 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                                   TypeMetadata fieldType,
                                   List<String> allowWriteUsers,
                                   List<String> hideUsers,
-                                  List<String> workflowAccessRights,
                                   String foreignKeyFilter,
                                   String visibilityRule,
                                   List<String> noAddRoles,
@@ -189,7 +183,6 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
         this.fieldType = fieldType;
         this.writeUsers = allowWriteUsers;
         this.hideUsers = hideUsers;
-        this.workflowAccessRights = workflowAccessRights;
         this.foreignKeyFilter = foreignKeyFilter;
         this.visibilityRule = visibilityRule;
         this.noAddRoles = noAddRoles;
@@ -382,8 +375,7 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
                 allowFKIntegrityOverride,
                 fieldType,
                 writeUsers,
-                hideUsers,
-                workflowAccessRights, 
+                hideUsers, 
                 foreignKeyFilter,
                 visibilityRule,
                 noAddRoles,
@@ -434,11 +426,6 @@ public class ReferenceFieldMetadata extends MetadataExtensions implements FieldM
         return writeUsers;
     }
     
-    @Override
-    public List<String> getWorkflowAccessRights() {
-        return this.workflowAccessRights;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {

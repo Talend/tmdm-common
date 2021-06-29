@@ -33,8 +33,6 @@ public class SimpleTypeFieldMetadata extends MetadataExtensions implements Field
 
     private final List<String> hideUsers;
 
-    private final List<String> workflowAccessRights;
-
     private final boolean isMandatory;
 
     private TypeMetadata fieldType;
@@ -63,7 +61,6 @@ public class SimpleTypeFieldMetadata extends MetadataExtensions implements Field
                                    TypeMetadata fieldType,
                                    List<String> allowWriteUsers,
                                    List<String> hideUsers,
-                                   List<String> workflowAccessRights,
                                    String visibilityRule) {
         if (fieldType == null) {
             throw new IllegalArgumentException("Field type cannot be null.");
@@ -78,7 +75,6 @@ public class SimpleTypeFieldMetadata extends MetadataExtensions implements Field
         this.fieldType = fieldType;
         this.allowWriteUsers = allowWriteUsers;
         this.hideUsers = hideUsers;
-        this.workflowAccessRights = workflowAccessRights;
     }
 
     public String getName() {
@@ -183,7 +179,7 @@ public class SimpleTypeFieldMetadata extends MetadataExtensions implements Field
                 fieldType,
                 allowWriteUsers,
                 hideUsers,
-                workflowAccessRights, visibilityRule);
+                visibilityRule);
         copy.setDeclaringType(declaringType);
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
@@ -199,10 +195,6 @@ public class SimpleTypeFieldMetadata extends MetadataExtensions implements Field
 
     public List<String> getWriteUsers() {
         return allowWriteUsers;
-    }
-
-    public List<String> getWorkflowAccessRights() {
-        return this.workflowAccessRights;
     }
 
     public boolean isMany() {

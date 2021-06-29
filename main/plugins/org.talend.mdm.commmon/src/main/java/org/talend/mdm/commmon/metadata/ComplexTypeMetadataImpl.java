@@ -77,8 +77,6 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
 
     private boolean isFrozen;
 
-    private final List<String> workflowAccessRights;
-
     private FieldMetadata containingField;
 
     private final Set<ComplexTypeMetadata> usages = new HashSet<ComplexTypeMetadata>();
@@ -93,29 +91,27 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
         this(nameSpace, name, Collections.<String> emptyList(), Collections.<String> emptyList(),
                 Collections.<String> emptyList(), Collections.<String> emptyList(), Collections.<String> emptyList(),
                 StringUtils.EMPTY, Collections.<FieldMetadata> emptyList(), Collections.<FieldMetadata> emptyList(),
-                isInstantiable, isAbstract, Collections.<String> emptyList());
+                isInstantiable, isAbstract);
     }
 
     public ComplexTypeMetadataImpl(String nameSpace, String name, List<String> allowWrite, List<String> denyCreate,
             List<String> hideUsers, List<String> physicalDelete, List<String> logicalDelete, String schematron,
-            List<FieldMetadata> primaryKeyInfo, List<FieldMetadata> lookupFields, boolean isInstantiable,
-            List<String> workflowAccessRights) {
+            List<FieldMetadata> primaryKeyInfo, List<FieldMetadata> lookupFields, boolean isInstantiable) {
         this(nameSpace, name, allowWrite, denyCreate, hideUsers, physicalDelete, logicalDelete, schematron, primaryKeyInfo,
-                lookupFields, isInstantiable, false, workflowAccessRights);
+                lookupFields, isInstantiable, false);
+    }
+
+    public ComplexTypeMetadataImpl(String nameSpace, String name, List<String> allowWrite, List<String> denyCreate,
+            List<String> hideUsers, List<String> physicalDelete, List<String> logicalDelete, String schematron,
+            List<FieldMetadata> primaryKeyInfo, List<FieldMetadata> lookupFields, boolean isInstantiable, boolean isAbstract) {
+        this(nameSpace, name, allowWrite, denyCreate, hideUsers, physicalDelete, logicalDelete, schematron, primaryKeyInfo,
+                lookupFields, isInstantiable, false, Collections.<Category> emptyList());
     }
 
     public ComplexTypeMetadataImpl(String nameSpace, String name, List<String> allowWrite, List<String> denyCreate,
             List<String> hideUsers, List<String> physicalDelete, List<String> logicalDelete, String schematron,
             List<FieldMetadata> primaryKeyInfo, List<FieldMetadata> lookupFields, boolean isInstantiable, boolean isAbstract,
-            List<String> workflowAccessRights) {
-        this(nameSpace, name, allowWrite, denyCreate, hideUsers, physicalDelete, logicalDelete, schematron, primaryKeyInfo,
-                lookupFields, isInstantiable, false, workflowAccessRights, Collections.<Category> emptyList());
-    }
-
-    public ComplexTypeMetadataImpl(String nameSpace, String name, List<String> allowWrite, List<String> denyCreate,
-            List<String> hideUsers, List<String> physicalDelete, List<String> logicalDelete, String schematron,
-            List<FieldMetadata> primaryKeyInfo, List<FieldMetadata> lookupFields, boolean isInstantiable, boolean isAbstract,
-            List<String> workflowAccessRights, List<Category> categories) {
+            List<Category> categories) {
         this.name = name;
         this.nameSpace = nameSpace;
         this.allowWrite = allowWrite;
@@ -128,7 +124,6 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
         this.lookupFields = lookupFields;
         this.isInstantiable = isInstantiable;
         this.isAbstract = isAbstract;
-        this.workflowAccessRights = workflowAccessRights;
         this.categories = categories;
     }
 
@@ -384,7 +379,7 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
     public ComplexTypeMetadata copy() {
         ComplexTypeMetadataImpl copy = new ComplexTypeMetadataImpl(getNamespace(), getName(), allowWrite, denyCreate, hideUsers,
                 physicalDelete, logicalDelete, schematron, primaryKeyInfo, Collections.<FieldMetadata> emptyList(),
-                isInstantiable, isAbstract, workflowAccessRights, categories);
+                isInstantiable, isAbstract, categories);
         Collection<FieldMetadata> fields = getFields();
         for (FieldMetadata field : fields) {
             FieldMetadata fieldCopy = field.copy();
@@ -422,7 +417,7 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
     public TypeMetadata copyShallow() {
         ComplexTypeMetadataImpl copy = new ComplexTypeMetadataImpl(getNamespace(), getName(), allowWrite, denyCreate, hideUsers,
                 physicalDelete, logicalDelete, schematron, primaryKeyInfo, Collections.<FieldMetadata> emptyList(),
-                isInstantiable, isAbstract, workflowAccessRights, categories);
+                isInstantiable, isAbstract, categories);
         copy.localeToLabel.putAll(localeToLabel);
         return copy;
     }
@@ -440,11 +435,6 @@ public class ComplexTypeMetadataImpl extends MetadataExtensions implements Compl
     @Override
     public List<String> getHideUsers() {
         return Collections.unmodifiableList(hideUsers);
-    }
-
-    @Override
-    public List<String> getWorkflowAccessRights() {
-        return Collections.unmodifiableList(workflowAccessRights);
     }
 
     @Override

@@ -137,11 +137,6 @@ public class ContainedComplexTypeMetadata implements ComplexTypeMetadata {
     }
 
     @Override
-    public List<String> getWorkflowAccessRights() {
-        return containedType.getWorkflowAccessRights();
-    }
-
-    @Override
     public String getSchematron() {
         return containedType.getSchematron();
     }

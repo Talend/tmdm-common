@@ -33,8 +33,6 @@ public class EnumerationFieldMetadata extends MetadataExtensions implements Fiel
 
     private final List<String> hideUsers;
 
-    private final List<String> workflowAccessRights;
-
     private final TypeMetadata declaringType;
 
     private final boolean isMany;
@@ -61,7 +59,6 @@ public class EnumerationFieldMetadata extends MetadataExtensions implements Fiel
                                     TypeMetadata fieldType,
                                     List<String> allowWriteUsers,
                                     List<String> hideUsers,
-                                    List<String> workflowAccessRights,
                                     String visibilityRule) {
         this.containingType = containingType;
         this.declaringType = containingType;
@@ -72,7 +69,6 @@ public class EnumerationFieldMetadata extends MetadataExtensions implements Fiel
         this.fieldType = fieldType;
         this.allowWriteUsers = allowWriteUsers;
         this.hideUsers = hideUsers;
-        this.workflowAccessRights = workflowAccessRights;
         this.visibilityRule = visibilityRule;
     }
 
@@ -171,7 +167,7 @@ public class EnumerationFieldMetadata extends MetadataExtensions implements Fiel
                 fieldType,
                 allowWriteUsers,
                 hideUsers,
-                workflowAccessRights, visibilityRule);
+                visibilityRule);
         copy.localeToLabel.putAll(localeToLabel);
         copy.localeToDescription.putAll(localeToDescription);
         if (dataMap != null) {
@@ -186,10 +182,6 @@ public class EnumerationFieldMetadata extends MetadataExtensions implements Fiel
 
     public List<String> getWriteUsers() {
         return allowWriteUsers;
-    }
-
-    public List<String> getWorkflowAccessRights() {
-        return this.workflowAccessRights;
     }
 
     public boolean isMany() {

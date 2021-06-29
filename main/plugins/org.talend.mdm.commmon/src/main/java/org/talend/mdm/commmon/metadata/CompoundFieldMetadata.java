@@ -207,10 +207,6 @@ public class CompoundFieldMetadata extends MetadataExtensions implements FieldMe
         return result;
     }
 
-    public List<String> getWorkflowAccessRights() {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public void registerDescription(Locale locale, String description) {
         localeToDescription.put(locale, description);

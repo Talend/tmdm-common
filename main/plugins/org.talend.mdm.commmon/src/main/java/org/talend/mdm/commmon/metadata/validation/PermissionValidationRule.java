@@ -87,8 +87,7 @@ public class PermissionValidationRule implements ValidationRule {
 
             List<FieldMetadata> writeUsers = new ArrayList<FieldMetadata>();
             List<FieldMetadata> hideUsers = new ArrayList<FieldMetadata>();
-            List<FieldMetadata> denyCreate = new ArrayList<FieldMetadata>();
-            List<FieldMetadata> workflowAccessRights = new ArrayList<FieldMetadata>();
+            List<FieldMetadata> denyCreate = new ArrayList<FieldMetadata>();          
             for (Element appInfo : appInfoElements) {
                 String source = appInfo.getAttribute("source"); //$NON-NLS-1$
                 String permissionRole = appInfo.getTextContent();
@@ -98,16 +97,12 @@ public class PermissionValidationRule implements ValidationRule {
                     hideUsers.add(getFieldMetadata(appInfo, permissionRole));
                 } else if ("X_Deny_Create".equals(source)) { //$NON-NLS-1$ )
                     denyCreate.add(getFieldMetadata(appInfo, permissionRole));
-                } else if ("X_Workflow".equals(source)) { //$NON-NLS-1$
-                    permissionRole = permissionRole.substring(0, permissionRole.indexOf("#")); //$NON-NLS-1$
-                    workflowAccessRights.add(getFieldMetadata(appInfo, permissionRole));
-                }
+                } 
             }
 
             valid = doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_WRITE, writeUsers);
             valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_HIDE, hideUsers);
-            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_DENY_CREATE, denyCreate);
-            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
+            valid &= doValidation(handler, ELEMENT_TYPE_FIELD, name, PermissionConstants.PERMISSIONTYPE_DENY_CREATE, denyCreate); 
         }
 
 
@@ -142,7 +137,6 @@ public class PermissionValidationRule implements ValidationRule {
         List<FieldMetadata> denyCreate = new ArrayList<FieldMetadata>();
         List<FieldMetadata> denyDeleteLogical = new ArrayList<FieldMetadata>();
         List<FieldMetadata> denyDeletePhysical = new ArrayList<FieldMetadata>();
-        List<FieldMetadata> workflowAccessRights = new ArrayList<FieldMetadata>();
         for (Element appInfo : appInfoElements) {
             String source = appInfo.getAttribute("source"); //$NON-NLS-1$
             String permissionRole = appInfo.getTextContent();
@@ -156,10 +150,7 @@ public class PermissionValidationRule implements ValidationRule {
                 denyDeleteLogical.add(getFieldMetadata(appInfo, permissionRole));
             } else if ("X_Deny_PhysicalDelete".equals(source)) { //$NON-NLS-1$
                 denyDeletePhysical.add(getFieldMetadata(appInfo, permissionRole));
-            } else if ("X_Workflow".equals(source)) {  //$NON-NLS-1$
-                permissionRole = permissionRole.substring(0, permissionRole.indexOf("#")); //$NON-NLS-1$
-                workflowAccessRights.add(getFieldMetadata(appInfo, permissionRole));
-            }
+            } 
         }
 
         boolean valid = doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_WRITE, writeUsers);
@@ -167,7 +158,6 @@ public class PermissionValidationRule implements ValidationRule {
         valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_DENY_CREATE, denyCreate);
         valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_DENY_DELETE_PHYSICAL, denyDeletePhysical);
         valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_DENY_DELETE_LOGICAL, denyDeleteLogical);
-        valid &= doValidation(handler, ELEMENT_TYPE_ENTITY, name, PermissionConstants.PERMISSIONTYPE_WORKFLOW_ACCESS, workflowAccessRights);
 
         return valid;
     }
