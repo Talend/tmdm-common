@@ -19,10 +19,6 @@ public interface ICoreConstants {
 
     String X_Schematron = "X_Schematron";
 
-    String X_Workflow = "X_Workflow";
-
-    String[] WORKFLOW_ACCESSES = { "Read-only", "Hidden", "Writable" };
-
     /**
      * the default svn name in VersionSystem
      */
