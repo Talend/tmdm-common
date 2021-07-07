@@ -25,8 +25,8 @@
         <gwt.dnd.version>3.1.2</gwt.dnd.version>
 
         <apache.httpcomponents.version>4.5.10</apache.httpcomponents.version>
-        <spring.version>4.3.23.RELEASE</spring.version>
-        <spring.security.version>4.2.2.RELEASE</spring.security.version>
+        <spring.version>4.3.25.RELEASE</spring.version>
+        <spring.security.version>4.2.13.RELEASE</spring.security.version>
         <cxf.version>3.3.4</cxf.version>
         <powermock.version>1.7.4</powermock.version>
         <hibernate.search.version>5.0.1.Final</hibernate.search.version>
@@ -930,12 +930,12 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.6.1</version>
+                <version>1.7.26</version>
             </dependency>
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
-                <version>1.6.4</version>
+                <version>1.7.26</version>
             </dependency>
             <dependency>
                 <groupId>xml-apis</groupId>
@@ -1148,7 +1148,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.2</version>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-jxpath</groupId>
@@ -1230,17 +1230,27 @@
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-web</artifactId>
-                <version>${spring.security.version}</version>
+                <version>4.2.2.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-core</artifactId>
-                <version>4.2.13.RELEASE</version>
+                <version>${spring.security.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
                 <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-jwt</artifactId>
+                <version>1.0.10.RELEASE</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>2.0.18.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.castor</groupId>
