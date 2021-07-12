@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.talend.mdm</groupId>
     <artifactId>mdm-base</artifactId>
-    <version>7.4.1-SNAPSHOT</version>
+    <version>8.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>org.talend.mdm.base</name>
     <url>http://www.talend.com</url>
