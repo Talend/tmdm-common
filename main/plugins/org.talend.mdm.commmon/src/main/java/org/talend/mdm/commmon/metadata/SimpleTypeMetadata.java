@@ -11,14 +11,12 @@
 
 package org.talend.mdm.commmon.metadata;
 
+import java.util.Collection;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import org.talend.mdm.commmon.metadata.validation.ValidationFactory;
 import org.talend.mdm.commmon.metadata.validation.ValidationRule;
 import org.w3c.dom.Element;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *
@@ -27,7 +25,7 @@ public class SimpleTypeMetadata extends MetadataExtensions implements TypeMetada
 
     private final String nameSpace;
 
-    private final List<TypeMetadata> superTypes = new LinkedList<TypeMetadata>();
+    private final Collection<TypeMetadata> superTypes = new ConcurrentLinkedQueue<TypeMetadata>();
 
     private String name;
 
@@ -86,10 +84,10 @@ public class SimpleTypeMetadata extends MetadataExtensions implements TypeMetada
 
     public TypeMetadata freeze() {
         if (!superTypes.isEmpty()) {
-            List<TypeMetadata> thisSuperTypes = new ArrayList<TypeMetadata>(superTypes);
+            Collection<TypeMetadata> thisSuperTypes = new ConcurrentLinkedQueue<TypeMetadata>(superTypes);
             superTypes.clear();
             for (TypeMetadata superType : thisSuperTypes) {
-                if (isInstantiable() == superType.isInstantiable()) {
+                if (superType != null && isInstantiable() == superType.isInstantiable()) {
                     superType = superType.freeze();
                     superTypes.add(superType);
                 }
