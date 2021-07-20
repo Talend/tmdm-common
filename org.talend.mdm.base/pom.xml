@@ -14,8 +14,7 @@
     </organization>
 
     <properties>
-        <!-- GWT and other dependent libraries must be aligned in term of 
-            version -->
+        <!-- GWT and other dependent libraries must be aligned in term of version -->
         <gwt.version>2.4.0</gwt.version>
         <gwt.localWorkers>4</gwt.localWorkers>
         <gwt.restlet.version>2.2.1</gwt.restlet.version>
@@ -1315,7 +1314,7 @@
             <dependency>
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
-                <version>1.6.1</version>
+                <version>1.9.4</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jra</groupId>
@@ -1664,8 +1663,8 @@
         <profile>
             <id>coverage</id>
             <activation>
-                <!-- Jenkins by default defines a property BUILD_NUMBER which 
-                    is used to enable this profile. <property> <name>env.BUILD_NUMBER</name> 
+                <!-- Jenkins by default defines a property BUILD_NUMBER which
+                    is used to enable this profile. <property> <name>env.BUILD_NUMBER</name>
                     </property> -->
                 <property>
                     <name>mdm.build.coverage</name>
