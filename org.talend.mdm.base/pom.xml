@@ -691,7 +691,7 @@
             <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
-                <version>1.13</version>
+                <version>1.14</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.poi</groupId>
@@ -1310,7 +1310,7 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.2</version>
+                <version>2.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-jxpath</groupId>
@@ -1428,6 +1428,11 @@
                 <groupId>org.springframework.security</groupId>
                 <artifactId>spring-security-config</artifactId>
                 <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth</groupId>
+                <artifactId>spring-security-oauth2</artifactId>
+                <version>2.5.1.RELEASE</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.castor</groupId>
